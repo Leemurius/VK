@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class = "EditForm">
+            <p id="header">Please enter in your account</p>
+
+            <table>
+                <tr>
+                    <p id="label">{{ form.login.label }}</p>
+                    <p id="field">{{ form.login(size=26) }}</p>
+                    {% for error in form.login.errors %}
+                        <p id="errors">[{{ error }}]</p>
+                    {% endfor %}
+                </tr>
+
+                <tr>
+                    <p id="label">{{ form.password.label }}</p>
+                    <p id="field">{{ form.password(size=26) }}</p>
+                    {% for error in form.password.errors %}
+                        <p id="errors">[{{ error }}]</p>
+                    {% endfor %}
+                </tr>
+
+                <tr>
+                    <p id="button">{{ form.submit() }}</p>
+                </tr>
+            </table>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="home">
+        <table class="person_information">
+            {% for user in users %}
+                <tr>
+                    <td id="person_td">
+                        <a href={{ url_for('profile', nick = user.nick) }}>
+
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div class="avatar">
+                                            <img src="{{ user.photo }}" alt="Avatar">
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="info">
+                                            <p>{{ user.surname }} {{ user.name }}</p>
+                                            Email : {{ user.email }}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

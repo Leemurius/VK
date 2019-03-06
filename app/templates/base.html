@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <link rel="shortcut icon" type="image/png" href="/static/image/favicon.png"/>
+        <link rel="stylesheet" type="text/css" href="/static/css/form.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/toast.min.css">
+        <script type="text/javascript" src="/static/js/jquery.js"></script>
+        <script type="text/javascript" src="/static/js/toast.min.js"></script>
+        <script type="text/javascript" src="/static/js/options.js"></script>
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title> VK </title>
+        {% endif %}
+    </head>
+
+    <body>
+        <div class="side_bar">
+            <table>
+                <tr>
+                    <td><a id="home" href={{ url_for('home') }}>Home</a></td>
+
+                    {% if current_user.is_authenticated %}
+                        <td>
+                            <a href={{ url_for('profile', nick=current_user.nick) }}> Your profile </a>
+                        </td>
+                    {% endif %}
+
+                    <td>
+                        {% if not current_user.is_authenticated %}
+                            <a href={{ url_for('login') }}> Login </a>
+                        {% else %}
+                            <a href={{ url_for('logout') }}> Logout </a>
+                        {% endif %}
+                    </td>
+
+                    {% if not current_user.is_authenticated %}
+                        <td>
+                            <a href={{ url_for('registration') }}>Registration</a>
+                        </td>
+                    {% endif %}
+
+                </tr>
+            </table>
+        </div>
+
+        {% block content %}{% endblock %}
+
+        <!-- Error messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <script>
+                    $.toast({
+                        heading: '{{message.head}}',
+                        text: '{{message.msg}}',
+                        showHideTransition: 'fade',
+                        icon: '{{category}}',
+                        hideAfter: 8500,
+                        allowToastClose: true
+                    })
+                    </script>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    </body>
+</html>

@@ -1,0 +1,11 @@
+body {
+   background-image: url(/static/image/404.gif);
+   background-repeat: no-repeat;
+   background-position: center;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 10%;
+    font-size: 350%;
+}
