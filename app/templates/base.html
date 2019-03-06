@@ -1,67 +1,118 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+
+<!DOCTYPE html>
 <html>
     <head>
-        <link rel="shortcut icon" type="image/png" href="/static/image/favicon.png"/>
-        <link rel="stylesheet" type="text/css" href="/static/css/form.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/toast.min.css">
-        <script type="text/javascript" src="/static/js/jquery.js"></script>
-        <script type="text/javascript" src="/static/js/toast.min.js"></script>
-        <script type="text/javascript" src="/static/js/options.js"></script>
-        {% if title %}
-        <title>{{ title }}</title>
-        {% else %}
-        <title> VK </title>
-        {% endif %}
+        <meta charset='UTF-8'>
+        <meta name="robots" content="noindex">
+
+        <link rel="shortcut icon" type="image/x-icon" href="//production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico"/>
+        <!--===============================================================================================-->
+        <link rel="mask-icon" type="" href="//production-assets.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111" />
+        <!--===============================================================================================-->
+        <link rel="canonical" href="https://codepen.io/emilcarlsson/pen/ZOQZaV?limit=all&page=74&q=contact+"/>
+        <!--===============================================================================================-->
+        <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+        <!--===============================================================================================-->
+        <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+        <!--===============================================================================================-->
+        <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+        <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="/static/css/base.css">
+
+        <script src='https://production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script>
+        <!--===============================================================================================-->
+        <script src='https://production-assets.codepen.io/assets/editor/live/events_runner-73716630c22bbc8cff4bd0f07b135f00a0bdc5d14629260c3ec49e5606f98fdd.js'></script>
+        <!--===============================================================================================-->
+        <script src='https://production-assets.codepen.io/assets/editor/live/css_live_reload_init-2c0dc5167d60a5af3ee189d570b1835129687ea2a61bee3513dee3a50c115a77.js'></script>
+        <!--===============================================================================================-->
+        <script src="https://use.typekit.net/hoy3lrg.js"></script>
     </head>
 
     <body>
-        <div class="side_bar">
-            <table>
-                <tr>
-                    <td><a id="home" href={{ url_for('home') }}>Home</a></td>
+        <div id="frame">
+            <div id="sidepanel">
 
-                    {% if current_user.is_authenticated %}
-                        <td>
-                            <a href={{ url_for('profile', nick=current_user.nick) }}> Your profile </a>
-                        </td>
-                    {% endif %}
+                <div id="profile">
+                    <div class="wrap">
+                        <a href="{{ url_for('my_profile') }}">
+                            <img id="profile-img" src= {{ current_user.photo }} class="online" alt="" />
+                        </a>
+                        <p>{{ current_user.name }} {{ current_user.surname }}</p>
+                        <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
 
-                    <td>
-                        {% if not current_user.is_authenticated %}
-                            <a href={{ url_for('login') }}> Login </a>
-                        {% else %}
-                            <a href={{ url_for('logout') }}> Logout </a>
-                        {% endif %}
-                    </td>
+                        <div id="expanded">
+                            <label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+                            <input name="twitter" type="text" value="mikeross" />
+                            <label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+                            <input name="twitter" type="text" value="ross81" />
+                            <label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
+                            <input name="twitter" type="text" value="mike.ross" />
+                        </div>
+                    </div>
+                </div>
 
-                    {% if not current_user.is_authenticated %}
-                        <td>
-                            <a href={{ url_for('registration') }}>Registration</a>
-                        </td>
-                    {% endif %}
+                <div id="search">
+                    <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+                    <input type="text" placeholder="Search contacts..." />
+                </div>
 
-                </tr>
-            </table>
+                <div id="contacts">
+                    <ul>
+                        {% for user in users %}
+                            {% if user.id != current_user.id %}
+                            <a href={{ url_for('chat', nick=user.nick) }}>
+                                <li class="contact">
+                                    <div class="wrap">
+                                        <span class="contact-status {{ 'online' if user.online else 'offline' }}"></span>
+                                        <img src= {{ user.photo }} alt="" />
+                                        <div class="meta">
+                                            <p class="name"> {{ user.name }} {{ user.surname }} </p>
+                                            <p class="preview">
+                                                <span>
+                                                    {{ 'You : ' if messages and messages[-1].sender_id == current_user.id else '' }}
+                                                </span>
+                                                {{messages[-1].text if messages else '' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </a>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div id="bottom-bar">
+                    <button id="addcontact">
+                        <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
+                        <span>Add contact</span>
+                    </button>
+
+                    <button id="settings">
+                        <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
+                        <span>Settings</span>
+                    </button>
+                </div>
+            </div>
+
+            {% block content %}{% endblock %}
+
         </div>
 
-        {% block content %}{% endblock %}
-
-        <!-- Error messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <script>
-                    $.toast({
-                        heading: '{{message.head}}',
-                        text: '{{message.msg}}',
-                        showHideTransition: 'fade',
-                        icon: '{{category}}',
-                        hideAfter: 8500,
-                        allowToastClose: true
-                    })
-                    </script>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
+        <script src='https://production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script>
+        <!--===============================================================================================-->
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+        <!--===============================================================================================-->
+        <script type="text/javascript" src="/static/js/base.js"></script>
     </body>
 </html>

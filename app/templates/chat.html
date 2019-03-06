@@ -1,46 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="chat_panel">
-        <p id="person">Chat with <b>{{ user.nick }}</b></p>
-
-        <table class="messages">
-            {% for i in range(times|length) %}
-                <tr>
-                    <td id="mess">
-
-                        <table class="construct_message">
-                            <tr>
-                                <td id="name_and_message">
-                                    <span> <b>{{ messages[i].sender_nick }}</b>: {{ messages[i].text }}</span>
-                                </td>
-
-                                <td id="time">
-                                    <p>{{ times[i] }}</p>
-                                </td>
-                            </tr>
-                        </table>
-
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-
-        <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-            <table id="write_panel">
-                <tr>
-                    <td>
-                        {{ form.message() }}
-                    </td>
-                    <td>
-                        {{ form.send() }}
-                    </td>
-                </tr>
-            </table>
-            {% for error in form.message.errors %}
-                <p id="errors">[{{ error }}]</p>
-            {% endfor %}
-        </form>
+<div class="content">
+    <div class="contact-profile">
+        <img src={{ recipient.photo }} alt="" />
+        <p> {{ recipient.name }} {{ recipient.surname }} </p>
+        <div id="logout">
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
     </div>
+
+    <div class="messages">
+        <ul>
+            {% for message in messages %}
+                {% if message.sender_id == current_user.id %}
+                    <li class="sent">
+                        <img src={{ current_user.photo }} alt="" >
+                        <p> {{ message.text }} </p>
+                        <span>{{ message.time.replace(microsecond=0).time() }}</span>
+                    </li>
+                {% else %}
+                    <li class="replies">
+                        <img src={{ recipient.photo }} alt="" />
+                        <p>{{ message.text }}</p>
+                        <span>{{ message.time.replace(microsecond=0).time() }}</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="message-input">
+        <div class="wrap">
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                {{ form.message() }}
+                <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+                <button class="submit">
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

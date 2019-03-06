@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     age = db.Column(db.Integer)
     email = db.Column(db.String(20), unique=True)
     photo = db.Column(db.String(1024), default=CONST_DEFAULT_PHOTO)
+    online = db.Column(db.Boolean)
     password_hash = db.Column(db.String(256))
 
     sent_messages = db.relationship(
@@ -49,6 +50,10 @@ class User(UserMixin, db.Model):
             time=datetime.datetime.now()
         )
         m.commit_to_db()
+
+    def set_online(self, flag):
+        self.online = flag
+        db.session.commit()
 
     def commit_to_db(self):
         db.session.add(self)

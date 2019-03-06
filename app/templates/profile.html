@@ -1,43 +1,10 @@
-{% extends 'base.html' %}
-
-{% block content %}
-    <div class="my_page">
-        <table>
-            <tr>
-                <td id="avatar">
-                    <img src="{{ user.photo }}" alt="Avatar">
-                </td>
-
-                <td class="profile_information" valign="top">
-                    <p id="name_sur" >{{ user.surname }} {{ user.name }}</p>
-                    <hr>
-
-                    <div class="infromation_list">
-                        <p>Nick : {{ user.nick }}</p>
-                        <p>Age : {{ user.age }}</p>
-                        <p>Email : {{ user.email }}</p>
-                    </div>
-
-                    {% if current_user.nick == user.nick %}
-                        <div class="edit_links">
-                            <a href={{ url_for('edit_profile', nick=user.nick) }}>Edit profile</a>
-                            <br>
-                            <a href={{ url_for('edit_password', nick=user.nick) }}>Edit password</a>
-                        </div>
-                    {% endif %}
-                </td>
-            </tr>
-
-            {% if current_user.nick != user.nick %}
-                <tr>
-                    <td class="button_in_table">
-                        <a id="button_on_dialog" href={{ url_for('chat', nick=user.nick) }}>
-                            <button>Open dialog</button>
-                        </a>
-                   </td>
-                </tr>
-            {% endif %}
-
-        </table>
-    </div>
-{% endblock %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+    <center><a href="{{ url_for('chat', nick=current_user.nick) }}">Chat</a></center>
+</body>
+</html>

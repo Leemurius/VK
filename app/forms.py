@@ -7,7 +7,8 @@ from wtforms import (
     TextAreaField,
     IntegerField,
     PasswordField,
-    SubmitField
+    SubmitField,
+    BooleanField
 )
 from wtforms.validators import DataRequired, Email, length, EqualTo, NumberRange
 
@@ -108,7 +109,7 @@ class LoginForm(FlaskForm):
         ]
     )
 
-    submit = SubmitField('Submit')
+    remember = BooleanField('Remember me')
 
     @staticmethod
     def _is_email(email):
@@ -134,11 +135,9 @@ class ChatForm(FlaskForm):
         'Message',
         validators=[
             DataRequired(),
-            length(max=MESSAGE_LENGTH, message='Very big message')
-        ]
+            length(max=MESSAGE_LENGTH, message='Very big message'),
+        ],
     )
-
-    send = SubmitField('Send')
 
 
 class EditProfileForm(FlaskForm):

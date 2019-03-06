@@ -20,6 +20,7 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 
+@app.route('/')
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     form = RegistrationForm()
@@ -45,26 +46,31 @@ def login():
 
     if form.validate_on_submit():
         login_user(form.get_user())
-        return redirect(url_for('home'))
+        current_user.set_online(True)
+        return redirect(url_for('my_profile'))
 
     return render_template('login.html', form=form, title='Login')
 
 
 @app.route('/logout')
 def logout():
+    current_user.set_online(False)
     logout_user()
     return redirect(url_for('login'))
 
 
-@app.route('/')
-@app.route('/home')
-def home():
-    return render_template('home.html', users=User.query.all())
+@app.route('/my_profile')
+@login_required
+def my_profile():
+    return render_template('profile.html', user=current_user)
 
 
 @app.route('/profile/<nick>')
 @login_required
 def profile(nick):
+    if nick == current_user.nick:
+        return redirect(url_for('my_profile'))
+
     user = User.query.filter_by(nick=nick).first_or_404()
     return render_template('profile.html', user=user)
 
@@ -103,33 +109,40 @@ def edit_password(nick):
 @app.route('/chat/<nick>', methods=['GET', 'POST'])
 @login_required
 def chat(nick):
-    user = User.query.filter_by(nick=nick).first_or_404()
+    recipient = User.query.filter_by(nick=nick).first_or_404()
 
     form = ChatForm()
 
     if form.validate_on_submit():
         current_user.send_message(
             text=form.message.data,
-            recipient=user
+            recipient=recipient
         )
         return redirect(url_for('chat', nick=nick))
 
     messages_sender = Message.query.filter_by(
         sender_id=current_user.id,
-        recipient_id=user.id
+        recipient_id=recipient.id
     ).all()
 
     messages_recipient = Message.query.filter_by(
-        sender_id=user.id,
+        sender_id=recipient.id,
         recipient_id=current_user.id
     ).all()
 
-    messages = messages_sender + messages_recipient
+    messages = messages_sender
+    if current_user != recipient:
+        messages += messages_recipient
+
     for i in range(len(messages)):
         messages[i].sender_nick = User.query.get(messages[i].sender_id).nick
     messages.sort(key=operator.attrgetter('time'))
 
-    times = map(lambda date: date.time.replace(microsecond=0), messages)
-    times = list(map(lambda it: str(it.time()) + ' | ' + str(it.date()), times))
-
-    return render_template('chat.html', form=form, user=user, messages=messages, times=times)
+    return render_template(
+        'chat.html',
+        form=form,
+        current_user=current_user,
+        messages=messages,
+        users=User.query.all(),
+        recipient=recipient
+)
