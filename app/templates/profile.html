@@ -1,10 +1,56 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Profile</title>
-</head>
-<body>
-    <center><a href="{{ url_for('chat', nick=current_user.nick) }}">Chat</a></center>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+	<title>{{ user.name }} {{ user.surname }}</title>
+
+	<!-- Favicon -->   
+	<link href="/static/images/favicon.png" rel="shortcut icon"/>
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,600,600i,700" rel="stylesheet">
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="/static/css/profile.css"/>
+
+	<!-- Page Preloder -->
+	<div id="preloder">
+		<div class="loader"></div>
+	</div>
+
+	<!-- Hero section start -->
+	<section class="hero-section spad">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-xl-10 offset-xl-1">
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="hero-text">
+								<h2>{{ user.name }} {{ user.surname }}</h2>
+								<p>
+                                    I’m a digital designer in love with photography,
+                                    painting and discovering new worlds and cultures.
+                                </p>
+							</div>
+							<div class="hero-info">
+								<h2>General Info</h2>
+								<ul>
+									<li><span>Date of Birth</span>No information</li>
+									<li><span>Address</span>No information</li>
+									<li><span>E-mail</span>{{ user.email }}</li>
+									<li><span>Phone </span>No information</li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<figure class="hero-image">
+								<img src="{{ user.photo }}" alt="5">
+							</figure>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- Hero section end -->
+    <script src="/static/js/profile.js"></script>
+{% endblock %}

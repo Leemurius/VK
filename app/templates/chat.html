@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<title>Chat with {{ recipient.nick }}</title>
+
 <div class="content">
     <div class="contact-profile">
-        <img src={{ recipient.photo }} alt="" />
+        <a href="{{ url_for('profile', nick=recipient.nick) }}">
+            <img src={{ recipient.photo }} alt="" />
+        </a>
         <p> {{ recipient.name }} {{ recipient.surname }} </p>
         <div id="logout">
             <a href="{{ url_for('logout') }}">Logout</a>
@@ -15,13 +19,13 @@
             {% for message in messages %}
                 {% if message.sender_id == current_user.id %}
                     <li class="sent">
-                        <img src={{ current_user.photo }} alt="" >
+                        <img src="{{ current_user.photo }}" alt="" >
                         <p> {{ message.text }} </p>
                         <span>{{ message.time.replace(microsecond=0).time() }}</span>
                     </li>
                 {% else %}
                     <li class="replies">
-                        <img src={{ recipient.photo }} alt="" />
+                        <img src="{{ recipient.photo }}" alt="" />
                         <p>{{ message.text }}</p>
                         <span>{{ message.time.replace(microsecond=0).time() }}</span>
                     </li>

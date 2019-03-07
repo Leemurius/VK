@@ -7,7 +7,7 @@ from app import db
 
 
 class User(UserMixin, db.Model):
-    CONST_DEFAULT_PHOTO = '/static/image/no_photo.png'
+    CONST_DEFAULT_PHOTO = '/static/images/no_photo.png'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
@@ -86,3 +86,7 @@ class Message(db.Model):
     def commit_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+    @staticmethod   # FIXME : delete last '\n'
+    def minimize_mess(text):
+        return text

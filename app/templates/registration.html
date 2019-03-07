@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login</title>
+	<title>Registration</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
+<!--===============================================================================================-->
 	<link rel="icon" type="image/png" href="/static/images/icons/favicon.ico"/>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
@@ -14,76 +14,89 @@
 	<link rel="stylesheet" type="text/css" href="/static/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/vendor/animate/animate.css">
-<!--===============================================================================================-->	
+<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/vendor/css-hamburgers/hamburgers.min.css">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/vendor/animsition/css/animsition.min.css">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/vendor/select2/select2.min.css">
-<!--===============================================================================================-->	
+<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/vendor/daterangepicker/daterangepicker.css">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/css/login_util.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/registration.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/login_and_reg.css">
 <!--===============================================================================================-->
 </head>
 <body>
-	
+
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
-				<div class="login100-form-title" style="background-image: url(static/images/login.jpg);">
+				<div class="login100-form-title">
 					<span class="login100-form-title-1">
-						Sign Up
+						Registration Form
 					</span>
 				</div>
 
 				<form class="login100-form validate-form" action="" method="post" novalidate>
                     {{ form.hidden_tag() }}
+
 					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100">Nick or email</span>
-{#                        {{ form.login(size=26, class="input100", placeholder="Enter username") }}#}
+						<span class="label-input100"> {{form.name.label}} </span>
+                          {{ form.name(size=26, class="input100", placeholder="Enter name") }}
 						<span class="focus-input100"></span>
 					</div>
 
-					<div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
-						<span class="label-input100">Password</span>
-{#                        {{ form.password(size=26, class="input100", placeholder="Enter password") }}#}
+					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+						<span class="label-input100"> {{form.surname.label}} </span>
+                          {{ form.surname(size=26, class="input100", placeholder="Enter surname") }}
 						<span class="focus-input100"></span>
 					</div>
 
-					<div class="flex-sb-m w-full p-b-30">
-						<div class="contact100-form-checkbox">
-{#                            {{ form.remember(class="input-checkbox100") }}#}
-							<label class="label-checkbox100" for="remember">
-								Remember me
-							</label>
-						</div>
-
-						<div>
-                            <!-- Later
-							<a href="#" class="txt1">
-								Forgot Password?
-							</a>
-							-->
-						</div>
+					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+						<span class="label-input100"> {{form.nick.label}} </span>
+                          {{ form.nick(size=26, class="input100", placeholder="Enter nick") }}
+						<span class="focus-input100"></span>
 					</div>
 
-					<div class="container-login100-form-btn">
+                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+						<span class="label-input100"> {{form.age.label}} </span>
+                          {{ form.age(size=26, class="input100", placeholder="Enter age") }}
+						<span class="focus-input100"></span>
+					</div>
+
+                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+						<span class="label-input100"> {{form.email.label}} </span>
+                          {{ form.email(size=26, class="input100", placeholder="Enter email") }}
+						<span class="focus-input100"></span>
+					</div>
+
+                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+						<span class="label-input100"> {{form.password.label}} </span>
+                          {{ form.password(size=26, class="input100", placeholder="Enter password") }}
+						<span class="focus-input100"></span>
+					</div>
+
+                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+						<span class="label-input100"> {{ form.confirm_password.label }} </span>
+                          {{ form.confirm_password(size=26, class="input100", placeholder="Confirm password") }}
+						<span class="focus-input100"></span>
+					</div>
+
+                    <div class="container-login100-form-btn">
 						<button class="login100-form-btn">
-							Login
+							Registration
 						</button>
-					</div>
-
-                    <div class="container-login100-form-login">
-                        <a href="{{ url_for('login') }}">I have account</a>
                     </div>
 
-				</form>
+                    <div id="have-account">
+                        <a href="{{ url_for('login') }}">I have account</a>
+                    </div>
+                </form>
 			</div>
 		</div>
 	</div>
-	
+
 <!--===============================================================================================-->
 	<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->

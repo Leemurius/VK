@@ -73,7 +73,7 @@ class RegistrationForm(FlaskForm):
     )
 
     confirm_password = PasswordField(
-        'Confirm password',
+        'Confirm',
         validators=[
             DataRequired(),
             length(max=PASSWORD_LENGTH, message='Very big password'),

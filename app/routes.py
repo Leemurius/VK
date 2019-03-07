@@ -20,10 +20,13 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     form = RegistrationForm()
+
+    if current_user.is_authenticated:
+        redirect('my_profile', )
 
     if form.validate_on_submit():
         user = User(
@@ -37,7 +40,7 @@ def registration():
         user.set_password(form.password.data)
         return redirect(url_for('login'))
 
-    return render_template('registration.html', form=form, title='Registration')
+    return render_template('registration.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -45,7 +48,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        login_user(form.get_user())
+        login_user(form.get_user(), remember=form.remember.data)
         current_user.set_online(True)
         return redirect(url_for('my_profile'))
 
@@ -62,7 +65,16 @@ def logout():
 @app.route('/my_profile')
 @login_required
 def my_profile():
-    return render_template('profile.html', user=current_user)
+
+    users = User.query.all()
+    for i in range(len(users)):
+        users[i].last_message = None
+
+    return render_template(
+        'profile.html',
+        user=current_user,
+        users=users
+    )
 
 
 @app.route('/profile/<nick>')
@@ -72,7 +84,16 @@ def profile(nick):
         return redirect(url_for('my_profile'))
 
     user = User.query.filter_by(nick=nick).first_or_404()
-    return render_template('profile.html', user=user)
+
+    users = User.query.all()
+    for i in range(len(users)):
+        users[i].last_message = None
+
+    return render_template(
+        'profile.html',
+        user=user,
+        users=users
+    )
 
 
 @app.route('/profile/<nick>/edit_profile/', methods=['GET', 'POST'])
@@ -115,7 +136,7 @@ def chat(nick):
 
     if form.validate_on_submit():
         current_user.send_message(
-            text=form.message.data,
+            text=Message.minimize_mess(form.message.data),
             recipient=recipient
         )
         return redirect(url_for('chat', nick=nick))

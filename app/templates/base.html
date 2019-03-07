@@ -28,6 +28,8 @@
         <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
         <!--===============================================================================================-->
         <link rel="stylesheet" type="text/css" href="/static/css/base.css">
+        <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="/static/css/chat.css">
 
         <script src='https://production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script>
         <!--===============================================================================================-->
@@ -79,9 +81,9 @@
                                             <p class="name"> {{ user.name }} {{ user.surname }} </p>
                                             <p class="preview">
                                                 <span>
-                                                    {{ 'You : ' if messages and messages[-1].sender_id == current_user.id else '' }}
+                                                    {{ 'You : ' if user.last_message and user.last_message.sender_id == current_user.id else '' }}
                                                 </span>
-                                                {{messages[-1].text if messages else '' }}
+                                                {{user.last_message.text if user.last_message else '' }}
                                             </p>
                                         </div>
                                     </div>
@@ -114,5 +116,7 @@
         <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
         <!--===============================================================================================-->
         <script type="text/javascript" src="/static/js/base.js"></script>
+        <!--===============================================================================================-->
+        <script type="text/javascript" src="/static/js/chat.js"></script>
     </body>
 </html>
