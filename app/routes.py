@@ -20,12 +20,6 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 
-@app.before_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.update_status()
-
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -55,6 +49,7 @@ def login():
 
     if form.validate_on_submit():
         login_user(form.get_user(), remember=form.remember.data)
+        current_user.set_online(True)
         return redirect(url_for('my_profile'))
 
     return render_template('login.html', form=form, title='Login')
@@ -62,6 +57,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    current_user.set_online(False)
     logout_user()
     return redirect(url_for('login'))
 
@@ -71,6 +67,8 @@ def logout():
 def my_profile():
 
     users = User.query.all()
+    for i in range(len(users)):
+        users[i].last_message = None
 
     return render_template(
         'profile.html',
@@ -86,7 +84,10 @@ def profile(nick):
         return redirect(url_for('my_profile'))
 
     user = User.query.filter_by(nick=nick).first_or_404()
+
     users = User.query.all()
+    for i in range(len(users)):
+        users[i].last_message = None
 
     return render_template(
         'profile.html',
@@ -95,47 +96,35 @@ def profile(nick):
     )
 
 
-@app.route('/my_profile/settings')
+@app.route('/profile/<nick>/edit_profile/', methods=['GET', 'POST'])
 @login_required
-def settings():
-    users = User.query.all()
-
-    return render_template(
-        'settings.html',
-        user=current_user,
-        users=users
+def edit_profile(nick):
+    form = EditProfileForm(
+        name=current_user.name,
+        surname=current_user.surname,
+        nick=current_user.nick,
+        age=current_user.age,
+        email=current_user.email,
+        photo=get_user_avatar_url(current_user.photo)
     )
 
+    if form.validate_on_submit():
+        current_user.set_ep_form(form)
+        return redirect(url_for('profile', nick=current_user.nick))
 
-# @app.route('/profile/<nick>/edit_profile/', methods=['GET', 'POST'])
-# @login_required
-# def edit_profile(nick):
-#     form = EditProfileForm(
-#         name=current_user.name,
-#         surname=current_user.surname,
-#         nick=current_user.nick,
-#         age=current_user.age,
-#         email=current_user.email,
-#         photo=get_user_avatar_url(current_user.photo)
-#     )
-#
-#     if form.validate_on_submit():
-#         current_user.set_ep_form(form)
-#         return redirect(url_for('profile', nick=current_user.nick))
-#
-#     return render_template('edit_profile.html', form=form)
-#
-#
-# @app.route('/profile/<nick>/edit_password/', methods=['GET', 'POST'])
-# @login_required
-# def edit_password(nick):
-#     form = EditPasswordForm()
-#
-#     if form.validate_on_submit():
-#         current_user.set_password(form.new_password.data)
-#         return redirect(url_for('profile', nick=current_user.nick))
-#
-#     return render_template('edit_password.html', form=form)
+    return render_template('edit_profile.html', form=form)
+
+
+@app.route('/profile/<nick>/edit_password/', methods=['GET', 'POST'])
+@login_required
+def edit_password(nick):
+    form = EditPasswordForm()
+
+    if form.validate_on_submit():
+        current_user.set_password(form.new_password.data)
+        return redirect(url_for('profile', nick=current_user.nick))
+
+    return render_template('edit_password.html', form=form)
 
 
 @app.route('/chat/<nick>', methods=['GET', 'POST'])

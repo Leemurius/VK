@@ -40,6 +40,7 @@ $(window).on('keydown', function(e) {
         $("#frame .content .message-input .wrap .attachment").css({"margin-top" : "17px"});
         $("#frame .content .message-input .wrap button").css({"margin-top" : "0em"});
 	}
+
 });
 
 $(document).ready(function() {

@@ -1,10 +1,5 @@
 {% extends 'base.html' %}
 
-{% block head %}
-    <title>My Profile</title>
-    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
-{% endblock %}
-
 {% block content %}
 	<title>{{ user.name }} {{ user.surname }}</title>
 
@@ -17,22 +12,20 @@
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="/static/css/profile.css"/>
 
+	<!-- Page Preloder -->
+	<div id="preloder">
+		<div class="loader"></div>
+	</div>
 
 	<!-- Hero section start -->
 	<section class="hero-section spad">
 		<div class="container-fluid">
-            <div id="logout">
-                <a href="{{ url_for('logout') }}">Logout</a>
-            </div>
 			<div class="row">
 				<div class="col-xl-10 offset-xl-1">
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="hero-text">
 								<h2>{{ user.name }} {{ user.surname }}</h2>
-                                <p id="status">
-                                    Status : <i>{{ 'Online' if user.status else 'Offline' }}</i>
-                                </p>
 								<p>
                                     I’m a digital designer in love with photography,
                                     painting and discovering new worlds and cultures.
@@ -59,10 +52,5 @@
 		</div>
 	</section>
 	<!-- Hero section end -->
-
     <script src="/static/js/profile.js"></script>
-{% endblock %}
-
-{% block js_files %}
-
 {% endblock %}

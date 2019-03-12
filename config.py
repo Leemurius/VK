@@ -11,6 +11,4 @@ class Config(object):
     MAIL_SERVER = 'smtp.yandex.ru'
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
-    MAIL_USERNAME = 'no-reply@ugmi.me'
-    MAIL_PASSWORD = 'FjskH_4'
     ADMINS = ['sidorevich.anton@gmail.com']

@@ -35,9 +35,9 @@ body, html {
 }
 
 body{
-  background-image: url(/static/images/back_reg_and_log.jpg);
-  background-size: cover;
-  background-repeat: no-repeat;
+    background-image: url(/static/images/back_reg_and_log.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 /*----------

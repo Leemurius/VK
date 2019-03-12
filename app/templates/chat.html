@@ -1,12 +1,8 @@
 {% extends 'base.html' %}
 
-{% block head %}
-    <title>Chat with {{ recipient.nick }}</title>
-    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
-    <link rel="stylesheet" type="text/css" href="/static/css/chat.css">
-{% endblock %}
-
 {% block content %}
+<title>Chat with {{ recipient.nick }}</title>
+
 <div class="content">
     <div class="contact-profile">
         <a href="{{ url_for('profile', nick=recipient.nick) }}">
@@ -51,8 +47,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block js_files %}
-    <script type="text/javascript" src="/static/js/chat.js"></script>
 {% endblock %}
