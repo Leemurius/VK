@@ -15,11 +15,8 @@
         <meta charset='UTF-8'>
         <meta name="robots" content="noindex">
 
-        <link rel="shortcut icon" type="image/x-icon" href="//production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico"/>
-        <!--===============================================================================================-->
-        <link rel="mask-icon" type="" href="//production-assets.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111" />
-        <!--===============================================================================================-->
-        <link rel="canonical" href="https://codepen.io/emilcarlsson/pen/ZOQZaV?limit=all&page=74&q=contact+"/>
+        {% block head %} {% endblock %}
+
         <!--===============================================================================================-->
         <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
         <!--===============================================================================================-->
@@ -29,7 +26,6 @@
         <!--===============================================================================================-->
         <link rel="stylesheet" type="text/css" href="/static/css/base.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="/static/css/chat.css">
 
         <script src='https://production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script>
         <!--===============================================================================================-->
@@ -41,6 +37,12 @@
     </head>
 
     <body>
+
+        <!-- Page Preloder -->
+        <div id="preloder">
+            <div class="loader"></div>
+        </div>
+
         <div id="frame">
             <div id="sidepanel">
 
@@ -50,16 +52,6 @@
                             <img id="profile-img" src= {{ current_user.photo }} class="online" alt="" />
                         </a>
                         <p>{{ current_user.name }} {{ current_user.surname }}</p>
-                        <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
-
-                        <div id="expanded">
-                            <label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
-                            <input name="twitter" type="text" value="mikeross" />
-                            <label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
-                            <input name="twitter" type="text" value="ross81" />
-                            <label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
-                            <input name="twitter" type="text" value="mike.ross" />
-                        </div>
                     </div>
                 </div>
 
@@ -75,15 +67,14 @@
                             <a href={{ url_for('chat', nick=user.nick) }}>
                                 <li class="contact">
                                     <div class="wrap">
-                                        <span class="contact-status {{ 'online' if user.online else 'offline' }}"></span>
+                                        <span class="contact-status {{ 'online' if user.status else 'offline' }}"></span>
                                         <img src= {{ user.photo }} alt="" />
                                         <div class="meta">
                                             <p class="name"> {{ user.name }} {{ user.surname }} </p>
                                             <p class="preview">
                                                 <span>
-                                                    {{ 'You : ' if user.last_message and user.last_message.sender_id == current_user.id else '' }}
+                                                    {{ 'You : Last message...' }}
                                                 </span>
-                                                {{user.last_message.text if user.last_message else '' }}
                                             </p>
                                         </div>
                                     </div>
@@ -100,10 +91,12 @@
                         <span>Add contact</span>
                     </button>
 
-                    <button id="settings">
-                        <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
-                        <span>Settings</span>
-                    </button>
+                    <a href="{{ url_for('settings') }}">
+                        <button id="settings">
+                            <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
+                            <span>Settings</span>
+                        </button>
+                    </a>
                 </div>
             </div>
 
@@ -115,8 +108,9 @@
         <!--===============================================================================================-->
         <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
         <!--===============================================================================================-->
+        {% block js_files %}{% endblock %}
+        <!--===============================================================================================-->
         <script type="text/javascript" src="/static/js/base.js"></script>
         <!--===============================================================================================-->
-        <script type="text/javascript" src="/static/js/chat.js"></script>
     </body>
 </html>

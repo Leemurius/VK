@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     age = db.Column(db.Integer)
     email = db.Column(db.String(20), unique=True)
     photo = db.Column(db.String(1024), default=CONST_DEFAULT_PHOTO)
-    online = db.Column(db.Boolean)
+    last_seen = db.Column(db.DateTime, index=True)
     password_hash = db.Column(db.String(256))
 
     sent_messages = db.relationship(
@@ -41,6 +41,19 @@ class User(UserMixin, db.Model):
         self.email = email
         self.photo = photo if photo else User.CONST_DEFAULT_PHOTO
 
+    @property
+    def status(self):
+        time_difference = datetime.datetime.now() - self.last_seen
+        print(time_difference.total_seconds() / 60)
+        if time_difference.total_seconds() / 60 > 5:
+            return False
+        else:
+            return True
+
+    def update_status(self):
+        self.last_seen = datetime.datetime.now()
+        db.session.commit()
+
     def send_message(self, text, recipient):
         m = Message(
             text=text,
@@ -50,10 +63,6 @@ class User(UserMixin, db.Model):
             time=datetime.datetime.now()
         )
         m.commit_to_db()
-
-    def set_online(self, flag):
-        self.online = flag
-        db.session.commit()
 
     def commit_to_db(self):
         db.session.add(self)
