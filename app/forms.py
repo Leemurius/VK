@@ -18,6 +18,7 @@ from app.models import User
 NAME_LENGTH = 50
 NICK_LENGTH = 50
 EMAIL_LENGTH = 50
+ADRESS_LENGTH = 50
 SURNAME_LENGTH = 50
 PASSWORD_LENGTH = 30
 MESSAGE_LENGTH = 1024
@@ -140,7 +141,7 @@ class ChatForm(FlaskForm):
     )
 
 
-class EditProfileForm(FlaskForm):
+class ProfSettingsForm(FlaskForm):
     name = StringField(
         'Name',
         validators=[
@@ -165,6 +166,14 @@ class EditProfileForm(FlaskForm):
         ]
     )
 
+    adress = StringField(
+        'Adress',
+        validators=[
+            DataRequired(),
+            length(max=ADRESS_LENGTH, message='Very big adress')
+        ]
+    )
+
     age = IntegerField(
         'Age',
         validators=[
@@ -181,7 +190,7 @@ class EditProfileForm(FlaskForm):
         ]
     )
 
-    photo = StringField('URL on avatar')
+    photo = StringField('Photo')
 
     password = PasswordField(
         'Confirm password',
@@ -223,7 +232,7 @@ class EditProfileForm(FlaskForm):
             raise ValueError('Invalid url')
 
 
-class EditPasswordForm(FlaskForm):
+class PassSettingsForm(FlaskForm):
     current_password = PasswordField(
         'Current password',
         validators=[

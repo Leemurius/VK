@@ -6,17 +6,11 @@
 {% endblock %}
 
 {% block content %}
-	<title>{{ user.name }} {{ user.surname }}</title>
-
-	<!-- Favicon -->   
-	<link href="/static/images/favicon.png" rel="shortcut icon"/>
-
-	<!-- Google Fonts -->
-	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,600,600i,700" rel="stylesheet">
-
-	<!-- Stylesheets -->
-	<link rel="stylesheet" href="/static/css/profile.css"/>
-
+    <!--===============================================================================================-->
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,600,600i,700" rel="stylesheet">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="/static/css/profile.css"/>
+    <!--===============================================================================================-->
 
 	<!-- Hero section start -->
 	<section class="hero-section spad">
@@ -41,11 +35,11 @@
 							<div class="hero-info">
 								<h2>General Info</h2>
 								<ul>
-									<li><span>Date of Birth</span>No information</li>
-									<li><span>Address</span>No information</li>
-									<li><span>E-mail</span>{{ user.email }}</li>
-									<li><span>Phone </span>No information</li>
-								</ul>
+									<li><span>Age</span>{{ user.age }}</li>
+                                    <li><span>Nick </span>{{ user.nick }}</li>
+                                    <li><span>E-mail</span>{{ user.email }}</li>
+                                    <li><span>Address</span>{{ user.adress }}</li>
+                                </ul>
 							</div>
 						</div>
 						<div class="col-lg-6">
@@ -59,10 +53,8 @@
 		</div>
 	</section>
 	<!-- Hero section end -->
-
-    <script src="/static/js/profile.js"></script>
 {% endblock %}
 
 {% block js_files %}
-
+    <script src="/static/js/profile.js"></script>
 {% endblock %}

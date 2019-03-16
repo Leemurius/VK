@@ -1,13 +1,10 @@
-import operator
-
 from flask import render_template, redirect, url_for
 from flask_login import login_user, logout_user, current_user
 
 from app import app
 from app.models import User, Message
 from app.custom_decorators import login_required
-from app.forms import RegistrationForm, LoginForm, ChatForm, EditProfileForm, EditPasswordForm
-from app.utils import get_user_avatar_url
+from app.forms import RegistrationForm, LoginForm, ChatForm, ProfSettingsForm
 
 
 @app.errorhandler(500)
@@ -89,53 +86,25 @@ def profile(nick):
     users = User.query.all()
 
     return render_template(
-        'profile.html',
+       'profile.html',
         user=user,
         users=users
     )
 
 
-@app.route('/my_profile/settings')
+@app.route('/my_profile/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
+    form = ProfSettingsForm()
+
     users = User.query.all()
 
     return render_template(
         'settings.html',
+        form=form,
         user=current_user,
         users=users
     )
-
-
-# @app.route('/profile/<nick>/edit_profile/', methods=['GET', 'POST'])
-# @login_required
-# def edit_profile(nick):
-#     form = EditProfileForm(
-#         name=current_user.name,
-#         surname=current_user.surname,
-#         nick=current_user.nick,
-#         age=current_user.age,
-#         email=current_user.email,
-#         photo=get_user_avatar_url(current_user.photo)
-#     )
-#
-#     if form.validate_on_submit():
-#         current_user.set_ep_form(form)
-#         return redirect(url_for('profile', nick=current_user.nick))
-#
-#     return render_template('edit_profile.html', form=form)
-#
-#
-# @app.route('/profile/<nick>/edit_password/', methods=['GET', 'POST'])
-# @login_required
-# def edit_password(nick):
-#     form = EditPasswordForm()
-#
-#     if form.validate_on_submit():
-#         current_user.set_password(form.new_password.data)
-#         return redirect(url_for('profile', nick=current_user.nick))
-#
-#     return render_template('edit_password.html', form=form)
 
 
 @app.route('/chat/<nick>', methods=['GET', 'POST'])
@@ -152,29 +121,11 @@ def chat(nick):
         )
         return redirect(url_for('chat', nick=nick))
 
-    messages_sender = Message.query.filter_by(
-        sender_id=current_user.id,
-        recipient_id=recipient.id
-    ).all()
-
-    messages_recipient = Message.query.filter_by(
-        sender_id=recipient.id,
-        recipient_id=current_user.id
-    ).all()
-
-    messages = messages_sender
-    if current_user != recipient:
-        messages += messages_recipient
-
-    for i in range(len(messages)):
-        messages[i].sender_nick = User.query.get(messages[i].sender_id).nick
-    messages.sort(key=operator.attrgetter('time'))
-
     return render_template(
         'chat.html',
         form=form,
         current_user=current_user,
-        messages=messages,
+        messages=Message.get_dialog(current_user, recipient),
         users=User.query.all(),
         recipient=recipient
 )

@@ -1,4 +1,5 @@
 import datetime
+import operator
 
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,6 +15,7 @@ class User(UserMixin, db.Model):
     surname = db.Column(db.String(20))
     nick = db.Column(db.String(20), unique=True)
     age = db.Column(db.Integer)
+    adress = db.Column(db.String(20))
     email = db.Column(db.String(20), unique=True)
     photo = db.Column(db.String(1024), default=CONST_DEFAULT_PHOTO)
     last_seen = db.Column(db.DateTime, index=True)
@@ -44,7 +46,6 @@ class User(UserMixin, db.Model):
     @property
     def status(self):
         time_difference = datetime.datetime.now() - self.last_seen
-        print(time_difference.total_seconds() / 60)
         if time_difference.total_seconds() / 60 > 5:
             return False
         else:
@@ -91,6 +92,25 @@ class Message(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     time = db.Column(db.DateTime, index=True)
+
+    @staticmethod
+    def get_dialog(current_user, recipient):
+        messages_sender = Message.query.filter_by(
+            sender_id=current_user.id,
+            recipient_id=recipient.id
+        ).all()
+
+        messages_recipient = Message.query.filter_by(
+            sender_id=recipient.id,
+            recipient_id=current_user.id
+        ).all()
+
+        messages = messages_sender
+        if current_user != recipient:
+            messages += messages_recipient
+
+        messages.sort(key=operator.attrgetter('time'))
+        return messages
 
     def commit_to_db(self):
         db.session.add(self)
