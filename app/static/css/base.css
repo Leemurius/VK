@@ -130,7 +130,7 @@ body {
 }
 
 #frame #sidepanel #profile .wrap {
-    height: 60px;
+    height: 55px;
     line-height: 60px;
     overflow: hidden;
     -moz-transition: 0.3s height ease;
@@ -157,6 +157,8 @@ body {
     -o-transition: 0.3s border ease;
     -webkit-transition: 0.3s border ease;
     transition: 0.3s border ease;
+    max-height: 3em;
+    max-width: 3em;
 }
 
 @media screen and (max-width: 735px) {

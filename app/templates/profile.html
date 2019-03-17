@@ -28,23 +28,34 @@
                                     Status : <i>{{ 'Online' if user.status else 'Offline' }}</i>
                                 </p>
 								<p>
-                                    I’m a digital designer in love with photography,
-                                    painting and discovering new worlds and cultures.
+                                    About him : {{ user.about_me if user.about_me else 'New user of messenger'}}
                                 </p>
 							</div>
 							<div class="hero-info">
 								<h2>General Info</h2>
 								<ul>
-									<li><span>Age</span>{{ user.age }}</li>
-                                    <li><span>Nick </span>{{ user.nick }}</li>
-                                    <li><span>E-mail</span>{{ user.email }}</li>
-                                    <li><span>Address</span>{{ user.adress }}</li>
+									<li>
+                                        <span>Age</span>
+                                        {{user.age if user.age else 'No information'}}
+                                    </li>
+                                    <li>
+                                        <span>Nick </span>
+                                        {{user.nick if user.nick else 'No information'}}
+                                    </li>
+                                    <li>
+                                        <span>E-mail</span>
+                                        {{user.email if user.email else 'No information'}}
+                                    </li>
+                                    <li>
+                                        <span>Address</span>
+                                        {{user.address if user.address else 'No information'}}
+                                    </li>
                                 </ul>
 							</div>
 						</div>
 						<div class="col-lg-6">
 							<figure class="hero-image">
-								<img src="{{ user.photo }}" alt="5">
+								<img src="{{ user.photo }}" alt="Oops">
 							</figure>
 						</div>
 					</div>

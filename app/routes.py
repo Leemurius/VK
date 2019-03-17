@@ -4,7 +4,14 @@ from flask_login import login_user, logout_user, current_user
 from app import app
 from app.models import User, Message
 from app.custom_decorators import login_required
-from app.forms import RegistrationForm, LoginForm, ChatForm, ProfSettingsForm
+from app.forms import (
+    RegistrationForm,
+    LoginForm,
+    ChatForm,
+    ProfSettingsForm,
+    SecSettingsForm,
+    AboutSettingsForm
+)
 
 
 @app.errorhandler(500)
@@ -48,6 +55,9 @@ def registration():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('my_profile'))
+
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -92,16 +102,48 @@ def profile(nick):
     )
 
 
-@app.route('/my_profile/settings', methods=['GET', 'POST'])
+@app.route('/my_profile/settings/<form_type>', methods=['GET', 'POST'])
 @login_required
-def settings():
-    form = ProfSettingsForm()
+def settings(form_type):
+    current_form = None
+
+    # ---------------------------------------------------------------------
+    if form_type == 'profile':
+        profile_form = ProfSettingsForm(
+            name=current_user.name,
+            surname=current_user.surname,
+            nick=current_user.nick,
+            age=current_user.age,
+            email=current_user.email,
+            address=current_user.address
+        )
+
+        current_form = profile_form
+        if profile_form.validate_on_submit():
+            current_user.set_profile_form(profile_form)
+            current_user.upload_photo(profile_form.photo)
+            return redirect(url_for('settings', form_type='profile'))
+    # ----------------------------------------------------------------------
+    elif form_type == 'security':
+        security_form = SecSettingsForm()
+        current_form = security_form
+        if security_form.validate_on_submit():
+            current_user.set_password(security_form.new_password.data)
+            return redirect(url_for('settings', form_type='security'))
+    else:  # ---------------------------------------------------------------
+        about_form = AboutSettingsForm(
+            about_me=current_user.about_me
+        )
+        current_form = about_form
+        if about_form.validate_on_submit():
+            current_user.set_about_form(about_form)
+            return redirect(url_for('settings', form_type='about'))
 
     users = User.query.all()
 
     return render_template(
-        'settings.html',
-        form=form,
+        form_type + '_settings.html',
+        form=current_form,
         user=current_user,
         users=users
     )

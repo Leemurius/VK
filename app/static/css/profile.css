@@ -237,6 +237,10 @@ ol {
 	padding-top: 70px;
 }
 
+.hero-info {
+	margin-top: -2em;
+}
+
 .hero-info h2 {
 	margin-bottom: 30px;
 }
@@ -262,6 +266,8 @@ ol {
 }
 
 .col-lg-6 img{
+	margin-top: -4em;
 	margin-left: 4em;
-	max-width: 100%;
+	max-width: 50vh;
+	max-height: 80%;
 }

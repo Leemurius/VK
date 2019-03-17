@@ -1,10 +1,11 @@
+import os
 import datetime
 import operator
 
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db
+from app import db, app
 
 
 class User(UserMixin, db.Model):
@@ -15,9 +16,10 @@ class User(UserMixin, db.Model):
     surname = db.Column(db.String(20))
     nick = db.Column(db.String(20), unique=True)
     age = db.Column(db.Integer)
-    adress = db.Column(db.String(20))
+    address = db.Column(db.String(20))
     email = db.Column(db.String(20), unique=True)
-    photo = db.Column(db.String(1024), default=CONST_DEFAULT_PHOTO)
+    photo = db.Column(db.String(100), default=CONST_DEFAULT_PHOTO)
+    about_me = db.Column(db.String(512))
     last_seen = db.Column(db.DateTime, index=True)
     password_hash = db.Column(db.String(256))
 
@@ -35,14 +37,6 @@ class User(UserMixin, db.Model):
         foreign_keys='Message.recipient_id'
     )
 
-    def __init__(self, name, surname, nick, age, email, photo=None):
-        self.name = name
-        self.surname = surname
-        self.nick = nick
-        self.age = age
-        self.email = email
-        self.photo = photo if photo else User.CONST_DEFAULT_PHOTO
-
     @property
     def status(self):
         time_difference = datetime.datetime.now() - self.last_seen
@@ -50,6 +44,26 @@ class User(UserMixin, db.Model):
             return False
         else:
             return True
+
+    def __init__(self, name, surname, nick, age, email):
+        self.name = name
+        self.surname = surname
+        self.nick = nick
+        self.age = age
+        self.email = email
+
+    def set_profile_form(self, form):
+        self.name = form.name.data
+        self.surname = form.surname.data
+        self.nick = form.nick.data
+        self.age = form.age.data
+        self.email = form.email.data
+        self.address = form.address.data
+        db.session.commit()
+
+    def set_about_form(self, form):
+        self.about_me = form.about_me.data
+        db.session.commit()
 
     def update_status(self):
         self.last_seen = datetime.datetime.now()
@@ -65,18 +79,17 @@ class User(UserMixin, db.Model):
         )
         m.commit_to_db()
 
-    def commit_to_db(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def set_ep_form(self, form):
-        self.name = form.name.data
-        self.surname = form.surname.data
-        self.nick = form.nick.data
-        self.age = form.age.data
-        self.email = form.email.data
-        self.photo = form.photo.data
-        db.session.commit()
+    def upload_photo(self, photo):
+        if photo.data:
+            filename = photo.data.filename
+            path = os.path.join(
+                '/static',
+                app.config['IMAGE_UPLOAD_FOLDER'],
+                self.nick + "." + filename.rsplit('.', 1)[1]
+            )
+            photo.data.save('app' + path)
+            self.photo = path
+            db.session.commit()
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -84,6 +97,10 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def commit_to_db(self):
+        db.session.add(self)
+        db.session.commit()
 
 
 class Message(db.Model):
@@ -112,10 +129,10 @@ class Message(db.Model):
         messages.sort(key=operator.attrgetter('time'))
         return messages
 
-    def commit_to_db(self):
-        db.session.add(self)
-        db.session.commit()
-
     @staticmethod   # FIXME : delete last '\n'
     def minimize_mess(text):
         return text
+
+    def commit_to_db(self):
+        db.session.add(self)
+        db.session.commit()

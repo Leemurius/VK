@@ -37,6 +37,8 @@
 #frame .content .messages ul li.sent img {
     float: left;
     margin: 6px 8px 0 0;
+    height: 2.3em;
+    width: 2.3em;
 }
 
 #frame .content .messages ul li.sent p {
@@ -56,6 +58,8 @@
 #frame .content .messages ul li.replies img {
     float: right;
     margin: 0px 0 0 8px;
+    height: 2.3em;
+    width: 2.3em;
 }
 
 #frame .content .messages ul li.replies p {
@@ -76,6 +80,8 @@
     width: 35px;
     border-radius: 50%;
     float: left;
+    max-height: 3em;
+    max-width: 3em;
 }
 
 #frame .content .messages ul li p {

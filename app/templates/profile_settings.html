@@ -12,14 +12,33 @@
 {% endblock %}
 
 {% block content %}
-    <div class="page-wrapper p-t-100 p-b-50">
+    <div class="page-wrapper p-b-50">
         <div class="wrapper wrapper--w900">
             <div class="card card-6">
                 <div class="card-heading">
-                    <h2 class="title">Profile</h2>
+                    <ul>
+                        <li id="title1">
+                            <a href="{{ url_for('settings', form_type='profile') }}">
+                                <h2 class="title" style="color: #2c6ed5">Profile</h2>
+                            </a>
+                        </li>
+
+                        <li id="title2">
+                            <a href="{{ url_for('settings', form_type='security') }}">
+                                <h2 class="title">Security</h2>
+                            </a>
+                        </li>
+
+                        <li id="title3">
+                            <a href="{{ url_for('settings', form_type='about') }}">
+                                <h2 class="title">About you</h2>
+                            </a>
+                        </li>
+                    </ul>
+
                 </div>
                 <div class="card-body">
-                    <form action="" method="post" novalidate>
+                    <form enctype="multipart/form-data" action="" method="post" novalidate>
                         {{ form.hidden_tag() }}
                         <div class="form-row">
                             <div class="name">{{ form.name.label }}</div>
@@ -32,7 +51,7 @@
                             <div class="name">{{ form.surname.label }}</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {{ form.name(class="input--style-6", placeholder="Sidorevich") }}
+                                    {{ form.surname(class="input--style-6", placeholder="Sidorevich") }}
                                 </div>
                             </div>
                         </div>
@@ -65,10 +84,10 @@
                         </div>
 
                         <div class="form-row">
-                            <div class="name">{{ form.adress.label }}</div>
+                            <div class="name">{{ form.address.label }}</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {{ form.adress(class="input--style-6", placeholder="Belarus, Gantsevichi") }}
+                                    {{ form.address(class="input--style-6", placeholder="Belarus, Gantsevichi") }}
                                 </div>
                             </div>
                         </div>
@@ -77,17 +96,20 @@
                             <div class="name">{{ form.photo.label }}</div>
                             <div class="value">
                                 <div class="input-group js-input-file">
-                                    <button class="input-file" type="button">
+                                    {{ form.photo(accept=".jpg, .jpeg, .png") }}
+                                    <button class="input-file" type="reset">
                                         Choose file
                                     </button>
                                     <span class="input-file__info">No file chosen</span>
                                 </div>
-                                <div class="label--desc">Upload your photo. Max file size 50 MB</div>
+                                <div class="label--desc">Upload your photo. Max photo size 5 MB</div>
                             </div>
                         </div>
 
                         <div class="card-footer">
-                            <button class="btn btn--radius-2 btn--blue-2">{{ form.save.label }}</button>
+                            <button class="btn btn--radius-2 btn--blue-2">
+                                Save
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -100,6 +122,6 @@
     <!--===============================================================================================-->
 	<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
     <!--===============================================================================================-->
-    <script src="/static/js/login.js"></script>
+    <script src="/static/js/settings.js"></script>
     <!--===============================================================================================-->
 {% endblock %}

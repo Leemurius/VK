@@ -1,6 +1,7 @@
 import re
 import requests
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, Form
+from flask_wtf.file import FileAllowed, FileField
 from flask_login import current_user
 from wtforms import (
     StringField,
@@ -10,7 +11,13 @@ from wtforms import (
     SubmitField,
     BooleanField
 )
-from wtforms.validators import DataRequired, Email, length, EqualTo, NumberRange
+from wtforms.validators import (
+    DataRequired,
+    Email,
+    length,
+    EqualTo,
+    NumberRange,
+)
 
 from app.models import User
 
@@ -18,9 +25,10 @@ from app.models import User
 NAME_LENGTH = 50
 NICK_LENGTH = 50
 EMAIL_LENGTH = 50
-ADRESS_LENGTH = 50
+ADDRESS_LENGTH = 50
 SURNAME_LENGTH = 50
 PASSWORD_LENGTH = 30
+ARTICLE_LENGTH = 512
 MESSAGE_LENGTH = 1024
 
 
@@ -166,11 +174,11 @@ class ProfSettingsForm(FlaskForm):
         ]
     )
 
-    adress = StringField(
-        'Adress',
+    address = StringField(
+        'Address',
         validators=[
             DataRequired(),
-            length(max=ADRESS_LENGTH, message='Very big adress')
+            length(max=ADDRESS_LENGTH, message='Very big address')
         ]
     )
 
@@ -190,28 +198,14 @@ class ProfSettingsForm(FlaskForm):
         ]
     )
 
-    photo = StringField('Photo')
-
-    password = PasswordField(
-        'Confirm password',
+    photo = FileField(
+        "Photo",
         validators=[
-            DataRequired(),
-            length(max=PASSWORD_LENGTH, message='Incorrect password')
+            FileAllowed(['jpg', 'jpeg', 'png'], message='Images only')
         ]
     )
 
     save = SubmitField('Save')
-
-    @staticmethod
-    def _is_url_image(image_url):
-        try:
-            image_formats = ("image/png", "image/jpeg", "image/jpg")
-            r = requests.head(image_url, verify=False, timeout=5)
-            if r.headers["content-type"] in image_formats:
-                return True
-            return False
-        except Exception:
-            return False
 
     def validate_nick(self, nick):
         if User.query.filter_by(nick=nick.data).count() and \
@@ -223,16 +217,12 @@ class ProfSettingsForm(FlaskForm):
                 email.data != current_user.email:
             raise ValueError('This email already taken')
 
-    def validate_password(self, password):
-        if not current_user.check_password(password.data):
-            raise ValueError('Password dont match')
-
     def validate_photo(self, photo):
-        if photo.data and not self._is_url_image(photo.data):
-            raise ValueError('Invalid url')
+        pass
+        # Check size
 
 
-class PassSettingsForm(FlaskForm):
+class SecSettingsForm(FlaskForm):
     current_password = PasswordField(
         'Current password',
         validators=[
@@ -263,3 +253,13 @@ class PassSettingsForm(FlaskForm):
     def validate_current_password(self, current_password):
         if not current_user.check_password(current_password.data):
             raise ValueError('Password dont match')
+
+
+class AboutSettingsForm(FlaskForm):
+    about_me = TextAreaField(
+        'About me',
+        validators=[
+            DataRequired(),
+            length(max=ARTICLE_LENGTH, message='Very big article'),
+        ],
+    )

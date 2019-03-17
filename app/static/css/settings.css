@@ -182,13 +182,29 @@ button {
    #PAGE WRAPPER
    ========================================================================== */
 .page-wrapper {
-  min-height: 100vh;
+  padding: 0;
+  position: relative;
+  margin: auto;
+  min-width: 100vh;
+  max-width: 120vh;
+  width: 100vh;
+  max-height: 100%;
+  height: max-content;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 500px) {
+    .page-wrapper {
+        width: 100vh;
+        min-width: 100vh;
+    }
 }
 
 body {
   font-family: "Open Sans", "Arial", "Helvetica Neue", sans-serif;
   font-weight: 400;
   font-size: 14px;
+  overflow: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -316,8 +332,15 @@ h6 {
 /* ==========================================================================
    #WRAPPER
    ========================================================================== */
-.wrapper {
-  margin: 0 auto;
+.page-wrapper .wrapper {
+  position: relative;
+  min-width: 100vh;
+  max-width: 120vh;
+  width: 100vh;
+  height: max-content;
+  background: #2c3e50;
+  color: #f5f5f5;
+  overflow: hidden;
 }
 
 .wrapper--w960 {
@@ -563,6 +586,10 @@ textarea {
   }
 }
 
+#photo{
+  display: none;
+}
+
 .input-file {
   display: none;
 }
@@ -610,9 +637,17 @@ textarea {
 .title {
   font-size: 36px;
   font-weight: 700;
-  text-align: left;
+  text-align: center;
   color: #fff;
   margin-bottom: 24px;
+}
+
+#title2 h2{
+  margin-left: 2em;
+}
+
+#title3 h2{
+  margin-left: 2em;
 }
 
 @media (max-width: 767px) {
@@ -637,6 +672,29 @@ textarea {
 
 .card-6 .card-heading {
   background: transparent;
+  margin: auto;
+  margin-top: 0.5em;
+}
+
+.card-6 .card-heading ul{
+  display: flex;
+  margin:0 auto;
+  width:100%;
+  text-align:center;
+}
+
+.card-6 .card-heading ul li{
+  list-style: none;
+  display:inline-block;
+  color:white;
+}
+
+.card-6 .card-heading ul li a{
+  text-decoration: none;
+}
+
+.card-6 .card-heading ul li h2:hover{
+  color: #2c6ed5;
 }
 
 .card-6 .card-body {
@@ -668,7 +726,7 @@ textarea {
   border-width: 10px;
 }
 
-.card-footer{
+.card-6 .card-footer{
   background: #fff;
   border: 1px solid #e5e5e5;
   border-top: none;
@@ -682,6 +740,7 @@ textarea {
 }
 
 .card-footer button{
+    width: 15%;
     cursor: pointer;
 }
 
