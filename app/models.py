@@ -40,7 +40,7 @@ class User(UserMixin, db.Model):
 
     @property
     def status(self):
-        time_difference = datetime.datetime.now() - self.last_seen
+        time_difference = datetime.datetime.utcnow() - self.last_seen
         if time_difference.total_seconds() / 60 > 5:
             return False
         else:
@@ -67,7 +67,7 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
     def update_status(self):
-        self.last_seen = datetime.datetime.now()
+        self.last_seen = datetime.datetime.utcnow()
         db.session.commit()
 
     def send_message(self, text, recipient):
@@ -76,7 +76,7 @@ class User(UserMixin, db.Model):
             sender=self,
             recipient=recipient,
             recipient_id=recipient.id,
-            time=datetime.datetime.now()
+            time=datetime.datetime.utcnow()
         )
         m.commit_to_db()
 

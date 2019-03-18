@@ -3,7 +3,12 @@ from flask_login import login_user, logout_user, current_user
 
 from app.auth import bp
 from app.models import User
-from app.auth.forms import RegistrationForm, LoginForm
+from app.auth.forms import(
+    RegistrationForm,
+    LoginForm,
+    ResetPassForm,
+    ResetPassRequestForm
+)
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -40,7 +45,33 @@ def login():
         login_user(form.get_user(), remember=form.remember.data)
         return redirect(url_for('main.my_profile'))
 
-    return render_template('auth/login.html', form=form, title='Login')
+    return render_template('auth/login.html', form=form)
+
+
+@bp.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.my_profile'))
+
+    form = ResetPassRequestForm()
+
+    if form.validate_on_submit():
+        return redirect(url_for('auth.login'))
+
+    return render_template('auth/reset_password_request.html', form=form)
+
+
+@bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.my_profile'))
+
+    form = ResetPassForm()
+
+    if form.validate_on_submit():
+        return redirect(url_for('auth.login'))
+
+    return render_template('auth/reset_password.html', form=form)
 
 
 @bp.route('/logout')

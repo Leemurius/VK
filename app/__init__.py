@@ -1,9 +1,11 @@
 import os
 import logging
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask_moment import Moment
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
 from config import Config
@@ -12,6 +14,8 @@ db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 login.login_view = 'registration'
+bootstrap = Bootstrap()
+moment = Moment()
 
 
 def create_app(config_class=Config):
@@ -21,6 +25,8 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
+    bootstrap.init_app(app)
+    moment.init_app(app)
 
     with app.app_context():
         from app.auth import bp as auth_bp

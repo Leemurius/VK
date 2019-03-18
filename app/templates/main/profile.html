@@ -6,6 +6,8 @@
 {% endblock %}
 
 {% block content %}
+    {{ moment.include_jquery() }}
+    {{ moment.include_moment() }}
     <!--===============================================================================================-->
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,600,600i,700" rel="stylesheet">
     <!--===============================================================================================-->
@@ -25,7 +27,11 @@
 							<div class="hero-text">
 								<h2>{{ user.name }} {{ user.surname }}</h2>
                                 <p id="status">
-                                    Status : <i>{{ 'Online' if user.status else 'Offline' }}</i>
+                                    {% if user.status %}
+                                        Status : <i>Online</i>
+                                    {% else %}
+                                        Status : <i>{{ moment(user.last_seen).fromNow() }}</i>
+                                    {% endif %}
                                 </p>
 								<p>
                                     About him : {{ user.about_me if user.about_me else 'New user of messenger'}}

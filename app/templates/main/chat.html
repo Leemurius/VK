@@ -10,50 +10,52 @@
 {% endblock %}
 
 {% block content %}
-<div class="content">
-    <div class="contact-profile">
-        <a href="{{ url_for('main.profile', nick=recipient.nick) }}">
-            <img src={{ recipient.photo }} alt="" />
-        </a>
-        <p> {{ recipient.name }} {{ recipient.surname }} </p>
-        <div id="logout">
-            <a href="{{ url_for('auth.logout') }}">Logout</a>
+    {{ moment.include_jquery() }}
+    {{ moment.include_moment() }}
+    <div class="content">
+        <div class="contact-profile">
+            <a href="{{ url_for('main.profile', nick=recipient.nick) }}">
+                <img src={{ recipient.photo }} alt="" />
+            </a>
+            <p> {{ recipient.name }} {{ recipient.surname }} </p>
+            <div id="logout">
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            </div>
+        </div>
+
+        <div class="messages">
+            <ul>
+                {% for message in messages %}
+                    {% if message.sender_id == current_user.id %}
+                        <li class="sent">
+                            <img src="{{ current_user.photo }}" alt="" >
+                            <p> {{ message.text }} </p>
+                            <span>{{ moment(message.time).format('h:mm a') }}</span>
+                        </li>
+                    {% else %}
+                        <li class="replies">
+                            <img src="{{ recipient.photo }}" alt="" />
+                            <p>{{ message.text }}</p>
+                            <span>{{ moment(message.time).format('h:mm a') }}</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="message-input">
+            <div class="wrap">
+                <form action="" method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    {{ form.message() }}
+                    <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+                    <button class="submit">
+                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-
-    <div class="messages">
-        <ul>
-            {% for message in messages %}
-                {% if message.sender_id == current_user.id %}
-                    <li class="sent">
-                        <img src="{{ current_user.photo }}" alt="" >
-                        <p> {{ message.text }} </p>
-                        <span>{{ message.time.replace(microsecond=0).time() }}</span>
-                    </li>
-                {% else %}
-                    <li class="replies">
-                        <img src="{{ recipient.photo }}" alt="" />
-                        <p>{{ message.text }}</p>
-                        <span>{{ message.time.replace(microsecond=0).time() }}</span>
-                    </li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div class="message-input">
-        <div class="wrap">
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-                {{ form.message() }}
-                <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-                <button class="submit">
-                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block js_files %}

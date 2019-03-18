@@ -124,3 +124,32 @@ class LoginForm(FlaskForm):
 
         if self._user is None or not self._user.check_password(password=password.data):
             raise ValueError('Username or password is incorrect')
+
+
+class ResetPassRequestForm(FlaskForm):
+    email = StringField(
+        'Email from your account',
+        validators=[
+            Email(),
+            length(max=current_app.config['EMAIL_LENGTH'], message='Very big email')
+        ]
+    )
+
+
+class ResetPassForm(FlaskForm):
+    new_password = PasswordField(
+        'New password',
+        validators=[
+            DataRequired(),
+            length(max=current_app.config['PASSWORD_LENGTH'], message='Very big password')
+        ]
+    )
+
+    confirm_password = PasswordField(
+        'Enter new password again',
+        validators=[
+            DataRequired(),
+            length(max=current_app.config['PASSWORD_LENGTH'], message='Very big password'),
+            EqualTo('new_password', message='Passwords must match')
+        ]
+    )

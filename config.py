@@ -15,7 +15,7 @@ class Config(object):
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
     MAIL_USERNAME = 'no-reply@ugmi.me'
-    MAIL_PASSWORD = ''
+    MAIL_PASSWORD = 'FjskH_48'
     ADMINS = ['sidorevich.anton@gmail.com']
 
     IMAGE_UPLOAD_FOLDER = "Data/UsersPhotos/"
