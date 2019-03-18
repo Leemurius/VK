@@ -8,53 +8,75 @@ from logging.handlers import SMTPHandler, RotatingFileHandler
 
 from config import Config
 
-# Application
-app = Flask(__name__)
-app.config.from_object(Config)
-
-# Database
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-# Login
-login = LoginManager(app)
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
 login.login_view = 'registration'
 
-from app import routes, models
 
-if not app.debug:
-    if app.config['MAIL_SERVER']:
-        auth = None
-        if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
-            auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-        secure = None
-        if app.config['MAIL_USE_TLS']:
-            secure = ()
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
 
-        mail_handler = SMTPHandler(
-            mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
-            fromaddr=app.config['MAIL_USERNAME'],
-            toaddrs=app.config['ADMINS'], subject='Failed',
-            credentials=auth,
-            secure=secure)
-        mail_handler.setLevel(logging.ERROR)
-        app.logger.addHandler(mail_handler)
+    with app.app_context():
+        from app.auth import bp as auth_bp
+        app.register_blueprint(auth_bp)
 
-    # Make logs
-    if not os.path.exists('logs'):
-        os.mkdir('logs')
-    file_handler = RotatingFileHandler('logs/vk.log', maxBytes=10240,
-                                       backupCount=10)
-    file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-    file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
-    app.logger.setLevel(logging.INFO)
-    app.logger.info('VK startup')
+    with app.app_context():
+        from app.errors import bp as errors_bp
+        app.register_blueprint(errors_bp)
+
+    with app.app_context():
+        from app.settings import bp as settings_bp
+        app.register_blueprint(settings_bp, url_prefix='/my_profile/settings/')
+
+    with app.app_context():
+        from app.main import bp as main_bp
+        app.register_blueprint(main_bp)
+
+    if not app.debug:
+        if app.config['MAIL_SERVER']:
+            auth = None
+            if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
+                auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+
+            secure = None
+            if app.config['MAIL_USE_TLS']:
+                secure = ()
+
+            mail_handler = SMTPHandler(
+                mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
+                fromaddr=app.config['MAIL_USERNAME'],
+                toaddrs=app.config['ADMINS'], subject='Failed',
+                credentials=auth,
+                secure=secure)
+            mail_handler.setLevel(logging.ERROR)
+            app.logger.addHandler(mail_handler)
+
+        # Make logs
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        file_handler = RotatingFileHandler('logs/vk.log', maxBytes=10240,
+                                           backupCount=10)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+        app.logger.setLevel(logging.INFO)
+        app.logger.info('VK startup')
+
+    return app
 
 
 @login.user_loader
 def load_user(id):
     return models.User.query.get(int(id))
+
+
+from app import models
+
 

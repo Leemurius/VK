@@ -22,7 +22,7 @@
         <!--===============================================================================================-->
         <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="/static/css/base.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/main/base.css">
         <!--===============================================================================================-->
         <script src="https://use.typekit.net/hoy3lrg.js"></script>
     </head>
@@ -39,7 +39,7 @@
 
                 <div id="profile">
                     <div class="wrap">
-                        <a href="{{ url_for('my_profile') }}">
+                        <a href="{{ url_for('main.my_profile') }}">
                             <img id="profile-img" src= {{ current_user.photo }} class="online" alt="" />
                         </a>
                         <p>{{ current_user.name }} {{ current_user.surname }}</p>
@@ -55,7 +55,7 @@
                     <ul>
                         {% for user in users %}
                             {% if user.id != current_user.id %}
-                            <a href={{ url_for('chat', nick=user.nick) }}>
+                            <a href={{ url_for('main.chat', nick=user.nick) }}>
                                 <li class="contact">
                                     <div class="wrap">
                                         <span class="contact-status {{ 'online' if user.status else 'offline' }}"></span>
@@ -82,7 +82,7 @@
                         <span>Add contact</span>
                     </button>
 
-                    <a href="{{ url_for('settings', form_type='profile') }}">
+                    <a href="{{ url_for('settings.profile') }}">
                         <button id="settings">
                             <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
                             <span>Settings</span>

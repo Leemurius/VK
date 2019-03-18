@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
 
 {% block head %}
     <title>My Profile</title>
@@ -9,14 +9,14 @@
     <!--===============================================================================================-->
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,600,600i,700" rel="stylesheet">
     <!--===============================================================================================-->
-    <link rel="stylesheet" href="/static/css/profile.css"/>
+    <link rel="stylesheet" href="/static/css/main/profile.css"/>
     <!--===============================================================================================-->
 
 	<!-- Hero section start -->
 	<section class="hero-section spad">
 		<div class="container-fluid">
             <div id="logout">
-                <a href="{{ url_for('logout') }}">Logout</a>
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
             </div>
 			<div class="row">
 				<div class="col-xl-10 offset-xl-1">

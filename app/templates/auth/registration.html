@@ -5,11 +5,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="/static/images/icons/favicon.ico"/>
+    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/registration.png"/>
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="/static/css/login_and_reg_util.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/auth/login_and_reg_util.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="/static/css/login_and_reg.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/auth/login_and_reg.css">
 <!--===============================================================================================-->
 </head>
 <body>
@@ -75,7 +75,7 @@
                     </div>
 
                     <div id="have-account">
-                        <a href="{{ url_for('login') }}">I have account</a>
+                        <a href="{{ url_for('auth.login') }}">I have account</a>
                     </div>
                 </form>
 			</div>

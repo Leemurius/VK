@@ -1,23 +1,23 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
 
 {% block head %}
     <title>Chat with {{ recipient.nick }}</title>
     <!--===============================================================================================-->
     <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/css/chat.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/main/chat.css">
     <!--===============================================================================================-->
 {% endblock %}
 
 {% block content %}
 <div class="content">
     <div class="contact-profile">
-        <a href="{{ url_for('profile', nick=recipient.nick) }}">
+        <a href="{{ url_for('main.profile', nick=recipient.nick) }}">
             <img src={{ recipient.photo }} alt="" />
         </a>
         <p> {{ recipient.name }} {{ recipient.surname }} </p>
         <div id="logout">
-            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
         </div>
     </div>
 

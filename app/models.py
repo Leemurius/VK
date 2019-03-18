@@ -2,10 +2,11 @@ import os
 import datetime
 import operator
 
+from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db, app
+from app import db
 
 
 class User(UserMixin, db.Model):
@@ -84,10 +85,10 @@ class User(UserMixin, db.Model):
             filename = photo.data.filename
             path = os.path.join(
                 '/static',
-                app.config['IMAGE_UPLOAD_FOLDER'],
-                self.nick + "." + filename.rsplit('.', 1)[1]
+                current_app.config['IMAGE_UPLOAD_FOLDER'],
+                str(self.id) + "." + filename.rsplit('.', 1)[1]
             )
-            photo.data.save('app' + path)
+            photo.data.save('app/' + path)
             self.photo = path
             db.session.commit()
 
@@ -128,10 +129,6 @@ class Message(db.Model):
 
         messages.sort(key=operator.attrgetter('time'))
         return messages
-
-    @staticmethod   # FIXME : delete last '\n'
-    def minimize_mess(text):
-        return text
 
     def commit_to_db(self):
         db.session.add(self)

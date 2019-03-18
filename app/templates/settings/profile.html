@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
 
 {% block head %}
     <title>Settings</title>
@@ -18,20 +18,20 @@
                 <div class="card-heading">
                     <ul>
                         <li id="title1">
-                            <a href="{{ url_for('settings', form_type='profile') }}">
+                            <a href="{{ url_for('settings.profile') }}">
                                 <h2 class="title" style="color: #2c6ed5">Profile</h2>
                             </a>
                         </li>
 
                         <li id="title2">
-                            <a href="{{ url_for('settings', form_type='security') }}">
+                            <a href="{{ url_for('settings.security') }}">
                                 <h2 class="title">Security</h2>
                             </a>
                         </li>
 
                         <li id="title3">
-                            <a href="{{ url_for('settings', form_type='about') }}">
-                                <h2 class="title">About you</h2>
+                            <a href="{{ url_for('settings.about') }}">
+                                <h2 class="title" >About you</h2>
                             </a>
                         </li>
                     </ul>
