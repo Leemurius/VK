@@ -1,6 +1,7 @@
 import os
 import logging
 from flask import Flask
+from flask_mail import Mail
 from flask_moment import Moment
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -16,6 +17,7 @@ login = LoginManager()
 login.login_view = 'registration'
 bootstrap = Bootstrap()
 moment = Moment()
+mail = Mail()
 
 
 def create_app(config_class=Config):
@@ -27,6 +29,7 @@ def create_app(config_class=Config):
     login.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
+    mail.init_app(app)
 
     with app.app_context():
         from app.auth import bp as auth_bp

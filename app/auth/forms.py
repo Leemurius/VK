@@ -83,6 +83,9 @@ class RegistrationForm(FlaskForm):
         if User.query.filter_by(nick=nick.data).count():
             raise ValueError('This nick already taken')
 
+        if not re.match('[0-9a-zA-Z-]', nick.data):
+            raise ValueError('Incorrect type of nick')
+
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).count():
             raise ValueError('This email already taken')

@@ -64,7 +64,7 @@ def about():
     )
 
     if form.validate_on_submit():
-        current_user.set_form(form)
+        current_user.set_about_form(form)
         return redirect(url_for('settings.about'))
 
     users = User.query.all()

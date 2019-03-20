@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, current_user
 
 from app.auth import bp
 from app.models import User
+from app.auth.email import send_password_reset_email
 from app.auth.forms import(
     RegistrationForm,
     LoginForm,
@@ -56,6 +57,9 @@ def reset_password_request():
     form = ResetPassRequestForm()
 
     if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
         return redirect(url_for('auth.login'))
 
     return render_template('auth/reset_password_request.html', form=form)
@@ -66,9 +70,14 @@ def reset_password(token):
     if current_user.is_authenticated:
         return redirect(url_for('main.my_profile'))
 
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('auth.login'))
+
     form = ResetPassForm()
 
     if form.validate_on_submit():
+        user.set_password(form.new_password.data)
         return redirect(url_for('auth.login'))
 
     return render_template('auth/reset_password.html', form=form)

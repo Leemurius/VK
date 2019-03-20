@@ -1,7 +1,8 @@
 import os
+import jwt
 import datetime
 import operator
-
+from time import time
 from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,7 +12,6 @@ from app import db
 
 class User(UserMixin, db.Model):
     CONST_DEFAULT_PHOTO = '/static/images/no_photo.png'
-
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
     surname = db.Column(db.String(20))
@@ -52,6 +52,24 @@ class User(UserMixin, db.Model):
         self.nick = nick
         self.age = age
         self.email = email
+
+    def get_reset_password_token(self, expires_in=500):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
+
+    @staticmethod
+    def last_message(id_1, id_2):
+        pass
 
     def set_profile_form(self, form):
         self.name = form.name.data
@@ -110,6 +128,13 @@ class Message(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     time = db.Column(db.DateTime, index=True)
+
+    @property
+    def is_over_a_day(self):
+        if datetime.datetime.utcnow().weekday() != self.time.weekday():
+            return True
+        else:
+            return False
 
     @staticmethod
     def get_dialog(current_user, recipient):

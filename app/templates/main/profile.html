@@ -30,7 +30,7 @@
                                     {% if user.status %}
                                         Status : <i>Online</i>
                                     {% else %}
-                                        Status : <i>{{ moment(user.last_seen).fromNow() }}</i>
+                                        Status : <i>last seen {{ moment(user.last_seen).fromNow() }}</i>
                                     {% endif %}
                                 </p>
 								<p>
