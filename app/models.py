@@ -5,9 +5,16 @@ import operator
 from time import time
 from flask import current_app
 from flask_login import UserMixin
+from sqlalchemy.ext.declarative import declarative_base
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
+
+
+rooms = db.Table('rooms',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('room_id', db.Integer, db.ForeignKey('room.id'))
+)
 
 
 class User(UserMixin, db.Model):
@@ -24,18 +31,10 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime, index=True)
     password_hash = db.Column(db.String(256))
 
-    sent_messages = db.relationship(
-        'Message',
-        backref='sender',
-        lazy='dynamic',
-        foreign_keys='Message.sender_id'
-    )
-
-    recipient_messages = db.relationship(
-        'Message',
-        backref='recipient',
-        lazy='dynamic',
-        foreign_keys='Message.recipient_id'
+    rooms = db.relationship(
+        'Room',
+        secondary=rooms,
+        backref=db.backref('members', lazy="dynamic")
     )
 
     @property
@@ -78,6 +77,7 @@ class User(UserMixin, db.Model):
         self.age = form.age.data
         self.email = form.email.data
         self.address = form.address.data
+        self.upload_photo(form.photo)
         db.session.commit()
 
     def set_about_form(self, form):
@@ -88,27 +88,30 @@ class User(UserMixin, db.Model):
         self.last_seen = datetime.datetime.utcnow()
         db.session.commit()
 
-    def send_message(self, text, recipient):
-        m = Message(
-            text=text,
-            sender=self,
-            recipient=recipient,
-            recipient_id=recipient.id,
-            time=datetime.datetime.utcnow()
-        )
-        m.commit_to_db()
+    def send_message(self, text, recipient_room):
+        recipient_room.add_message(self, text)
 
     def upload_photo(self, photo):
         if photo.data:
             filename = photo.data.filename
-            path = os.path.join(
-                '/static',
-                current_app.config['IMAGE_UPLOAD_FOLDER'],
+
+            dir_path = os.path.join(
+                'app/static',
+                current_app.config['IMAGE_UPLOAD_FOLDER']
+            )
+            file_path = os.path.join(
+                dir_path,
                 str(self.id) + "." + filename.rsplit('.', 1)[1]
             )
-            photo.data.save('app/' + path)
-            self.photo = path
-            db.session.commit()
+            file_path_db = os.path.join(
+                '/', file_path.split('/', 1)[1]
+            )
+
+            if not os.path.isdir(dir_path):
+                os.makedirs(dir_path)
+
+            photo.data.save(file_path)
+            self.photo = file_path_db
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -122,39 +125,75 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
 
-class Message(db.Model):
-    message_id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(512))
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    time = db.Column(db.DateTime, index=True)
-
-    @property
-    def is_over_a_day(self):
-        if datetime.datetime.utcnow().weekday() != self.time.weekday():
-            return True
-        else:
-            return False
+class Room(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
 
     @staticmethod
-    def get_dialog(current_user, recipient):
-        messages_sender = Message.query.filter_by(
-            sender_id=current_user.id,
-            recipient_id=recipient.id
-        ).all()
+    def create_new_room():
+        room = Room()
+        room.commit_to_db()
+        room.create_chat()
+        return room
 
-        messages_recipient = Message.query.filter_by(
-            sender_id=recipient.id,
-            recipient_id=current_user.id
-        ).all()
+    @staticmethod
+    def get_room_or_create(user1, user2):
+        for room1 in user1.rooms:
+            for room2 in user2.rooms:
+                if room1 == room2:
+                    return room1.id
 
-        messages = messages_sender
-        if current_user != recipient:
-            messages += messages_recipient
+        room = Room.create_new_room()
+        room.add_user(user1)
+        room.add_user(user2)
+        return room.id
 
-        messages.sort(key=operator.attrgetter('time'))
-        return messages
+    def create_chat(self):
+        self.chat = self.get_class_chat
+        print(type(self.chat))
 
     def commit_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+    def get_class_chat(self):
+        DynamicBase = declarative_base(class_registry=dict())
+
+        class Message(DynamicBase):
+            __tablename__ = 'message_{}'.format(self.id)
+            id = db.Column(db.Integer, primary_key=True)
+            text = db.Column(db.String(512))
+            sender = None
+            time = db.Column(db.DateTime, index=True)
+
+            @property
+            def is_over_a_day(self):
+                if datetime.datetime.utcnow().weekday() != self.time.weekday():
+                    return True
+                else:
+                    return False
+
+            def commit_to_db(self):
+                db.session.add(self)
+                db.session.commit()
+
+        DynamicBase.metadata.drop_all(db.engine)
+        DynamicBase.metadata.create_all(db.engine)
+        return Message
+
+    def add_user(self, user):
+        self.members.append(user)
+        db.session.commit()
+
+    def is_member(self, user):  # FIXME: make me fast, pls
+        for member in self.members:
+            if member == user:
+                return True
+        return False
+
+    def add_message(self, sender, text):
+        self.chat(text=text, sender=sender).commit_to_db()
+
+    def get_messages(self):
+        messages = self.chat.query.all()
+        messages.sort(key=operator.attrgetter('time'))
+        return messages

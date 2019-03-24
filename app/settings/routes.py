@@ -24,7 +24,6 @@ def profile():
 
     if form.validate_on_submit():
         current_user.set_profile_form(form)
-        current_user.upload_photo(form.photo)
         return redirect(url_for('settings.profile'))
 
     users = User.query.all()

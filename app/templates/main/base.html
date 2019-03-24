@@ -55,7 +55,7 @@
                     <ul>
                         {% for user in users %}
                             {% if user.id != current_user.id %}
-                            <a href={{ url_for('main.chat', nick=user.nick) }}>
+                            <a href={{ url_for('main.chat', room_id=Room.get_room_or_create(user, current_user)) }}>
                                 <li class="contact">
                                     <div class="wrap">
                                         <span class="contact-status {{ 'online' if user.status else 'offline' }}"></span>
@@ -90,6 +90,7 @@
                     </a>
                 </div>
             </div>
+            <img src="" alt="">
 
             {% block content %}{% endblock %}
 

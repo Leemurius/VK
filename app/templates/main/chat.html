@@ -28,21 +28,11 @@
                 {% for message in messages %}
                     {% if message.sender_id == current_user.id %}
                         <li class="sent">
-                            <img src="{{ current_user.photo }}" alt="" >
-
-                            <p> {{ message.text }} </p>
-
-                            {% if message.is_over_a_day %}
-                                <span>{{ moment(message.time).format('MMMM Do, h:mm a') }}</span>
-                            {% else %}
-                                <span>{{ moment(message.time).format('h:mm a') }}</span>
-                            {% endif %}
-                        </li>
                     {% else %}
                         <li class="replies">
-                            <img src="{{ recipient.photo }}" alt="" />
+                            <img src="{{ sender.photo }}" alt="" >
 
-                            <p>{{ message.text }}</p>
+                            <p> {{ message.text }} </p>
 
                             {% if message.is_over_a_day %}
                                 <span>{{ moment(message.time).format('MMMM Do, h:mm a') }}</span>
