@@ -87,10 +87,12 @@
                 </div>
 
                 <div id="bottom-bar">
-                    <button id="addcontact">
-                        <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
-                        <span>Add contact</span>
-                    </button>
+                    <a href="{{ url_for('main.search') }}">
+                        <button id="addcontact">
+                            <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
+                            <span>Add contact</span>
+                        </button>
+                    </a>
 
                     <a href="{{ url_for('settings.profile') }}">
                         <button id="settings">

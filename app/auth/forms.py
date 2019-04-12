@@ -12,7 +12,7 @@ from wtforms.validators import (
     Email,
     length,
     EqualTo,
-    NumberRange,
+    NumberRange
 )
 
 from app.models import User

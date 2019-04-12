@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for
 from flask_login import current_user, login_required
 
 from app.main import bp
-from app.main.forms import ChatForm
+from app.main.forms import ChatForm, SearchForm
 from app.models import User, Room
 
 
@@ -49,9 +49,21 @@ def chat(room_id):
             if room.is_dialog
             else room.title
         ),
-        messages=room.get_messages(),
+        messages=room.get_messages()
     )
 
+
+@bp.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    form = SearchForm()
+
+    return render_template(
+        'main/search.html',
+        current_user=current_user,  # for base.html
+        rooms=current_user.rooms,  # for base.html
+        users=User.query.all()
+    )
 
 @bp.before_request
 def before_request():

@@ -33,6 +33,7 @@ class Constants(object):
     NICK_LENGTH = 50
     EMAIL_LENGTH = 50
     PHOTO_LENGTH = 50
+    REQUEST_LENGTH = 50
     ADDRESS_LENGTH = 50
     SURNAME_LENGTH = 50
     PASSWORD_LENGTH = 30

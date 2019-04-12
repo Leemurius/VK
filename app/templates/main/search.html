@@ -1,0 +1,64 @@
+{% extends 'main/base.html' %}
+
+{% block head %}
+    <title>Search</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/main/search.css"/>
+    <hr>
+    <div class="container bootstrap snippet">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="main-box no-header clearfix">
+                    <div class="main-box-body clearfix">
+                        <div class="table-responsive">
+                            <table class="table user-list">
+                                <thead>
+                                    <tr>
+                                    <th><span>User</span></th>
+                                    <th><span>Age</span></th>
+                                    <th class="text-center"><span>Status</span></th>
+                                    <th><span>Email</span></th>
+                                    <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>
+                                                <img src="{{ user.photo }}" alt="">
+                                                <a href="{{ url_for('main.profile', nick=user.nick) }}" class="user-link">{{ user.name }} {{ user.surname }}</a>
+                                            </td>
+                                            <td>{{ user.age }}</td>
+                                            <td class="text-center">
+                                                {% if user.status %}
+                                                    <span class="label label-success">Online</span>
+                                                {% else %}
+                                                    <span class="label label-default">Offline</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="#">{{ user.email }}</a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#">Write message</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_files %}
+    <script src="/static/js/profile.js"></script>
+{% endblock %}

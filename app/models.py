@@ -85,7 +85,7 @@ class User(UserMixin, db.Model):
         self.email = form.email.data
         self.address = form.address.data
         self.upload_photo(form.photo)
-        # not use commit because use commit in upload_photo
+        db.session.commit()
 
     def set_about_form(self, form):
         self.about_me = form.about_me.data
@@ -119,7 +119,6 @@ class User(UserMixin, db.Model):
 
             photo.data.save(file_path)
             self.photo = file_path_db
-            db.session.commit()
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
