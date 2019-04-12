@@ -1,7 +1,6 @@
 from flask import render_template, redirect, url_for
 from flask_login import current_user, login_required
 
-from app.models import User
 from app.settings import bp
 from app.settings.forms import (
     ProfSettingsForm,
@@ -26,13 +25,11 @@ def profile():
         current_user.set_profile_form(form)
         return redirect(url_for('settings.profile'))
 
-    users = User.query.all()
-
     return render_template(
         'settings/profile.html',
-        form=form,
-        user=current_user,
-        users=users
+        current_user=current_user,  # for base.html
+        rooms=current_user.rooms,  # for base.html
+        form=form
     )
 
 
@@ -45,13 +42,11 @@ def security():
         current_user.set_password(form.new_password.data)
         return redirect(url_for('settings.security'))
 
-    users = User.query.all()
-
     return render_template(
         'settings/security.html',
-        form=form,
-        user=current_user,
-        users=users
+        current_user=current_user,  # for base.html
+        rooms=current_user.rooms,  # for base.html
+        form=form
     )
 
 
@@ -66,11 +61,9 @@ def about():
         current_user.set_about_form(form)
         return redirect(url_for('settings.about'))
 
-    users = User.query.all()
-
     return render_template(
         'settings/about.html',
-        form=form,
-        user=current_user,
-        users=users
+        current_user=current_user,  # for base.html
+        rooms=current_user.rooms,  # for base.html
+        form=form
     )

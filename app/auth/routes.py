@@ -12,13 +12,12 @@ from app.auth.forms import(
 )
 
 
-@bp.route('/', methods=['GET', 'POST'])
 @bp.route('/registration', methods=['GET', 'POST'])
 def registration():
     form = RegistrationForm()
 
     if current_user.is_authenticated:
-        redirect('main.my_profile')
+        return redirect(url_for('main.profile', nick=current_user.nick))
 
     if form.validate_on_submit():
         user = User(
@@ -35,24 +34,24 @@ def registration():
     return render_template('auth/registration.html', form=form)
 
 
-@bp.route('/login', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.my_profile'))
+        return redirect(url_for('main.profile', nick=current_user.nick))
 
     form = LoginForm()
 
     if form.validate_on_submit():
         login_user(form.get_user(), remember=form.remember.data)
-        return redirect(url_for('main.my_profile'))
+        return redirect(url_for('main.profile', nick=current_user.nick))
 
     return render_template('auth/login.html', form=form)
 
 
-@bp.route('/reset_password_request', methods=['GET', 'POST'])
+@bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:
-        return redirect(url_for('main.my_profile'))
+        return redirect(url_for('main.profile', nick=current_user.nick))
 
     form = ResetPassRequestForm()
 
@@ -68,7 +67,7 @@ def reset_password_request():
 @bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:
-        return redirect(url_for('main.my_profile'))
+        return redirect(url_for('main.profile', nick=current_user.nick))
 
     user = User.verify_reset_password_token(token)
     if not user:

@@ -1,7 +1,6 @@
 import os
 import jwt
 import datetime
-import operator
 from time import time
 from flask import current_app
 from flask_login import UserMixin
@@ -9,6 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
+from config import Constants
 
 
 rooms = db.Table('rooms',
@@ -20,15 +20,21 @@ rooms = db.Table('rooms',
 class User(UserMixin, db.Model):
     CONST_DEFAULT_PHOTO = '/static/images/no_photo.png'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-    surname = db.Column(db.String(20))
-    nick = db.Column(db.String(20), unique=True)
+    name = db.Column(db.String(Constants.NAME_LENGTH))
+    surname = db.Column(db.String(Constants.SURNAME_LENGTH))
+    nick = db.Column(db.String(Constants.NICK_LENGTH), unique=True)
     age = db.Column(db.Integer)
-    address = db.Column(db.String(20))
-    email = db.Column(db.String(20), unique=True)
-    photo = db.Column(db.String(100), default=CONST_DEFAULT_PHOTO)
-    about_me = db.Column(db.String(512))
-    last_seen = db.Column(db.DateTime, index=True)
+    address = db.Column(db.String(Constants.ADDRESS_LENGTH))
+    email = db.Column(db.String(Constants.EMAIL_LENGTH), unique=True)
+    photo = db.Column(
+        db.String(Constants.PHOTO_LENGTH),
+        default=Constants.CONST_DEFAULT_USER_PHOTO
+    )
+    about_me = db.Column(db.String(Constants.ARTICLE_LENGTH))
+    last_seen = db.Column(
+        db.DateTime, index=True,
+        default=datetime.datetime.utcnow()
+    )
     password_hash = db.Column(db.String(256))
 
     rooms = db.relationship(
@@ -36,6 +42,13 @@ class User(UserMixin, db.Model):
         secondary=rooms,
         backref=db.backref('members', lazy="dynamic")
     )
+
+    def __init__(self, name, surname, nick, age, email):
+        self.name = name
+        self.surname = surname
+        self.nick = nick
+        self.age = age
+        self.email = email
 
     @property
     def status(self):
@@ -45,30 +58,24 @@ class User(UserMixin, db.Model):
         else:
             return True
 
-    def __init__(self, name, surname, nick, age, email):
-        self.name = name
-        self.surname = surname
-        self.nick = nick
-        self.age = age
-        self.email = email
-
-    def get_reset_password_token(self, expires_in=500):
-        return jwt.encode(
-            {'reset_password': self.id, 'exp': time() + expires_in},
-            current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
-
     @staticmethod
     def verify_reset_password_token(token):
         try:
             id = jwt.decode(token, current_app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
         except:
-            return
+            return None
         return User.query.get(id)
 
-    @staticmethod
-    def last_message(id_1, id_2):
-        pass
+    def get_reset_password_token(self, expires_in=Constants.TIME_OF_ACTUAL_REQUEST):
+        return jwt.encode(
+            {
+                'reset_password': self.id,
+                'exp': time() + expires_in
+            },
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+        ).decode('utf-8')
 
     def set_profile_form(self, form):
         self.name = form.name.data
@@ -78,7 +85,7 @@ class User(UserMixin, db.Model):
         self.email = form.email.data
         self.address = form.address.data
         self.upload_photo(form.photo)
-        db.session.commit()
+        # not use commit because use commit in upload_photo
 
     def set_about_form(self, form):
         self.about_me = form.about_me.data
@@ -89,7 +96,7 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
     def send_message(self, text, recipient_room):
-        recipient_room.add_message(self, text)
+        recipient_room.add_message(self.id, text)
 
     def upload_photo(self, photo):
         if photo.data:
@@ -97,7 +104,7 @@ class User(UserMixin, db.Model):
 
             dir_path = os.path.join(
                 'app/static',
-                current_app.config['IMAGE_UPLOAD_FOLDER']
+                Constants.IMAGE_UPLOAD_FOLDER
             )
             file_path = os.path.join(
                 dir_path,
@@ -112,6 +119,7 @@ class User(UserMixin, db.Model):
 
             photo.data.save(file_path)
             self.photo = file_path_db
+            db.session.commit()
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -127,73 +135,138 @@ class User(UserMixin, db.Model):
 
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(Constants.ROOM_NAME_LENGTH))
+    photo = db.Column(
+        db.String(Constants.PHOTO_LENGTH),
+        default=Constants.CONST_DEFAULT_ROOM_PHOTO
+    )
+    is_dialog = db.Column(db.Boolean)
 
     @staticmethod
-    def create_new_room():
-        room = Room()
+    def create_new_room(is_dialog=False):
+        room = Room(is_dialog=is_dialog)
         room.commit_to_db()
         room.create_chat()
         return room
 
     @staticmethod
-    def get_room_or_create(user1, user2):
-        for room1 in user1.rooms:
+    def get_or_create_room(user1, user2):
+        for room1 in user1.rooms:       # FIXME: make faster
             for room2 in user2.rooms:
                 if room1 == room2:
                     return room1.id
 
-        room = Room.create_new_room()
+        room = Room.create_new_room(is_dialog=True)
         room.add_user(user1)
-        room.add_user(user2)
+        if user1 != user2:  # Chat with yourself
+            room.add_user(user2)
         return room.id
 
+    @property
+    def chat(self):
+        chat_name = 'chat_{}'.format(self.id)
+        chat_table = None
+
+        # If table not exists in metadata - create
+        if chat_name not in db.metadata.tables.keys():
+            chat_table = db.Table(
+                'chat_{}'.format(self.id), db.metadata,
+                db.Column('id', db.Integer, primary_key=True),
+                db.Column('text', db.String(Constants.MESSAGE_LENGTH)),
+                db.Column('sender_id', db.Integer),
+                db.Column('time', db.DateTime, index=True)
+            )
+        else:
+            chat_table = db.metadata.tables[chat_name]
+
+        return chat_table
+
+    def add_message(self, sender_id, text):
+        insert = self.chat.insert().values(
+            text=text,
+            sender_id=sender_id,
+            time=datetime.datetime.utcnow()
+        )
+        db.engine.connect().execute(insert)
+
+    @staticmethod
+    def get_message_sender(sender_id):
+        return User.query.get(sender_id)
+
+    def get_messages(self):
+        messages = db.session.query(self.chat).all()
+
+        class Message(object):
+            def __init__(self, message):
+                self.id = message[0]
+                self.text = message[1]
+                self.sender = User.query.get(message[2])
+                self.time = message[3]
+
+        messages = [Message(message)for message in messages]
+        return messages
+
+    def get_last_message(self):
+        messages = db.session.query(self.chat).all()
+        if messages:
+            return messages[-1].text
+        else:
+            return None
+
     def create_chat(self):
-        self.chat = self.get_class_chat
-        print(type(self.chat))
-
-    def commit_to_db(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def get_class_chat(self):
         DynamicBase = declarative_base(class_registry=dict())
 
         class Message(DynamicBase):
-            __tablename__ = 'message_{}'.format(self.id)
+            __tablename__ = 'chat_{}'.format(self.id)
             id = db.Column(db.Integer, primary_key=True)
-            text = db.Column(db.String(512))
-            sender = None
+            text = db.Column(db.String(Constants.MESSAGE_LENGTH))
+            sender_id = db.Column(db.Integer)
             time = db.Column(db.DateTime, index=True)
 
-            @property
-            def is_over_a_day(self):
-                if datetime.datetime.utcnow().weekday() != self.time.weekday():
-                    return True
-                else:
-                    return False
-
-            def commit_to_db(self):
-                db.session.add(self)
-                db.session.commit()
-
-        DynamicBase.metadata.drop_all(db.engine)
-        DynamicBase.metadata.create_all(db.engine)
-        return Message
+        Message.__table__.create(db.engine)
 
     def add_user(self, user):
         self.members.append(user)
         db.session.commit()
 
-    def is_member(self, user):  # FIXME: make me fast, pls
-        for member in self.members:
-            if member == user:
-                return True
-        return False
+    def upload_photo(self, photo):
+        if photo.data:
+            filename = photo.data.filename
 
-    def add_message(self, sender, text):
-        self.chat(text=text, sender=sender).commit_to_db()
+            dir_path = os.path.join(
+                'app/static',
+                Constants.ROOM_IMAGE_UPLOAD_FOLDER
+            )
+            file_path = os.path.join(
+                dir_path,
+                str(self.id) + "." + filename.rsplit('.', 1)[1]
+            )
+            file_path_db = os.path.join(
+                '/', file_path.split('/', 1)[1]
+            )
 
-    def get_messages(self):
-        messages = self.chat.query.all()
-        messages.sort(key=operator.attrgetter('time'))
-        return messages
+            if not os.path.isdir(dir_path):
+                os.makedirs(dir_path)
+
+            photo.data.save(file_path)
+            self.photo = file_path_db
+
+    def get_recipient(self, user):
+        if not self.is_dialog:  # Chat
+            return None
+
+        for member in self.members:  # Dialog
+            if user != member:
+                return member
+
+        return self.members[0]  # Dialog with yourself
+
+    def is_member(self, user):
+        if user in self.members:
+            return True
+        else:
+            return False
+
+    def commit_to_db(self):
+        db.session.add(self)
+        db.session.commit()

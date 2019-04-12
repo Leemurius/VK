@@ -6,61 +6,51 @@ from app.main.forms import ChatForm
 from app.models import User, Room
 
 
-@bp.route('/my_profile')
-@login_required
-def my_profile():
-
-    users = User.query.all()
-
-    return render_template(
-        'main/profile.html',
-        room=-1,
-        user=current_user,
-        chats=User.rooms
-    )
-
-
-@bp.route('/profile/<nick>')
+@bp.route('/<nick>')
 @login_required
 def profile(nick):
-    if nick == current_user.nick:
-        return redirect(url_for('main.my_profile'))
-
     user = User.query.filter_by(nick=nick).first_or_404()
-    chats = User.rooms
 
     return render_template(
         'main/profile.html',
-        room=Room.get_room_or_create(user, current_user),
+        current_user=current_user,  # for base.html
+        rooms=current_user.rooms,  # for base.html
         user=user,
-        chats=chats
+        get_or_create_room=Room.get_or_create_room  # if click 'write message'
     )
 
 
 @bp.route('/chat/<room_id>', methods=['GET', 'POST'])
 @login_required
 def chat(room_id):
-    room = Room.query.filter_by(id=room_id).first()
+    room = Room.query.get(room_id)
 
     if not room.is_member(current_user):
-        return redirect(url_for('main.my_profile'))  # FIXME: redirect back
+        return redirect(url_for('main.profile', nick=current_user.nick))  # FIXME: redirect back
 
     form = ChatForm()
 
     if form.validate_on_submit():
         current_user.send_message(
-            text=form.message.data,
-            recipient_room=room
+            recipient_room=room,
+            text=form.message.data
         )
         return redirect(url_for('main.chat', room_id=room_id))
 
     return render_template(
         'main/chat.html',
+        current_user=current_user,  # for base.html
+        rooms=current_user.rooms,  # for base.html
         form=form,
-        current_user=current_user,
+        room=room,
+        recipient=room.get_recipient(current_user),  # if chat is dialog
+        title=(
+            room.get_recipient(current_user).nick
+            if room.is_dialog
+            else room.title
+        ),
         messages=room.get_messages(),
-        users=User.query.all(),
-)
+    )
 
 
 @bp.before_request

@@ -18,8 +18,17 @@ class Config(object):
     MAIL_PASSWORD = 'FjskH_48'
     ADMINS = ['sidorevich.anton@gmail.com']
 
-    IMAGE_UPLOAD_FOLDER = "Data/UsersPhotos/"
 
+class Constants(object):
+    IMAGE_UPLOAD_FOLDER = "Data/UsersPhotos/"
+    ROOM_IMAGE_UPLOAD_FOLDER = "Data/RoomPhotos/"
+    CONST_DEFAULT_USER_PHOTO = '/static/images/no_photo.png'
+    CONST_DEFAULT_ROOM_PHOTO = '/static/images/no_photo.png'
+
+    TIME_OF_ACTUAL_REQUEST = 500
+    TIME_OF_ONLINE = 5  # minutes
+
+    MAX_AGE = 150
     NAME_LENGTH = 50
     NICK_LENGTH = 50
     EMAIL_LENGTH = 50
@@ -28,4 +37,5 @@ class Config(object):
     SURNAME_LENGTH = 50
     PASSWORD_LENGTH = 30
     ARTICLE_LENGTH = 512
+    ROOM_NAME_LENGTH = 50
     MESSAGE_LENGTH = 1024

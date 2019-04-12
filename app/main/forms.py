@@ -1,7 +1,8 @@
-from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField
 from wtforms.validators import DataRequired, length
+
+from config import Constants
 
 
 class ChatForm(FlaskForm):
@@ -9,9 +10,9 @@ class ChatForm(FlaskForm):
         'Message',
         validators=[
             DataRequired(),
-            length(max=current_app.config['MESSAGE_LENGTH'], message='Very big message'),
+            length(max=Constants.MESSAGE_LENGTH, message='Very big message'),
         ],
     )
 
     def validate_message(self, message):
-        self.message.data = message.data.strip('\r\n')
+        self.message.data = message.data.strip('\r\n')  # delete excess new lines

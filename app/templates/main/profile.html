@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 
 {% block head %}
-    <title>My Profile</title>
+    <title>Profile of {{ user.nick }}</title>
     <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
 {% endblock %}
 
@@ -58,7 +58,10 @@
                                     </li>
                                 </ul>
 							</div>
-                            <a href={{ url_for('main.chat', room_id=room) }}>Write message</a>
+
+                            <div class="write_message">
+{#                                <a href={{ url_for('main.chat', room_id=get_or_create_room(user, current_user)) }}>Write message</a>#}
+                            </div>
 						</div>
 						<div class="col-lg-6">
 							<figure class="hero-image">

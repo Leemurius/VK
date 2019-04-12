@@ -39,7 +39,7 @@
 
                 <div id="profile">
                     <div class="wrap">
-                        <a href="{{ url_for('main.my_profile') }}">
+                        <a href="{{ url_for('main.profile', nick=current_user.nick) }}">
                             <img id="profile-img" src= {{ current_user.photo }} class="online" alt="" />
                         </a>
                         <p>{{ current_user.name }} {{ current_user.surname }}</p>
@@ -53,25 +53,35 @@
 
                 <div id="contacts">
                     <ul>
-                        {% for user in users %}
-                            {% if user.id != current_user.id %}
-                            <a href={{ url_for('main.chat', room_id=Room.get_room_or_create(user, current_user)) }}>
+                        {% for room in rooms %}
+                            <a href={{ url_for('main.chat', room_id=room.id) }}>
                                 <li class="contact">
                                     <div class="wrap">
-                                        <span class="contact-status {{ 'online' if user.status else 'offline' }}"></span>
-                                        <img src= {{ user.photo }} alt="" />
-                                        <div class="meta">
-                                            <p class="name"> {{ user.name }} {{ user.surname }} </p>
-                                            <p class="preview">
-                                                <span>
-                                                    {{ 'You : Last message...' }}
-                                                </span>
-                                            </p>
-                                        </div>
+                                        {% if room.is_dialog %}
+                                            {% set recipient = room.get_recipient(current_user) %}
+                                            <span class="contact-status {{ 'online' if recipient.status else 'offline' }}"></span>
+
+                                            <img src= {{ recipient.photo }} alt="" />
+
+                                            <div class="meta">
+                                                <p class="name"> {{ recipient.name }} {{ recipient.surname }} </p>
+                                                <p class="preview">
+                                                    <span> {{ room.get_last_message() }} </span>
+                                                </p>
+                                            </div>
+                                        {% else %}
+                                            <img src= {{ room.photo }} alt="" />
+
+                                            <div class="meta">
+                                                <p class="name"> {{ room.title }} </p>
+                                                <p class="preview">
+                                                    <span> {{ room.get_last_message() }} </span>
+                                                </p>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </li>
                             </a>
-                            {% endif %}
                         {% endfor %}
                     </ul>
                 </div>

@@ -1,5 +1,4 @@
 import re
-from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -17,6 +16,7 @@ from wtforms.validators import (
 )
 
 from app.models import User
+from config import Constants
 
 
 class RegistrationForm(FlaskForm):
@@ -24,7 +24,7 @@ class RegistrationForm(FlaskForm):
         'Name',
         validators=[
             DataRequired(),
-            length(max=current_app.config['NAME_LENGTH'], message='Very big name')
+            length(max=Constants.NAME_LENGTH, message='Very big name')
         ]
     )
 
@@ -32,7 +32,7 @@ class RegistrationForm(FlaskForm):
         'Surname',
         validators=[
             DataRequired(),
-            length(max=current_app.config['SURNAME_LENGTH'], message='Very big surname')
+            length(max=Constants.SURNAME_LENGTH, message='Very big surname')
         ]
     )
 
@@ -40,7 +40,7 @@ class RegistrationForm(FlaskForm):
         'Nick',
         validators=[
             DataRequired(),
-            length(max=current_app.config['NICK_LENGTH'], message='Very big nick')
+            length(max=Constants.NICK_LENGTH, message='Very big nick')
         ]
     )
 
@@ -48,7 +48,7 @@ class RegistrationForm(FlaskForm):
         'Age',
         validators=[
             DataRequired(),
-            NumberRange(min=1, max=150)
+            NumberRange(min=1, max=Constants.MAX_AGE)
         ]
     )
 
@@ -56,7 +56,7 @@ class RegistrationForm(FlaskForm):
         'Email',
         validators=[
             Email(),
-            length(max=current_app.config['EMAIL_LENGTH'], message='Very big email')
+            length(max=Constants.EMAIL_LENGTH, message='Very big email')
         ]
     )
 
@@ -64,7 +64,7 @@ class RegistrationForm(FlaskForm):
         'Password',
         validators=[
             DataRequired(),
-            length(max=current_app.config['PASSWORD_LENGTH'], message='Very big password')
+            length(max=Constants.PASSWORD_LENGTH, message='Very big password')
         ]
     )
 
@@ -72,7 +72,7 @@ class RegistrationForm(FlaskForm):
         'Confirm',
         validators=[
             DataRequired(),
-            length(max=current_app.config['PASSWORD_LENGTH'], message='Very big password'),
+            length(max=Constants.PASSWORD_LENGTH, message='Very big password'),
             EqualTo('password', message='Passwords must match')
         ]
     )
@@ -96,7 +96,7 @@ class LoginForm(FlaskForm):
         'Nick or email',
         validators=[
             DataRequired(),
-            length(max=current_app.config['NAME_LENGTH'], message='Very big name')
+            length(max=Constants.NAME_LENGTH, message='Very big name')
         ]
     )
 
@@ -104,7 +104,7 @@ class LoginForm(FlaskForm):
         'Password',
         validators=[
             DataRequired(),
-            length(max=current_app.config['PASSWORD_LENGTH'], message='Incorrect password')
+            length(max=Constants.PASSWORD_LENGTH, message='Incorrect password')
         ]
     )
 
@@ -134,7 +134,7 @@ class ResetPassRequestForm(FlaskForm):
         'Email from your account',
         validators=[
             Email(),
-            length(max=current_app.config['EMAIL_LENGTH'], message='Very big email')
+            length(max=Constants.EMAIL_LENGTH, message='Very big email')
         ]
     )
 
@@ -144,7 +144,7 @@ class ResetPassForm(FlaskForm):
         'New password',
         validators=[
             DataRequired(),
-            length(max=current_app.config['PASSWORD_LENGTH'], message='Very big password')
+            length(max=Constants.PASSWORD_LENGTH, message='Very big password')
         ]
     )
 
@@ -152,7 +152,7 @@ class ResetPassForm(FlaskForm):
         'Enter new password again',
         validators=[
             DataRequired(),
-            length(max=current_app.config['PASSWORD_LENGTH'], message='Very big password'),
+            length(max=Constants.PASSWORD_LENGTH, message='Very big password'),
             EqualTo('new_password', message='Passwords must match')
         ]
     )

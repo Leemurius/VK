@@ -1,5 +1,3 @@
-import requests
-from flask import current_app
 from flask_wtf import FlaskForm
 from flask_login import current_user
 from flask_wtf.file import FileAllowed, FileField
@@ -19,6 +17,7 @@ from wtforms.validators import (
 )
 
 from app.models import User
+from config import Constants
 
 
 # -------------------------------------------------------------------------------------
@@ -27,7 +26,7 @@ class ProfSettingsForm(FlaskForm):
         'Name',
         validators=[
             DataRequired(),
-            length(max=current_app.config['NAME_LENGTH'], message='Very big name')
+            length(max=Constants.NAME_LENGTH, message='Very big name')
         ]
     )
 
@@ -35,7 +34,7 @@ class ProfSettingsForm(FlaskForm):
         'Surname',
         validators=[
             DataRequired(),
-            length(max=current_app.config['SURNAME_LENGTH'], message='Very big surname')
+            length(max=Constants.SURNAME_LENGTH, message='Very big surname')
         ]
     )
 
@@ -43,7 +42,7 @@ class ProfSettingsForm(FlaskForm):
         'Nick',
         validators=[
             DataRequired(),
-            length(max=current_app.config['NICK_LENGTH'], message='Very big nick')
+            length(max=Constants.NICK_LENGTH, message='Very big nick')
         ]
     )
 
@@ -51,7 +50,7 @@ class ProfSettingsForm(FlaskForm):
         'Address',
         validators=[
             DataRequired(),
-            length(max=current_app.config['ADDRESS_LENGTH'], message='Very big address')
+            length(max=Constants.ADDRESS_LENGTH, message='Very big address')
         ]
     )
 
@@ -59,7 +58,7 @@ class ProfSettingsForm(FlaskForm):
         'Age',
         validators=[
             DataRequired(),
-            NumberRange(min=1, max=150)
+            NumberRange(min=1, max=Constants.MAX_AGE)
         ]
     )
 
@@ -67,7 +66,7 @@ class ProfSettingsForm(FlaskForm):
         'Email',
         validators=[
             Email(),
-            length(max=current_app.config['EMAIL_LENGTH'], message='Very big email')
+            length(max=Constants.EMAIL_LENGTH, message='Very big email')
         ]
     )
 
@@ -101,7 +100,7 @@ class SecSettingsForm(FlaskForm):
         'Current password',
         validators=[
             DataRequired(),
-            length(max=current_app.config['PASSWORD_LENGTH'], message='Incorrect password')
+            length(max=Constants.PASSWORD_LENGTH, message='Incorrect password')
         ]
     )
 
@@ -109,7 +108,7 @@ class SecSettingsForm(FlaskForm):
         'New password',
         validators=[
             DataRequired(),
-            length(max=current_app.config['PASSWORD_LENGTH'], message='Very big password')
+            length(max=Constants.PASSWORD_LENGTH, message='Very big password')
         ]
     )
 
@@ -117,7 +116,7 @@ class SecSettingsForm(FlaskForm):
         'Enter new password again',
         validators=[
             DataRequired(),
-            length(max=current_app.config['PASSWORD_LENGTH'], message='Very big password'),
+            length(max=Constants.PASSWORD_LENGTH, message='Very big password'),
             EqualTo('new_password', message='Passwords must match')
         ]
     )
@@ -135,6 +134,6 @@ class AboutSettingsForm(FlaskForm):
         'About me',
         validators=[
             DataRequired(),
-            length(max=current_app.config['ARTICLE_LENGTH'], message='Very big article'),
+            length(max=Constants.ARTICLE_LENGTH, message='Very big article'),
         ],
     )

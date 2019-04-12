@@ -14,7 +14,7 @@ from config import Config
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
-login.login_view = 'registration'
+login.login_view = 'auth.registration'
 bootstrap = Bootstrap()
 moment = Moment()
 mail = Mail()
@@ -76,7 +76,7 @@ def create_app(config_class=Config):
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
         app.logger.setLevel(logging.INFO)
-        app.logger.info('VK startup')
+        app.logger.info('Leemur chat')
 
     return app
 

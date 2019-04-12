@@ -1,7 +1,8 @@
 {% extends 'main/base.html' %}
 
 {% block head %}
-    <title>Chat with {{ recipient.nick }}</title>
+
+    <title>Chat with {{ title }}</title>
     <!--===============================================================================================-->
     <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
     <!--===============================================================================================-->
@@ -13,11 +14,14 @@
     {{ moment.include_jquery() }}
     {{ moment.include_moment() }}
     <div class="content">
+
         <div class="contact-profile">
             <a href="{{ url_for('main.profile', nick=recipient.nick) }}">
                 <img src={{ recipient.photo }} alt="" />
             </a>
-            <p> {{ recipient.name }} {{ recipient.surname }} </p>
+
+            <p> {{ title }} </p>
+
             <div id="logout">
                 <a href="{{ url_for('auth.logout') }}">Logout</a>
             </div>
@@ -25,23 +29,23 @@
 
         <div class="messages">
             <ul>
-                {% for message in messages %}
-                    {% if message.sender_id == current_user.id %}
-                        <li class="sent">
-                    {% else %}
-                        <li class="replies">
-                            <img src="{{ sender.photo }}" alt="" >
+            {% for message in messages %}
+                {% if message.sender.id == current_user.id %}
+                    <li class="sent">
+                {% else %}
+                    <li class="replies">
+                {% endif %}
+                        <img src="{{ message.sender.photo }}" alt="" >
 
-                            <p> {{ message.text }} </p>
+                        <p> {{ message.text }} </p>
 
-                            {% if message.is_over_a_day %}
-                                <span>{{ moment(message.time).format('MMMM Do, h:mm a') }}</span>
-                            {% else %}
-                                <span>{{ moment(message.time).format('h:mm a') }}</span>
-                            {% endif %}
-                        </li>
-                    {% endif %}
-                {% endfor %}
+                        {% if message.is_over_a_day %}
+                            <span>{{ moment(message.time).format('MMMM Do, h:mm a') }}</span>
+                        {% else %}
+                            <span>{{ moment(message.time).format('h:mm a') }}</span>
+                        {% endif %}
+                    </li>
+            {% endfor %}
             </ul>
         </div>
 
