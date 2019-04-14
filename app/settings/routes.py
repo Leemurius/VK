@@ -5,7 +5,7 @@ from app.settings import bp
 from app.settings.forms import (
     ProfSettingsForm,
     SecSettingsForm,
-    AboutSettingsForm
+    AboutSettingsForm,
 )
 
 

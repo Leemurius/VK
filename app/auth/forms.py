@@ -5,26 +5,29 @@ from wtforms import (
     IntegerField,
     PasswordField,
     SubmitField,
-    BooleanField
+    BooleanField,
 )
 from wtforms.validators import (
     DataRequired,
     Email,
     length,
     EqualTo,
-    NumberRange
+    NumberRange,
 )
 
 from app.models import User
 from config import Constants
 
 
+# My dick is big, my dick very big.
+# Related to yours "Very big ..."
+
 class RegistrationForm(FlaskForm):
     name = StringField(
         'Name',
         validators=[
             DataRequired(),
-            length(max=Constants.NAME_LENGTH, message='Very big name')
+            length(max=Constants.NAME_LENGTH, message='Too long name')
         ]
     )
 
@@ -32,7 +35,7 @@ class RegistrationForm(FlaskForm):
         'Surname',
         validators=[
             DataRequired(),
-            length(max=Constants.SURNAME_LENGTH, message='Very big surname')
+            length(max=Constants.SURNAME_LENGTH, message='Too long surname')
         ]
     )
 
@@ -40,7 +43,7 @@ class RegistrationForm(FlaskForm):
         'Nick',
         validators=[
             DataRequired(),
-            length(max=Constants.NICK_LENGTH, message='Very big nick')
+            length(max=Constants.NICK_LENGTH, message='Too long nick')
         ]
     )
 
@@ -48,7 +51,7 @@ class RegistrationForm(FlaskForm):
         'Age',
         validators=[
             DataRequired(),
-            NumberRange(min=1, max=Constants.MAX_AGE)
+            NumberRange(min=0, max=Constants.MAX_AGE)
         ]
     )
 
@@ -56,7 +59,7 @@ class RegistrationForm(FlaskForm):
         'Email',
         validators=[
             Email(),
-            length(max=Constants.EMAIL_LENGTH, message='Very big email')
+            length(max=Constants.EMAIL_LENGTH, message='Too long email')
         ]
     )
 
@@ -64,7 +67,7 @@ class RegistrationForm(FlaskForm):
         'Password',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Very big password')
+            length(max=Constants.PASSWORD_LENGTH, message='Too long password')  # FIXME: Also you should check min lenght of pw
         ]
     )
 
@@ -72,7 +75,6 @@ class RegistrationForm(FlaskForm):
         'Confirm',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Very big password'),
             EqualTo('password', message='Passwords must match')
         ]
     )
@@ -84,7 +86,7 @@ class RegistrationForm(FlaskForm):
             raise ValueError('This nick already taken')
 
         if not re.match('[0-9a-zA-Z-]', nick.data):
-            raise ValueError('Incorrect type of nick')
+            raise ValueError('Only letters and digits are allowed')
 
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).count():
@@ -92,11 +94,15 @@ class RegistrationForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
+    def __init__(self):
+        self._user = None
+        super().__init__()
+
     login = StringField(
         'Nick or email',
         validators=[
             DataRequired(),
-            length(max=Constants.NAME_LENGTH, message='Very big name')
+            length(max=Constants.NAME_LENGTH, message='Too long login')
         ]
     )
 
@@ -112,14 +118,12 @@ class LoginForm(FlaskForm):
 
     @staticmethod
     def _is_email(email):
-        return re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email)
+        return re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email)  # FIXME: You can just check (if '@' in email)
 
     def get_user(self):
         return self._user
 
     def validate_password(self, password):
-        self._user = None
-
         if self._is_email(self.login.data):
             self._user = User.query.filter_by(email=self.login.data).first()
         else:
@@ -134,7 +138,7 @@ class ResetPassRequestForm(FlaskForm):
         'Email from your account',
         validators=[
             Email(),
-            length(max=Constants.EMAIL_LENGTH, message='Very big email')
+            length(max=Constants.EMAIL_LENGTH, message='Too long email')
         ]
     )
 
@@ -144,7 +148,7 @@ class ResetPassForm(FlaskForm):
         'New password',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Very big password')
+            length(max=Constants.PASSWORD_LENGTH, message='Too long password')  # FIXME: Also you should check min lenght of pw
         ]
     )
 
@@ -152,7 +156,6 @@ class ResetPassForm(FlaskForm):
         'Enter new password again',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Very big password'),
             EqualTo('new_password', message='Passwords must match')
         ]
     )

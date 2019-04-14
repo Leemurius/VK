@@ -20,13 +20,12 @@ from app.models import User
 from config import Constants
 
 
-# -------------------------------------------------------------------------------------
 class ProfSettingsForm(FlaskForm):
     name = StringField(
         'Name',
         validators=[
             DataRequired(),
-            length(max=Constants.NAME_LENGTH, message='Very big name')
+            length(max=Constants.NAME_LENGTH, message='Too long name')  # FIXME: Min?
         ]
     )
 
@@ -34,7 +33,7 @@ class ProfSettingsForm(FlaskForm):
         'Surname',
         validators=[
             DataRequired(),
-            length(max=Constants.SURNAME_LENGTH, message='Very big surname')
+            length(max=Constants.SURNAME_LENGTH, message='Too long surname')  # FIXME: Min?
         ]
     )
 
@@ -42,7 +41,7 @@ class ProfSettingsForm(FlaskForm):
         'Nick',
         validators=[
             DataRequired(),
-            length(max=Constants.NICK_LENGTH, message='Very big nick')
+            length(max=Constants.NICK_LENGTH, message='Too long nick')  # FIXME: Min?
         ]
     )
 
@@ -50,7 +49,7 @@ class ProfSettingsForm(FlaskForm):
         'Address',
         validators=[
             DataRequired(),
-            length(max=Constants.ADDRESS_LENGTH, message='Very big address')
+            length(max=Constants.ADDRESS_LENGTH, message='Too long address')  # FIXME: Min?
         ]
     )
 
@@ -58,7 +57,7 @@ class ProfSettingsForm(FlaskForm):
         'Age',
         validators=[
             DataRequired(),
-            NumberRange(min=1, max=Constants.MAX_AGE)
+            NumberRange(min=0, max=Constants.MAX_AGE)
         ]
     )
 
@@ -66,35 +65,34 @@ class ProfSettingsForm(FlaskForm):
         'Email',
         validators=[
             Email(),
-            length(max=Constants.EMAIL_LENGTH, message='Very big email')
+            length(max=Constants.EMAIL_LENGTH, message='Too long email')
         ]
     )
 
     photo = FileField(
         "Photo",
         validators=[
-            FileAllowed(['jpg', 'jpeg', 'png'], message='Images only')
+            FileAllowed(['jpg', 'jpeg', 'png'], message='Images only')  # FIXME: bmp?
         ]
     )
 
     save = SubmitField('Save')
 
     def validate_nick(self, nick):
-        if User.query.filter_by(nick=nick.data).count() and \
-                nick.data != current_user.nick:
+        if (User.query.filter_by(nick=nick.data).count() and
+                nick.data != current_user.nick):
             raise ValueError('This nick already taken')
 
     def validate_email(self, email):
-        if User.query.filter_by(email=email.data).count() and \
-                email.data != current_user.email:
+        if (User.query.filter_by(email=email.data).count() and
+                email.data != current_user.email):
             raise ValueError('This email already taken')
 
     def validate_photo(self, photo):
         pass
-        # FIXME: check size
+        # TODO: check size
 
 
-# -------------------------------------------------------------------------------------
 class SecSettingsForm(FlaskForm):
     current_password = PasswordField(
         'Current password',
@@ -108,7 +106,7 @@ class SecSettingsForm(FlaskForm):
         'New password',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Very big password')
+            length(max=Constants.PASSWORD_LENGTH, message='Too long password')  # FIXME: Min?
         ]
     )
 
@@ -116,7 +114,6 @@ class SecSettingsForm(FlaskForm):
         'Enter new password again',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Very big password'),
             EqualTo('new_password', message='Passwords must match')
         ]
     )
@@ -125,15 +122,14 @@ class SecSettingsForm(FlaskForm):
 
     def validate_current_password(self, current_password):
         if not current_user.check_password(current_password.data):
-            raise ValueError('Password dont match')
+            raise ValueError('Incorrect current password')
 
 
-# -------------------------------------------------------------------------------------
 class AboutSettingsForm(FlaskForm):
     about_me = TextAreaField(
         'About me',
         validators=[
             DataRequired(),
-            length(max=Constants.ARTICLE_LENGTH, message='Very big article'),
-        ],
+            length(max=Constants.ARTICLE_LENGTH, message='Too long article')
+        ]
     )

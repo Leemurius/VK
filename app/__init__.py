@@ -66,7 +66,7 @@ def create_app(config_class=Config):
             mail_handler.setLevel(logging.ERROR)
             app.logger.addHandler(mail_handler)
 
-        # Make logs
+        # Write logs
         if not os.path.exists('logs'):
             os.mkdir('logs')
         file_handler = RotatingFileHandler('logs/vk.log', maxBytes=10240,
@@ -87,5 +87,3 @@ def load_user(id):
 
 
 from app import models
-
-

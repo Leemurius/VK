@@ -18,4 +18,5 @@ def send_password_reset_email(user):
                text_body=render_template('auth/email/reset_password.txt',
                                          user=user, token=token),
                html_body=render_template('auth/email/reset_password.html',
-                                         user=user, token=token))
+                                         user=user, token=token)
+               )

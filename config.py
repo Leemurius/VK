@@ -1,15 +1,21 @@
 import os
+import string
+import random
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
+def random_str(size=128, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
 class Config(object):
-    SECRET_KEY = 'kldsjgmoid4yt834f84mtemvt74tv437vmetm'
+    SECRET_KEY = random_str()
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     WTF_CSRF_ENABLED = False
-    WTF_CSRF_SECRET_KEY = 'kldsjgmoid4yt834f84mtemvt74tv437vmetm'
+    WTF_CSRF_SECRET_KEY = random_str()
 
     MAIL_SERVER = 'smtp.yandex.ru'
     MAIL_PORT = 587
