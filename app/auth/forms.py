@@ -19,9 +19,6 @@ from app.models import User
 from config import Constants
 
 
-# My dick is big, my dick very big.
-# Related to yours "Very big ..."
-
 class RegistrationForm(FlaskForm):
     name = StringField(
         'Name',
@@ -67,7 +64,11 @@ class RegistrationForm(FlaskForm):
         'Password',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Too long password')  # FIXME: Also you should check min lenght of pw
+            length(
+                min=Constants.MIN_PASSWORD_LENGTH,
+                max=Constants.MAX_PASSWORD_LENGTH,
+                message='Password is short or too long'
+            )
         ]
     )
 
@@ -110,7 +111,11 @@ class LoginForm(FlaskForm):
         'Password',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Incorrect password')
+            length(
+                min=Constants.MIN_PASSWORD_LENGTH,
+                max=Constants.MAX_PASSWORD_LENGTH,
+                message='Incorrect password'
+            )
         ]
     )
 
@@ -118,7 +123,7 @@ class LoginForm(FlaskForm):
 
     @staticmethod
     def _is_email(email):
-        return re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email)  # FIXME: You can just check (if '@' in email)
+        return re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email)
 
     def get_user(self):
         return self._user
@@ -148,7 +153,11 @@ class ResetPassForm(FlaskForm):
         'New password',
         validators=[
             DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Too long password')  # FIXME: Also you should check min lenght of pw
+            length(
+                min=Constants.MIN_PASSWORD_LENGTH,
+                max=Constants.MAX_PASSWORD_LENGTH,
+                message='Password is short or too long'
+            )
         ]
     )
 

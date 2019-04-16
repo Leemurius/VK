@@ -18,6 +18,8 @@ rooms = db.Table('rooms',
 
 
 class User(UserMixin, db.Model):
+    __searchable__ = ['body']
+
     CONST_DEFAULT_PHOTO = '/static/images/no_photo.png'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(Constants.NAME_LENGTH))

@@ -1,21 +1,19 @@
 import os
-import string
-import random
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-def random_str(size=128, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
-
+# def random_str(size=128, chars=string.ascii_uppercase + string.digits):
+#     return ''.join(random.choice(chars) for _ in range(size))
+# uncommit on production
 
 class Config(object):
-    SECRET_KEY = random_str()
+    SECRET_KEY = 'vtn73y777ct847ytn7347ct348ctny83378'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     WTF_CSRF_ENABLED = False
-    WTF_CSRF_SECRET_KEY = random_str()
+    WTF_CSRF_SECRET_KEY = 'vtn73y777ct847ytn7347ct348ctny83378'
 
     MAIL_SERVER = 'smtp.yandex.ru'
     MAIL_PORT = 587
@@ -23,6 +21,8 @@ class Config(object):
     MAIL_USERNAME = 'no-reply@ugmi.me'
     MAIL_PASSWORD = 'FjskH_48'
     ADMINS = ['sidorevich.anton@gmail.com']
+
+    ELASTICSEARCH_URL = 'http://localhost:9200'
 
 
 class Constants(object):
@@ -42,7 +42,8 @@ class Constants(object):
     REQUEST_LENGTH = 50
     ADDRESS_LENGTH = 50
     SURNAME_LENGTH = 50
-    PASSWORD_LENGTH = 30
+    MIN_PASSWORD_LENGTH = 6
+    MAX_PASSWORD_LENGTH = 30
     ARTICLE_LENGTH = 512
     ROOM_NAME_LENGTH = 50
     MESSAGE_LENGTH = 1024

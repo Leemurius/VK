@@ -24,39 +24,39 @@ class ProfSettingsForm(FlaskForm):
     name = StringField(
         'Name',
         validators=[
-            DataRequired(),
-            length(max=Constants.NAME_LENGTH, message='Too long name')  # FIXME: Min?
+            DataRequired(message='Field is empty'),
+            length(max=Constants.NAME_LENGTH, message='Too long name')
         ]
     )
 
     surname = StringField(
         'Surname',
         validators=[
-            DataRequired(),
-            length(max=Constants.SURNAME_LENGTH, message='Too long surname')  # FIXME: Min?
+            DataRequired(message='Field is empty'),
+            length(max=Constants.SURNAME_LENGTH, message='Too long surname')
         ]
     )
 
     nick = StringField(
         'Nick',
         validators=[
-            DataRequired(),
-            length(max=Constants.NICK_LENGTH, message='Too long nick')  # FIXME: Min?
+            DataRequired(message='Field is empty'),
+            length(max=Constants.NICK_LENGTH, message='Too long nick')
         ]
     )
 
     address = StringField(
         'Address',
         validators=[
-            DataRequired(),
-            length(max=Constants.ADDRESS_LENGTH, message='Too long address')  # FIXME: Min?
+            DataRequired(message='Field is empty'),
+            length(max=Constants.ADDRESS_LENGTH, message='Too long address')
         ]
     )
 
     age = IntegerField(
         'Age',
         validators=[
-            DataRequired(),
+            DataRequired(message='Field is empty'),
             NumberRange(min=0, max=Constants.MAX_AGE)
         ]
     )
@@ -72,7 +72,7 @@ class ProfSettingsForm(FlaskForm):
     photo = FileField(
         "Photo",
         validators=[
-            FileAllowed(['jpg', 'jpeg', 'png'], message='Images only')  # FIXME: bmp?
+            FileAllowed(['jpg', 'jpeg', 'png'], message='Images only')
         ]
     )
 
@@ -97,23 +97,20 @@ class SecSettingsForm(FlaskForm):
     current_password = PasswordField(
         'Current password',
         validators=[
-            DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Incorrect password')
+            DataRequired(message='Field is empty'),
+            length(max=Constants.MAX_PASSWORD_LENGTH, message='Incorrect password')
         ]
     )
 
     new_password = PasswordField(
         'New password',
-        validators=[
-            DataRequired(),
-            length(max=Constants.PASSWORD_LENGTH, message='Too long password')  # FIXME: Min?
-        ]
+        validators=[DataRequired(message='Field is empty')]
     )
 
     confirm_password = PasswordField(
         'Enter new password again',
         validators=[
-            DataRequired(),
+            DataRequired(message='Field is empty'),
             EqualTo('new_password', message='Passwords must match')
         ]
     )
@@ -123,6 +120,13 @@ class SecSettingsForm(FlaskForm):
     def validate_current_password(self, current_password):
         if not current_user.check_password(current_password.data):
             raise ValueError('Incorrect current password')
+
+    def validate_new_password(self, new_password):
+        if len(new_password.data) > Constants.MESSAGE_LENGTH:
+            return ValueError('Too long request')
+
+        if len(new_password.data) == 0:
+            return ValueError('Request is empty')
 
 
 class AboutSettingsForm(FlaskForm):

@@ -1,5 +1,6 @@
 import os
 import logging
+from elasticsearch import Elasticsearch
 from flask import Flask
 from flask_mail import Mail
 from flask_moment import Moment
@@ -18,6 +19,7 @@ login.login_view = 'auth.registration'
 bootstrap = Bootstrap()
 moment = Moment()
 mail = Mail()
+es = Elasticsearch()
 
 
 def create_app(config_class=Config):
@@ -30,6 +32,9 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     moment.init_app(app)
     mail.init_app(app)
+
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+        if app.config['ELASTICSEARCH_URL'] else None
 
     with app.app_context():
         from app.auth import bp as auth_bp

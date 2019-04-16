@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for
 from flask_login import current_user, login_required
 
 from app.main import bp
-from app.main.forms import ChatForm
+from app.main.forms import ChatForm, SearchForm
 from app.models import User, Room
 
 
@@ -26,7 +26,7 @@ def chat(room_id):
     room = Room.query.get_or_404(room_id)
 
     if not room.is_member(current_user):
-        return redirect(url_for('main.profile', nick=current_user.nick))  # FIXME: redirect back
+        return redirect(url_for('main.profile', nick=current_user.nick))  # TODO: redirect back
 
     form = ChatForm()
 
@@ -56,11 +56,17 @@ def chat(room_id):
 @bp.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
+    form = SearchForm()
+
+    if form.validate_on_submit():
+        return redirect(url_for('main.search'))
+
     return render_template(
         'main/search.html',
         current_user=current_user,  # for base.html
         rooms=current_user.rooms,  # for base.html
-        users=User.query.all()
+        users=User.query.all(),
+        form=form
     )
 
 
