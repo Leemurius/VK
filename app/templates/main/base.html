@@ -48,7 +48,10 @@
 
                 <div id="search">
                     <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-                    <input type="text" placeholder="Search contacts..." />
+                    <form action="" method="post" novalidate>
+                        {{ base_form.hidden_tag() }}
+                        {{ base_form.request(type="text", placeholder="Search contacts...") }}
+                    </form>
                 </div>
 
                 <div id="contacts">

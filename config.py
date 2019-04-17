@@ -3,10 +3,6 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-# def random_str(size=128, chars=string.ascii_uppercase + string.digits):
-#     return ''.join(random.choice(chars) for _ in range(size))
-# uncommit on production
-
 class Config(object):
     SECRET_KEY = 'vtn73y777ct847ytn7347ct348ctny83378'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
@@ -30,6 +26,9 @@ class Constants(object):
     ROOM_IMAGE_UPLOAD_FOLDER = "Data/RoomPhotos/"
     CONST_DEFAULT_USER_PHOTO = '/static/images/no_photo.png'
     CONST_DEFAULT_ROOM_PHOTO = '/static/images/no_photo.png'
+
+    USER_PER_PAGE = 10
+    MESSAGE_PER_PAGE = 20
 
     TIME_OF_ACTUAL_REQUEST = 500
     TIME_OF_ONLINE = 5  # minutes
