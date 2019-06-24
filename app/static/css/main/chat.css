@@ -89,14 +89,14 @@
     margin-bottom: 1em;
 }
 
-#frame .content .messages ul li.sent img {
+#frame .content .messages ul li.replies img {
     float: left;
     margin: 6px 8px 0 0;
     height: 2.3em;
     width: 2.3em;
 }
 
-#frame .content .messages ul li.sent p {
+#frame .content .messages ul li.replies p {
     background: #435f7a;
     color: #f5f5f5;
     float: left;
@@ -105,27 +105,28 @@
     word-break: break-all;
 }
 
-#frame .content .messages ul li.sent span {
+#frame .content .messages ul li.replies span {
     margin-left: 3px;
 }
 
 
-#frame .content .messages ul li.replies img {
+#frame .content .messages ul li.sent img {
     float: right;
     margin: 0px 0 0 8px;
     height: 2.3em;
     width: 2.3em;
 }
 
-#frame .content .messages ul li.replies p {
-    background: #f5f5f5;
+#frame .content .messages ul li.sent p {
+    background: #00BCD4;
+    color: black;
     float: right;
     white-space: pre-wrap;
     word-wrap: break-word;
     word-break: break-all;
 }
 
-#frame .content .messages ul li.replies span {
+#frame .content .messages ul li.sent span {
     margin-top: 0.7em;
     margin-right: 3px;
     float: right;
@@ -166,15 +167,25 @@
 
 #frame .content .message-input .wrap textarea {
     font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
-    float: left;
-    border: none;
-    width: calc(100% - 90px);
-    height: 2.2em;
-    max-height: 5em;
-    padding: 11px 32px 10px 8px;
     font-size: 1em;
     color: #32465a;
+
+    float: left;
+    margin: 5px;
+    margin-bottom: 0.7vh;
+
+    border: none;
+    border-radius: 6px;
+    box-shadow: 2px 2px 8px black;
+
+    width: calc(100% - 90px);
+    height: 2.3em;
+    max-height: 10em;
+    padding: 11px 32px 10px 8px;
+    box-sizing: border-box;
+
     resize: none;
+    overflow: hidden;
 }
 
 @media screen and (max-width: 735px) {
@@ -189,10 +200,10 @@
 
 #frame .content .message-input .wrap .attachment {
     position: absolute;
-    right: 60px;
+    right: 40px;
     z-index: 4;
-    margin-top: 10px;
-    font-size: 1.2em;
+    margin-top: 7px;
+    font-size: 1.5em;
     color: #435f7a;
     opacity: .5;
     cursor: pointer;
@@ -201,35 +212,10 @@
 @media screen and (max-width: 735px) {
     #frame .content .message-input .wrap .attachment {
         margin-top: 17px;
-        right: 65px;
+        right: 5px;
     }
 }
 
 #frame .content .message-input .wrap .attachment:hover {
     opacity: 1;
-}
-
-#frame .content .message-input .wrap button {
-    float: right;
-    border: none;
-    width: 50px;
-    height: 2.2em;
-    padding: 12px 0;
-    cursor: pointer;
-    background: #32465a;
-    color: #f5f5f5;
-}
-
-@media screen and (max-width: 735px) {
-    #frame .content .message-input .wrap button {
-        padding: 16px 0;
-    }
-}
-
-#frame .content .message-input .wrap button:hover {
-    background: #435f7a;
-}
-
-#frame .content .message-input .wrap button:focus {
-    outline: none;
 }

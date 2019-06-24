@@ -11,11 +11,11 @@ class Config(object):
     WTF_CSRF_ENABLED = False
     WTF_CSRF_SECRET_KEY = 'vtn73y777ct847ytn7347ct348ctny83378'
 
-    MAIL_SERVER = 'smtp.yandex.ru'
+    MAIL_SERVER = 'smtp.mail.ru'
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
-    MAIL_USERNAME = 'no-reply@ugmi.me'
-    MAIL_PASSWORD = 'FjskH_48'
+    MAIL_USERNAME = 'sidorevich.toxa@mail.ru'
+    MAIL_PASSWORD = 'Leemur2001top36+27=63'
     ADMINS = ['sidorevich.anton@gmail.com']
 
     ELASTICSEARCH_URL = 'http://localhost:9200'
@@ -41,7 +41,7 @@ class Constants(object):
     REQUEST_LENGTH = 50
     ADDRESS_LENGTH = 50
     SURNAME_LENGTH = 50
-    MIN_PASSWORD_LENGTH = 6
+    MIN_PASSWORD_LENGTH = 3
     MAX_PASSWORD_LENGTH = 30
     ARTICLE_LENGTH = 512
     ROOM_NAME_LENGTH = 50

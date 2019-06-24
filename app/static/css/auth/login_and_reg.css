@@ -389,6 +389,7 @@ input.input100 {
   display: -ms-flexbox;
   display: flex;
   flex-wrap: wrap;
+  margin-top: -0.6em;
 }
 
 .login100-form-btn {
@@ -519,4 +520,14 @@ input.input100 {
   }
 }
 
+#error {
+  color: red;
+  font-size: 0.9em;
+  margin-top: -2.5vh;
+}
+
+.error2 #error {
+  margin-top: -1.8vh;
+  margin-bottom: 2vh;
+}
 

@@ -66,7 +66,11 @@
                                             </td>
 
                                             <td>
-                                                <a href="#">Write message</a>
+                                                {% if current_user != user %}
+                                                    <div class="write_message">
+                                                        <a href="{{ user.nick }}">Write message</a>
+                                                    </div>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -78,14 +82,15 @@
             </div>
         </div>
         {% if prev_url %}
-            <a href="{{ prev_url }}">Newer posts</a>
+            <a href="{{ prev_url }}">Prev users</a>
         {% endif %}
+        <br><br>
         {% if next_url %}
-            <a href="{{ next_url }}">Older posts</a>
+            <a href="{{ next_url }}">Next users</a>
         {% endif %}
     </div>
 {% endblock %}
 
 {% block js_files %}
-    <script src="/static/js/profile.js"></script>
+    <script src="/static/js/search.js"></script>
 {% endblock %}

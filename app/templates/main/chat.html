@@ -53,11 +53,8 @@
             <div class="wrap">
                 <form action="" method="post" novalidate>
                     {{ form.hidden_tag() }}
-                    {{ form.message() }}
+                    {{ form.message(autofocus='autofocus', placeholder='Write a message...') }}
                     <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-                    <button class="submit">
-                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                    </button>
                 </form>
             </div>
         </div>

@@ -11,6 +11,8 @@
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/static/css/auth/login_and_reg.css">
 <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/static/css/auth/registration.css">
+<!--===============================================================================================-->
 </head>
 <body>
 
@@ -31,42 +33,77 @@
                           {{ form.name(size=26, class="input100", placeholder="Enter name") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error">
+                        {% for error in form.name.errors %}
+                            <p id="errors">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
 
 					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
 						<span class="label-input100"> {{form.surname.label}} </span>
                           {{ form.surname(size=26, class="input100", placeholder="Enter surname") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error">
+                        {% for error in form.surname.errors %}
+                            <p id="errors">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
 
 					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
 						<span class="label-input100"> {{form.nick.label}} </span>
                           {{ form.nick(size=26, class="input100", placeholder="Enter nick") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error">
+                        {% for error in form.nick.errors %}
+                            <p id="errors">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
 
                     <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
 						<span class="label-input100"> {{form.age.label}} </span>
                           {{ form.age(size=26, class="input100", placeholder="Enter age") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error">
+                        {% for error in form.age.errors %}
+                            <p id="errors">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
 
                     <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
 						<span class="label-input100"> {{form.email.label}} </span>
                           {{ form.email(size=26, class="input100", placeholder="Enter email") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error">
+                        {% for error in form.email.errors %}
+                            <p id="errors">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
 
                     <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
 						<span class="label-input100"> {{form.password.label}} </span>
                           {{ form.password(size=26, class="input100", placeholder="Enter password") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error">
+                        {% for error in form.password.errors %}
+                            <p id="errors">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
 
                     <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
 						<span class="label-input100"> {{ form.confirm_password.label }} </span>
                           {{ form.confirm_password(size=26, class="input100", placeholder="Confirm password") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error">
+                        {% for error in form.confirm_password.errors %}
+                            <p id="errors">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
 
                     <div class="container-login100-form-btn">
 						<button class="login100-form-btn">
@@ -75,7 +112,7 @@
                     </div>
 
                     <div id="have-account">
-                        <a href="{{ url_for('auth.login') }}">I have account</a>
+                        <a href="{{ url_for('auth.login') }}">I have an account</a>
                     </div>
                 </form>
 			</div>

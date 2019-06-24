@@ -56,7 +56,7 @@ def reset_password_request():
     form = ResetPassRequestForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data).first_or_404()
         if user:
             send_password_reset_email(user)
         # TODO: Add something like flash(...) here

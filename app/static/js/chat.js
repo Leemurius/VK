@@ -1,47 +1,121 @@
-function newMessage() {
-	message = $(".message-input textarea").val();
-	if($.trim(message) == '') {
-		return false;
-	}
-	// $('<li class="sent">' +
-    //     '<img src="http://emilcarlsson.se/assets/mikeross.png" alt="">' +
-    //     '<p>' + message + '</p>' +
-    //     '</li>').appendTo($('.messages ul'));
-	// $('.message-input textarea').val(null);
-	// $('.contact.active .preview').html('<span>You: </span>' + message);
-	$(".messages").animate({ scrollTop: undefined }, "fast");
-};
+const INF = 100000000000;
+const MY_IP = 'http://192.168.43.36:5000';
 
-$('.submit').click(function() {
+function GetAjaxInformation(url) {
+    var response = '';
+    $.ajax({ type: "GET",
+             url: url,
+             async: false,
+             success : function(text) {
+                 response = text;
+             }
+    });
+    return response;
+}
 
-});
+function PostAjaxInformation(url, data) {
+    var response = '';
+    $.ajax({ type: "POST",
+             url: url,
+             async: false,
+             data: data,
+             contentType: 'application/json;charset=UTF-8',
+             success : function(text) {
+                 response = text;
+             }
+    });
+    return response;
+}
 
-var check = false;
+function GetSelfPhoto() {
+    return GetAjaxInformation(MY_IP + '/api/self/user_photo');
+}
+
+function GetRoomId() {
+    var split_url = (window.location.href).split('/'); // current link
+    var room_id = split_url[split_url.length - 1];
+    return room_id;
+}
+
+function AddMessageInChat(message) {
+    var cur_date = new Date();
+    date = cur_date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    date = date.replace("AM", "am").replace("PM", "pm");
+
+    $('<li class="sent">' +
+        '<img src=' + GetSelfPhoto() + ' alt="">' +
+        '<p>' + message + '</p>' +
+        '<span>' + date + '</span>' +
+        '</li>'
+    ).appendTo($('.messages ul'));
+}
+
+function StartState() {
+    $('.messages').css({
+        'min-height': 'calc(100% - 110px)',
+        'max-height': 'calc(100% - 110px)'
+    });
+    $('.message-input textarea').val('');
+    $('.message-input textarea').css({
+        'height': '2.3em',
+    });
+
+    $(".messages").animate({ scrollTop: INF }, "fast");
+}
+
+function AddMessage(text) {
+    var data = JSON.stringify({'room_id' : Number(GetRoomId()), 'message' : text});
+    var response = JSON.parse(PostAjaxInformation(MY_IP + '/api/messages', data));
+    if (response) {
+        AddMessageInChat(text);
+    }
+    StartState();
+}
+
+function GetMessageFromArea() {
+    message = $('.message-input textarea').val();
+    return message.replace(/^\s+|\s+$/g, ''); // clear text
+}
+
+var AREA_HEIGHT = $('textarea').height();
 $(window).on('keydown', function(e) {
-  if (e.which == 13 && !check && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
-    check = true;
-      $('.submit').click()
-      $('.message-input textarea').val(null);
-  }
-
-    message = $(".message-input textarea").val();
-	if((message.match(/\n/g)||[]).length) {
-        $(".message-input textarea").css({"height" : "5em"});
-        $("#frame .content .messages ul li:nth-last-child(1)").css({"margin-bottom" : "5em"});
-        $(".messages").animate({ scrollTop: 10000000000 }, "fast");
-        $("#frame .content .message-input .wrap .attachment").css({"margin-top" : "1.5em"});
-        $("#frame .content .message-input .wrap button").css({"margin-top" : "1.5em"});
-	}
-
-	if(!(message.match(/\n/g)||[]).length) {
-        $(".message-input textarea").css({"height" : "2.2em"});
-        $("#frame .content .messages ul li:nth-last-child(1)").css({"margin-bottom" : "1em"});
-        $(".messages").animate({ scrollTop: 10000000000 }, "fast");
-        $("#frame .content .message-input .wrap .attachment").css({"margin-top" : "17px"});
-        $("#frame .content .message-input .wrap button").css({"margin-top" : "0em"});
-	}
+    if (e.which == 13 && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        if (GetMessageFromArea() == '') return;
+        AddMessage(GetMessageFromArea());
+        AREA_HEIGHT = $('textarea').height();
+    }
 });
 
-$(document).ready(function() {
-    $('.message-input textarea').focus()
+$("textarea").keyup(function(e) {
+    function get_height(elt) {
+        return elt.scrollHeight + parseFloat($(elt).css("borderTopWidth")) + parseFloat($(elt).css("borderBottomWidth"));
+    }
+
+    if (GetMessageFromArea() == '') { // new line before enter
+        StartState();
+        return;
+    }
+
+    var max_height = +$(this).css('max-height').replace('px', '');
+    if ($(this).height() + 50 <= max_height) {
+        var found = 0;
+        while (!found) {
+            $(this).height($(this).height() - 10);
+            while($(this).outerHeight() < get_height(this)) {
+                $(this).height($(this).height() + 1);
+                found = 1;
+            }
+        }
+    }
+
+    var div_heaght = $('.messages').height();
+    var area_heaght = $('textarea').height();
+    if (AREA_HEIGHT != area_heaght) {
+        $('.messages').css({
+            'min-height': (div_heaght - (area_heaght - AREA_HEIGHT)).toString() + 'px',
+            'max-height': (div_heaght - (area_heaght - AREA_HEIGHT)).toString() + 'px'
+        });
+        $(".messages").animate({ scrollTop: INF }, "fast");
+        AREA_HEIGHT = $('textarea').height();
+    }
 });

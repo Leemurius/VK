@@ -229,3 +229,9 @@ select {
 .foot a:hover{
   color: grey;
 }
+
+.error #errors {
+  color: red;
+  font-size: 0.7em;
+  margin-top: -3vh;
+}

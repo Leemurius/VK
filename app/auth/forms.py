@@ -24,7 +24,7 @@ class RegistrationForm(FlaskForm):
         'Name',
         validators=[
             DataRequired(),
-            length(max=Constants.NAME_LENGTH, message='Too long name')
+            length(max=Constants.NAME_LENGTH, message='Too long name.')
         ]
     )
 
@@ -32,7 +32,7 @@ class RegistrationForm(FlaskForm):
         'Surname',
         validators=[
             DataRequired(),
-            length(max=Constants.SURNAME_LENGTH, message='Too long surname')
+            length(max=Constants.SURNAME_LENGTH, message='Too long surname.')
         ]
     )
 
@@ -40,7 +40,7 @@ class RegistrationForm(FlaskForm):
         'Nick',
         validators=[
             DataRequired(),
-            length(max=Constants.NICK_LENGTH, message='Too long nick')
+            length(max=Constants.NICK_LENGTH, message='Too long nick.')
         ]
     )
 
@@ -56,7 +56,7 @@ class RegistrationForm(FlaskForm):
         'Email',
         validators=[
             Email(),
-            length(max=Constants.EMAIL_LENGTH, message='Too long email')
+            length(max=Constants.EMAIL_LENGTH, message='Too long email.')
         ]
     )
 
@@ -76,7 +76,7 @@ class RegistrationForm(FlaskForm):
         'Confirm',
         validators=[
             DataRequired(),
-            EqualTo('password', message='Passwords must match')
+            EqualTo('password', message='Passwords must match.')
         ]
     )
 
@@ -84,14 +84,14 @@ class RegistrationForm(FlaskForm):
 
     def validate_nick(self, nick):
         if User.query.filter_by(nick=nick.data).count():
-            raise ValueError('This nick already taken')
+            raise ValueError('This nick already taken.')
 
-        if not re.match('[0-9a-zA-Z-]', nick.data):
-            raise ValueError('Only letters and digits are allowed')
+        if not re.match('[0-9a-zA-Z]', nick.data):
+            raise ValueError('Only letters and digits are allowed.')
 
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).count():
-            raise ValueError('This email already taken')
+            raise ValueError('This email already taken.')
 
 
 class LoginForm(FlaskForm):
@@ -103,7 +103,7 @@ class LoginForm(FlaskForm):
         'Nick or email',
         validators=[
             DataRequired(),
-            length(max=Constants.NAME_LENGTH, message='Too long login')
+            length(max=Constants.NAME_LENGTH, message='Too long login.')
         ]
     )
 
@@ -114,7 +114,7 @@ class LoginForm(FlaskForm):
             length(
                 min=Constants.MIN_PASSWORD_LENGTH,
                 max=Constants.MAX_PASSWORD_LENGTH,
-                message='Incorrect password'
+                message='Incorrect password.'
             )
         ]
     )
@@ -135,7 +135,7 @@ class LoginForm(FlaskForm):
             self._user = User.query.filter_by(nick=self.login.data).first()
 
         if self._user is None or not self._user.check_password(password=password.data):
-            raise ValueError('Username or password is incorrect')
+            raise ValueError('Username or password is incorrect.')
 
 
 class ResetPassRequestForm(FlaskForm):
@@ -143,7 +143,7 @@ class ResetPassRequestForm(FlaskForm):
         'Email from your account',
         validators=[
             Email(),
-            length(max=Constants.EMAIL_LENGTH, message='Too long email')
+            length(max=Constants.EMAIL_LENGTH, message='Too long email.')
         ]
     )
 
@@ -156,15 +156,15 @@ class ResetPassForm(FlaskForm):
             length(
                 min=Constants.MIN_PASSWORD_LENGTH,
                 max=Constants.MAX_PASSWORD_LENGTH,
-                message='Password is short or too long'
+                message='Password is short or too long.'
             )
         ]
     )
 
     confirm_password = PasswordField(
-        'Enter new password again',
+        'Enter new password again.',
         validators=[
             DataRequired(),
-            EqualTo('new_password', message='Passwords must match')
+            EqualTo('new_password', message='Passwords must match.')
         ]
     )

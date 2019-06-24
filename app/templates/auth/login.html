@@ -32,12 +32,23 @@
                         {{ form.login(size=26, class="input100", placeholder="Enter username") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error1">
+                        {% for error in form.login.errors %}
+                            <p id="error">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
 
 					<div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
 						<span class="label-input100">Password</span>
                         {{ form.password(size=26, class="input100", placeholder="Enter password") }}
 						<span class="focus-input100"></span>
 					</div>
+                    <div class="error2">
+                        {% for error in form.password.errors %}
+                            <p id="error">[{{ error }}]</p>
+                        {% endfor %}
+                    </div>
+
 
 					<div class="flex-sb-m w-full p-b-30">
 						<div class="contact100-form-checkbox">
@@ -50,6 +61,11 @@
 						<div>
 							<a href="{{ url_for('auth.reset_password_request') }}" class="txt1">
 								Forgot Password?
+							</a>
+						</div>
+                        <div>
+							<a href="{{ url_for('auth.registration') }}" class="txt1">
+								Registration
 							</a>
 						</div>
 					</div>

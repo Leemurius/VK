@@ -29,13 +29,15 @@ class SearchForm(FlaskForm):
     )
 
     def get_founding_room(self, current_user):
-        rooms = current_user.rooms  # your own rooms
+        my_rooms = current_user.rooms  # your own rooms
+        rooms = []
 
         if self.validate_on_submit():
-            rooms = []
-            for room in Room.query.all():  # TODO : normal search
+            for room in my_rooms:  # TODO : normal search
                 if room.get_title(current_user) == self.request.data:
                     rooms.append(room)
+        else:
+            rooms = my_rooms
 
         return rooms
 

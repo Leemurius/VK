@@ -79,6 +79,18 @@ class User(UserMixin, db.Model):
             algorithm='HS256'
         ).decode('utf-8')
 
+    def from_dict(self, data):
+        pass  # TODO: relize pls
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'name': self.name,
+            'surname': self.surname,
+            'nick': self.nick
+        }
+        return data
+
     def set_profile_form(self, form):
         self.name = form.name.data
         self.surname = form.surname.data
@@ -152,9 +164,12 @@ class Room(db.Model):
 
     @staticmethod
     def get_or_create_room(user1, user2):
+        if user1 == user2:  # TODO: next time
+            return None
+
         for room1 in user1.rooms:       # FIXME: make faster
             for room2 in user2.rooms:
-                if room1 == room2:
+                if room1 == room2 and room1.members.count() == 2:  # private
                     return room1.id
 
         room = Room.create_new_room(is_dialog=True)

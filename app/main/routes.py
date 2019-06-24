@@ -19,12 +19,11 @@ def profile(nick):
         base_form=base_form,  # for base.html
         current_user=current_user,  # for base.html
         rooms=rooms,  # for base.html
-        user=user,
-        get_or_create_room=Room.get_or_create_room  # if click 'write message'
+        user=user
     )
 
 
-@bp.route('/chat/<room_id>', methods=['GET', 'POST'])
+@bp.route('/chat/<room_id>', methods=['GET'])
 @login_required
 def chat(room_id):
     room = Room.query.get_or_404(room_id)
@@ -35,12 +34,6 @@ def chat(room_id):
     form = ChatForm()
     base_form = SearchForm()
     rooms = base_form.get_founding_room(current_user)  # validate inside
-
-    if form.validate_on_submit():
-        current_user.send_message(
-            recipient_room=room,
-            text=form.message.data
-        )
 
     return render_template(
         'main/chat.html',

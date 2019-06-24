@@ -59,9 +59,11 @@
                                 </ul>
 							</div>
 
-                            <div class="write_message">
-{#                                <a href={{ url_for('main.chat', room_id=get_or_create_room(user, current_user)) }}>Write message</a>#}
-                            </div>
+                            {% if current_user != user %}
+                                <div class="write_message">
+                                    <a href="#">Write message</a>
+                                </div>
+                            {% endif %}
 						</div>
 						<div class="col-lg-6">
 							<figure class="hero-image">

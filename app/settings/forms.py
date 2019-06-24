@@ -133,7 +133,6 @@ class AboutSettingsForm(FlaskForm):
     about_me = TextAreaField(
         'About me',
         validators=[
-            DataRequired(),
             length(max=Constants.ARTICLE_LENGTH, message='Too long article')
         ]
     )
