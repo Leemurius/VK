@@ -48,7 +48,6 @@ class ProfSettingsForm(FlaskForm):
     address = StringField(
         'Address',
         validators=[
-            DataRequired(message='Field is empty'),
             length(max=Constants.ADDRESS_LENGTH, message='Too long address')
         ]
     )

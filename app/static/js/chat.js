@@ -1,5 +1,5 @@
 const INF = 100000000000;
-const MY_IP = 'http://192.168.43.36:5000';
+const MY_IP = '192.168.43.7:5000';
 
 function GetAjaxInformation(url) {
     var response = '';
@@ -28,7 +28,7 @@ function PostAjaxInformation(url, data) {
 }
 
 function GetSelfPhoto() {
-    return GetAjaxInformation(MY_IP + '/api/self/user_photo');
+    return GetAjaxInformation('http://' + MY_IP + '/api/self/user_photo');
 }
 
 function GetRoomId() {
@@ -65,7 +65,7 @@ function StartState() {
 
 function AddMessage(text) {
     var data = JSON.stringify({'room_id' : Number(GetRoomId()), 'message' : text});
-    var response = JSON.parse(PostAjaxInformation(MY_IP + '/api/messages', data));
+    var response = JSON.parse(PostAjaxInformation('http://' + MY_IP + '/api/messages', data));
     if (response) {
         AddMessageInChat(text);
     }

@@ -749,3 +749,15 @@ textarea {
     padding: 50px 30px;
   }
 }
+
+.error {
+  width: auto;
+  margin: auto;
+}
+
+.error #errors {
+  color: red;
+  font-size: 1em;
+  margin-top: 1.5vh;
+  margin-bottom: -1.5vh;
+}

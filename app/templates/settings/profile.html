@@ -43,7 +43,12 @@
                         <div class="form-row">
                             <div class="name">{{ form.name.label }}</div>
                             <div class="value">
-                                {{ form.name(class="input--style-6", placeholder="Anton") }}
+                                {{ form.name(class="input--style-6", placeholder="Ivan") }}
+                            </div>
+                            <div class="error">
+                                {% for error in form.name.errors %}
+                                    <p id="errors">[{{ error }}]</p>
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -51,8 +56,13 @@
                             <div class="name">{{ form.surname.label }}</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {{ form.surname(class="input--style-6", placeholder="Sidorevich") }}
+                                    {{ form.surname(class="input--style-6", placeholder="Ivanov") }}
                                 </div>
+                            </div>
+                            <div class="error">
+                                {% for error in form.surname.errors %}
+                                    <p id="errors">[{{ error }}]</p>
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -60,8 +70,13 @@
                             <div class="name">{{ form.nick.label }}</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {{ form.nick(class="input--style-6", placeholder="Leemur") }}
+                                    {{ form.nick(class="input--style-6", placeholder="Skyhawk") }}
                                 </div>
+                            </div>
+                            <div class="error">
+                                {% for error in form.nick.errors %}
+                                    <p id="errors">[{{ error }}]</p>
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -69,8 +84,13 @@
                             <div class="name">{{ form.age.label }}</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {{ form.age(class="input--style-6", placeholder="17") }}
+                                    {{ form.age(class="input--style-6", placeholder="23") }}
                                 </div>
+                            </div>
+                            <div class="error">
+                                {% for error in form.age.errors %}
+                                    <p id="errors">[{{ error }}]</p>
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -78,8 +98,13 @@
                             <div class="name">{{ form.email.label }}</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {{ form.email(class="input--style-6", placeholder="leemur@mail.com") }}
+                                    {{ form.email(class="input--style-6", placeholder="somename@mail.com") }}
                                 </div>
+                            </div>
+                            <div class="error">
+                                {% for error in form.email.errors %}
+                                    <p id="errors">[{{ error }}]</p>
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -87,8 +112,13 @@
                             <div class="name">{{ form.address.label }}</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {{ form.address(class="input--style-6", placeholder="Belarus, Gantsevichi") }}
+                                    {{ form.address(class="input--style-6", placeholder="Belarus, Minsk") }}
                                 </div>
+                            </div>
+                            <div class="error">
+                                {% for error in form.address.errors %}
+                                    <p id="errors">[{{ error }}]</p>
+                                {% endfor %}
                             </div>
                         </div>
 

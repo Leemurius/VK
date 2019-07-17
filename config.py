@@ -27,7 +27,7 @@ class Constants(object):
     CONST_DEFAULT_USER_PHOTO = '/static/images/no_photo.png'
     CONST_DEFAULT_ROOM_PHOTO = '/static/images/no_photo.png'
 
-    USER_PER_PAGE = 10
+    USER_PER_PAGE = 8
     MESSAGE_PER_PAGE = 20
 
     TIME_OF_ACTUAL_REQUEST = 500

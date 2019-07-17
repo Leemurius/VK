@@ -273,7 +273,19 @@ ol {
 }
 
 .write_message {
-	margin-top: 10px;
+	margin-top: 1em;
+	width: 8em;
+	padding: 3px;
+	font-size: 1em;
+	border: 2px solid dodgerblue;
+	border-radius: 4px;
+	text-align: center;
+}
+
+.write_message:hover,
+.write_message a:hover {
+	background: dodgerblue;
+	color: white;
 }
 
 .write_message a{

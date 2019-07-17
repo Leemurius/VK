@@ -10,15 +10,11 @@ $(document).ready(function() {
 
         if (f) {
             $('.input-file__info').text(f.name);
+
         } else {
-          alert("Failed to load file");
+            alert("Failed to load file");
         }
     }
 });
-
-
-
-
-
 
 
