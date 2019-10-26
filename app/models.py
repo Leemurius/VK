@@ -20,7 +20,6 @@ rooms = db.Table('rooms',
 class User(UserMixin, db.Model):
     __searchable__ = ['body']
 
-    CONST_DEFAULT_PHOTO = '/static/images/no_photo.png'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(Constants.NAME_LENGTH))
     surname = db.Column(db.String(Constants.SURNAME_LENGTH))
@@ -114,22 +113,13 @@ class User(UserMixin, db.Model):
 
     def upload_photo(self, photo):
         if photo.data:
-            filename = photo.data.filename
+            filename = str(self.id) + "." + photo.data.filename.rsplit('.', 1)[1]
 
-            dir_path = os.path.join(
-                'app/static',
-                Constants.IMAGE_UPLOAD_FOLDER
-            )
-            file_path = os.path.join(
-                dir_path,
-                str(self.id) + "." + filename.rsplit('.', 1)[1]
-            )
-            file_path_db = os.path.join(
-                '/', file_path.split('/', 1)[1]
-            )
+            file_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER, filename)
+            file_path_db = os.path.join(Constants.IMAGE_DB_FOLDER, filename)
 
-            if not os.path.isdir(dir_path):
-                os.makedirs(dir_path)
+            if not os.path.isdir(Constants.IMAGE_UPLOAD_FOLDER):
+                os.makedirs(Constants.IMAGE_UPLOAD_FOLDER)
 
             photo.data.save(file_path)
             self.photo = file_path_db
@@ -247,22 +237,13 @@ class Room(db.Model):
 
     def upload_photo(self, photo):
         if photo.data:
-            filename = photo.data.filename
+            filename = str(self.id) + "." + photo.data.filename.rsplit('.', 1)[1]
 
-            dir_path = os.path.join(
-                'app/static',
-                Constants.ROOM_IMAGE_UPLOAD_FOLDER
-            )
-            file_path = os.path.join(
-                dir_path,
-                str(self.id) + "." + filename.rsplit('.', 1)[1]
-            )
-            file_path_db = os.path.join(
-                '/', file_path.split('/', 1)[1]
-            )
+            file_path = os.path.join(Constants.ROOM_IMAGE_UPLOAD_FOLDER, filename)
+            file_path_db = os.path.join(Constants.ROOM_IMAGE_DB_FOLDER, filename)
 
-            if not os.path.isdir(dir_path):
-                os.makedirs(dir_path)
+            if not os.path.isdir(Constants.ROOM_IMAGE_UPLOAD_FOLDER):
+                os.makedirs(Constants.ROOM_IMAGE_UPLOAD_FOLDER)
 
             photo.data.save(file_path)
             self.photo = file_path_db

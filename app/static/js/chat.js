@@ -1,5 +1,8 @@
+function getIP() {
+    return "127.0.0.1:5000";
+}
+
 const INF = 100000000000;
-const MY_IP = '192.168.43.7:5000';
 
 function GetAjaxInformation(url) {
     var response = '';
@@ -28,7 +31,7 @@ function PostAjaxInformation(url, data) {
 }
 
 function GetSelfPhoto() {
-    return GetAjaxInformation('http://' + MY_IP + '/api/self/user_photo');
+    return GetAjaxInformation('http://' + getIP() + '/api/self/user_photo');
 }
 
 function GetRoomId() {
@@ -39,7 +42,7 @@ function GetRoomId() {
 
 function AddMessageInChat(message) {
     var cur_date = new Date();
-    date = cur_date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    var date = cur_date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
     date = date.replace("AM", "am").replace("PM", "pm");
 
     $('<li class="sent">' +
@@ -65,7 +68,7 @@ function StartState() {
 
 function AddMessage(text) {
     var data = JSON.stringify({'room_id' : Number(GetRoomId()), 'message' : text});
-    var response = JSON.parse(PostAjaxInformation('http://' + MY_IP + '/api/messages', data));
+    var response = JSON.parse(PostAjaxInformation('http://' + getIP() + '/api/messages', data));
     if (response) {
         AddMessageInChat(text);
     }
@@ -73,7 +76,7 @@ function AddMessage(text) {
 }
 
 function GetMessageFromArea() {
-    message = $('.message-input textarea').val();
+    var message = $('.message-input textarea').val();
     return message.replace(/^\s+|\s+$/g, ''); // clear text
 }
 
@@ -88,7 +91,9 @@ $(window).on('keydown', function(e) {
 
 $("textarea").keyup(function(e) {
     function get_height(elt) {
-        return elt.scrollHeight + parseFloat($(elt).css("borderTopWidth")) + parseFloat($(elt).css("borderBottomWidth"));
+        return elt.scrollHeight +
+            parseFloat($(elt).css("borderTopWidth")) +
+            parseFloat($(elt).css("borderBottomWidth"));
     }
 
     if (GetMessageFromArea() == '') { // new line before enter

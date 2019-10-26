@@ -4,3 +4,4 @@ $(window).on('load', function() {
 });
 
 $(".messages").animate({ scrollTop: 1000000000 }, "fast");
+
