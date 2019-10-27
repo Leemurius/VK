@@ -1,0 +1,6 @@
+/app.db
+/venv/
+/migrations/
+/logs/
+/.idea/*
+/app/static/Data/

@@ -79,7 +79,7 @@ class User(UserMixin, db.Model):
         ).decode('utf-8')
 
     def from_dict(self, data):
-        pass  # TODO: relize pls
+        pass  # TODO: implement pls
 
     def to_dict(self):
         data = {

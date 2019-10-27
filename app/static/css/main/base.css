@@ -87,6 +87,7 @@ body {
     color: #f5f5f5;
     overflow: hidden;
     position: relative;
+    border-radius: 5px;
 }
 
 @media screen and (max-width: 735px) {
@@ -115,8 +116,8 @@ body {
     line-height: initial;
 }
 
-#frame #sidepanel #profile.expanded .wrap p {
-    margin-top: 20px;
+#frame #sidepanel #profile .wrap p {
+    margin-top: -7px;
 }
 
 #frame #sidepanel #profile.expanded .wrap i.expand-button {
@@ -388,7 +389,7 @@ body {
 #frame #sidepanel #search input {
     font-family: "proxima-nova",    "Source Sans Pro", sans-serif;
     padding: 10px 0 10px 46px;
-    width: calc(100% - 25px);
+    width: 100%;
     border: none;
     background: #32465a;
     color: #f5f5f5;

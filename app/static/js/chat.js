@@ -89,6 +89,12 @@ $(window).on('keydown', function(e) {
     }
 });
 
+$(".submit").click(function(e) {
+    if (GetMessageFromArea() == '') return;
+    AddMessage(GetMessageFromArea());
+    AREA_HEIGHT = $('textarea').height();
+});
+
 $("textarea").keyup(function(e) {
     function get_height(elt) {
         return elt.scrollHeight +

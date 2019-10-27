@@ -58,7 +58,8 @@ def search():
 
     if form.validate_on_submit():
         # Get list of found users
-        users = User.query.filter_by(nick=form.request.data)  # TODO : normal search
+        users = User.query.filter(User.nick.like(form.request.data + '%'))
+        # TODO : normal search
 
     # pagination
     page = request.args.get('page', default=1, type=int)
