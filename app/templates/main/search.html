@@ -2,97 +2,93 @@
 
 {% block head %}
     <title>Search</title>
-    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
+    <!--===============================================================================================-->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/favicons/search.png"/>
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="/static/css/main/search.css"/>
+    <!--===============================================================================================-->
 {% endblock %}
 
 {% block content %}
-    <link rel="stylesheet" type="text/css" href="/static/vendor/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,800" rel="stylesheet" />
-    <link rel="stylesheet" href="/static/css/main/search.css"/>
+    {{ moment.include_jquery() }}
 
-    <div class="s006">
-      <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <fieldset>
-          <legend>Let's find new friends for you!</legend>
-          <div class="inner-form">
-            <div class="input-field">
-              <button class="btn-search" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                  <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-                </svg>
-              </button>
-                {{ form.request(id="search",
-                                type="text",
-                                placeholder="Let's go find someone knowing a nick")
-                }}
-            </div>
-          </div>
-        </fieldset>
-      </form>
-    </div>
+    {# SEARCH BOX #}
+    <div class="col-xl-9 search-box">
+        <div class="card">
 
-    <hr>
-    <div class="container bootstrap snippet">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="main-box no-header clearfix">
-                    <div class="main-box-body clearfix">
-                        <div class="table-responsive">
-                            <table class="table user-list">
-                                <thead>
-                                    <tr>
-                                    <th><span>User</span></th>
-                                    <th><span>Age</span></th>
-                                    <th class="text-center"><span>Status</span></th>
-                                    <th><span>Email</span></th>
-                                    <th>&nbsp;</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for user in users %}
-                                        <tr>
-                                            <td>
-                                                <img src="{{ user.photo }}" alt="">
-                                                <a href="{{ url_for('main.profile', nick=user.nick) }}" class="user-link">{{ user.name }} {{ user.surname }}</a>
-                                            </td>
-                                            <td>{{ user.age }}</td>
-                                            <td class="text-center">
-                                                {% if user.status %}
-                                                    <span class="label label-success">Online</span>
-                                                {% else %}
-                                                    <span class="label label-default">Offline</span>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                <a href="#">{{ user.email }}</a>
-                                            </td>
-
-                                            <td>
-                                                {% if current_user != user %}
-                                                    <div class="write_message">
-                                                        <a class="example_c" href="{{ user.nick }}" target="_blank" rel="nofollow noopener">
-                                                            Write message
-                                                        </a>
-                                                    </div>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+            {#HEADER#}
+            <div class="card-header">
+                <div class="input-group">
+                    <input type="text" placeholder="Search new friend..." class="form-control search">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
                     </div>
                 </div>
+                <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                <div class="action_menu">
+                    <ul>
+                        <a href="{{ url_for('main.profile', nick=current_user.nick) }}">
+                            <li><i class="fas fa-user-circle"></i>View your profile</li>
+                        </a>
+
+                        <a href="{{ url_for('main.search') }}">
+                            <li><i class="fas fa-search"></i>Find user</li>
+                        </a>
+
+                        <a href="{{ url_for('settings.security') }}">
+                            <li><i class="fas fa-plus"></i> Add to chat</li>
+                        </a>
+
+                        <a href="{{ url_for('settings.profile') }}">
+                            <li><i class="fas fa-"></i>Settings</li>
+                        </a>
+
+                        <a href="{{ url_for('auth.logout') }}">
+                            <li><i class="fas fa-ban"></i>Logout</li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+
+            {#USERS#}
+             <div class="container">
+                <table class="table user-list">
+                    <thead>
+                        <tr>
+                            <th><span>User</span></th>
+                            <th><span>Age</span></th>
+                            <th class="text-center"><span>Status</span></th>
+                            <th><span>Email</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr data-href="{{ url_for('main.profile', nick=user.nick) }}">
+                                <td>
+                                    <img src="{{ user.photo }}" alt="" class="rounded-circle user_img">
+                                    <span class="name_surname"> {{ user.name }} {{ user.surname }}
+                                    </span>
+                                </td>
+
+                                <td>{{ user.age }}</td>
+
+                                <td class="text-center">
+                                    {% if user.status %}
+                                        <span class="label label-success">Online</span>
+                                    {% else %}
+                                        <span class="label label-default">Offline</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <span>{{ user.email }}</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-        {% if prev_url %}
-            <a href="{{ prev_url }}">Prev users</a>
-        {% endif %}
-        <br><br>
-        {% if next_url %}
-            <a href="{{ next_url }}">Next users</a>
-        {% endif %}
     </div>
 {% endblock %}
 

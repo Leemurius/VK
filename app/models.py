@@ -18,8 +18,6 @@ rooms = db.Table('rooms',
 
 
 class User(UserMixin, db.Model):
-    __searchable__ = ['body']
-
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(Constants.NAME_LENGTH))
     surname = db.Column(db.String(Constants.SURNAME_LENGTH))
@@ -77,18 +75,6 @@ class User(UserMixin, db.Model):
             current_app.config['SECRET_KEY'],
             algorithm='HS256'
         ).decode('utf-8')
-
-    def from_dict(self, data):
-        pass  # TODO: implement pls
-
-    def to_dict(self):
-        data = {
-            'id': self.id,
-            'name': self.name,
-            'surname': self.surname,
-            'nick': self.nick
-        }
-        return data
 
     def set_profile_form(self, form):
         self.name = form.name.data
@@ -215,7 +201,7 @@ class Room(db.Model):
     def get_last_message(self):
         messages = db.session.query(self.chat).all()
         if messages:
-            return messages[-1].text
+            return messages[-1].text[0:50] + '...'
         else:
             return None
 

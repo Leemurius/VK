@@ -3,7 +3,7 @@
 {% block head %}
     <title>Settings</title>
     <!--===============================================================================================-->
-    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/settings.png"/>
+    <link rel="shortcut icon" type="image/x-icon" href="/static/favicons/settings.png"/>
     <!--===============================================================================================-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet">
     <!--===============================================================================================-->
@@ -12,6 +12,8 @@
 {% endblock %}
 
 {% block content %}
+    {{ moment.include_jquery() }}
+
     <div class="page-wrapper p-b-50">
         <div class="wrapper wrapper--w900">
             <div class="card card-6">
@@ -74,9 +76,5 @@
 {% endblock %}
 
 {% block js_files %}
-    <!--===============================================================================================-->
-	<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
-    <!--===============================================================================================-->
     <script src="/static/js/settings.js"></script>
-    <!--===============================================================================================-->
 {% endblock %}

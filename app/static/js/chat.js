@@ -1,122 +1,84 @@
-function getIP() {
-    return "127.0.0.1:5000";
+// - Requests --------------------------------------------------------------------------------------
+
+function getSelfPhoto() {
+    return getAjaxInformation('http://' + getIP() + '/api/self/user_photo');
 }
 
-const INF = 100000000000;
-
-function GetAjaxInformation(url) {
-    var response = '';
-    $.ajax({ type: "GET",
-             url: url,
-             async: false,
-             success : function(text) {
-                 response = text;
-             }
-    });
-    return response;
-}
-
-function PostAjaxInformation(url, data) {
-    var response = '';
-    $.ajax({ type: "POST",
-             url: url,
-             async: false,
-             data: data,
-             contentType: 'application/json;charset=UTF-8',
-             success : function(text) {
-                 response = text;
-             }
-    });
-    return response;
-}
-
-function GetSelfPhoto() {
-    return GetAjaxInformation('http://' + getIP() + '/api/self/user_photo');
-}
-
-function GetRoomId() {
-    var split_url = (window.location.href).split('/'); // current link
-    var room_id = split_url[split_url.length - 1];
+function getRoomId() {
+    const split_url = (window.location.href).split('/'); // current link
+    const room_id = split_url[split_url.length - 1];
     return room_id;
 }
 
-function AddMessageInChat(message) {
-    var cur_date = new Date();
-    var date = cur_date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-    date = date.replace("AM", "am").replace("PM", "pm");
-
-    $('<li class="sent">' +
-        '<img src=' + GetSelfPhoto() + ' alt="">' +
-        '<p>' + message + '</p>' +
-        '<span>' + date + '</span>' +
-        '</li>'
-    ).appendTo($('.messages ul'));
-}
-
-function StartState() {
-    $('.messages').css({
-        'min-height': 'calc(100% - 110px)',
-        'max-height': 'calc(100% - 110px)'
-    });
-    $('.message-input textarea').val('');
-    $('.message-input textarea').css({
-        'height': '2.3em',
-    });
-
-    $(".messages").animate({ scrollTop: INF }, "fast");
-}
-
-function AddMessage(text) {
-    var data = JSON.stringify({'room_id' : Number(GetRoomId()), 'message' : text});
-    var response = JSON.parse(PostAjaxInformation('http://' + getIP() + '/api/messages', data));
-    if (response) {
-        AddMessageInChat(text);
+function addMessage(text) {
+    if (text == '') {
+        return null;
     }
-    StartState();
+    var data = JSON.stringify({'room_id' : Number(getRoomId()), 'message' : text});
+    var response = JSON.parse(postAjaxInformation('http://' + getIP() + '/api/messages', data));
+    return response;
 }
 
-function GetMessageFromArea() {
-    var message = $('.message-input textarea').val();
-    return message.replace(/^\s+|\s+$/g, ''); // clear text
-}
+// - JS --------------------------------------------------------------------------------------------
 
-var AREA_HEIGHT = $('textarea').height();
+$(document).ready(function() {
+	$('#action_menu_btn').click(function() {
+		$('.action_menu').toggle();
+	});
+    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
+});
+
 $(window).on('keydown', function(e) {
     if (e.which == 13 && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        if (GetMessageFromArea() == '') return;
-        AddMessage(GetMessageFromArea());
-        AREA_HEIGHT = $('textarea').height();
+        var message = getMessageFromArea();
+        if (addMessage(message)) {
+            addMessageVisual(message);
+            beginState();
+        }
     }
 });
 
-$(".submit").click(function(e) {
-    if (GetMessageFromArea() == '') return;
-    AddMessage(GetMessageFromArea());
-    AREA_HEIGHT = $('textarea').height();
+$(".send_btn").click(function() {
+    var message = getMessageFromArea();
+    if (addMessage(message)) {
+        addMessageVisual(message);
+        beginState();
+    }
 });
+
+function getMessageFromArea() {
+    var message = $('textarea').val();
+    return message.replace(/^\s+|\s+$/g, ''); // Clear [:space:]
+}
+
+function addMessageVisual(message) {
+    const cur_date = new Date();
+    let date = cur_date.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+    date = date.replace("AM", "am").replace("PM", "pm");
+
+    $('<div class="d-flex justify-content-end mb-4">' +
+            '<div class="msg_cotainer_send">' +
+                message +
+                '<span class="msg_time_send">' + date + '</span>' +
+            '</div>' +
+
+            '<div class="img_cont_msg">' +
+               '<img src="' + getSelfPhoto() + '" class="rounded-circle user_img_msg" >' +
+            '</div>' +
+        '</div>'
+    ).appendTo($('.msg_card_body'));
+}
+
+function beginState() {
+    $('textarea').val('');
+
+    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
+}
 
 $("textarea").keyup(function(e) {
-    function get_height(elt) {
-        return elt.scrollHeight +
-            parseFloat($(elt).css("borderTopWidth")) +
-            parseFloat($(elt).css("borderBottomWidth"));
-    }
-
-    if (GetMessageFromArea() == '') { // new line before enter
-        StartState();
+    if (getMessageFromArea() == '') {
+        beginState();
         return;
-    }
-
-    var max_height = +$(this).css('max-height').replace('px', '');
-    if ($(this).height() + 50 <= max_height) {
-        var found = 0;
-        while (!found) {
-            $(this).height($(this).height() - 10);
-            while($(this).outerHeight() < get_height(this)) {
-                $(this).height($(this).height() + 1);
-                found = 1;
-            }
-        }
     }
 
     var div_heaght = $('.messages').height();
@@ -126,7 +88,7 @@ $("textarea").keyup(function(e) {
             'min-height': (div_heaght - (area_heaght - AREA_HEIGHT)).toString() + 'px',
             'max-height': (div_heaght - (area_heaght - AREA_HEIGHT)).toString() + 'px'
         });
-        $(".messages").animate({ scrollTop: INF }, "fast");
+        $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
         AREA_HEIGHT = $('textarea').height();
     }
 });

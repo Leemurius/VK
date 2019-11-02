@@ -1,10 +1,9 @@
 {% extends 'main/base.html' %}
 
 {% block head %}
-
     <title>Chat with {{ title }}</title>
     <!--===============================================================================================-->
-    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
+    <link rel="shortcut icon" type="image/x-icon" href="/static/favicons/chat.png"/>
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="/static/css/main/chat.css">
     <!--===============================================================================================-->
@@ -13,50 +12,107 @@
 {% block content %}
     {{ moment.include_jquery() }}
     {{ moment.include_moment() }}
-    <div class="content">
 
-        <div class="contact-profile">
-            <a href="{{ url_for('main.profile', nick=recipient.nick) }}">
-                <img src={{ recipient.photo }} alt="" />
-            </a>
+    <div class="col-xl-9 chat">
+        <div class="card">
 
-            <p> {{ title }} </p>
+            <!-- HEAD -->
+            <div class="card-header msg_head">
+                <div class="d-flex bd-highlight">
+                    <div class="img_cont">
+                        <a href="{{ url_for('main.profile', nick=recipient.nick) }}">
+                            <img src="{{ recipient.photo }}" class="rounded-circle user_img" />
+                        </a>
+                        <span class="online_icon {{ 'online' if recipient.status else 'offline' }}"></span>
+                    </div>
+                    <div class="user_info">
+                        <span>{{ recipient.name + ' ' + recipient.surname }}</span>
+                        <p>{{ 'Nick: ' + recipient.nick }}</p>
+                    </div>
+                </div>
+                <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                <div class="action_menu">
+                    <ul>
+                        <a href="{{ url_for('main.profile', nick=current_user.nick) }}">
+                            <li><i class="fas fa-user-circle"></i>View your profile</li>
+                        </a>
 
-            <div id="logout">
-                <a href="{{ url_for('auth.logout') }}">Logout</a>
+                        <a href="{{ url_for('main.search') }}">
+                            <li><i class="fas fa-search"></i>Find user</li>
+                        </a>
+
+                        <a href="{{ url_for('settings.security') }}">
+                            <li><i class="fas fa-plus"></i> Add to chat</li>
+                        </a>
+
+                        <a href="{{ url_for('settings.profile') }}">
+                            <li><i class="fas fa-"></i>Settings</li>
+                        </a>
+
+                        <a href="{{ url_for('auth.logout') }}">
+                            <li><i class="fas fa-ban"></i>Logout</li>
+                        </a>
+                    </ul>
+                </div>
             </div>
-        </div>
 
-        <div class="messages">
-            <ul>
-            {% for message in messages %}
-                {% if message.sender.id == current_user.id %}
-                    <li class="sent">
-                {% else %}
-                    <li class="replies">
-                {% endif %}
-                        <img src="{{ message.sender.photo }}" alt="" >
+            <!-- DIALOG -->
+            <div class="card-body msg_card_body">
+                {% for message in messages %}
+                    {% if message.sender.id == current_user.id %}
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="msg_cotainer_send">
+                                <p class="text">{{ message.text }}</p>
+                                <span class="msg_time_send">
+                                    {% if message.is_over_a_day %}
+                                        {{ moment(message.time).format('MMMM Do, h:mm a') }}
+                                    {% else %}
+                                        {{ moment(message.time).format('h:mm a') }}
+                                    {% endif %}
+                                </span>
+                            </div>
 
-                        <p> {{ message.text }} </p>
+                            <div class="img_cont_msg">
+                                <img src="{{ message.sender.photo }}" class="rounded-circle user_img_msg" >
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="d-flex justify-content-start mb-4">
+                            <div class="img_cont_msg">
+                                <img src="{{ message.sender.photo }}" class="rounded-circle user_img_msg" >
+                            </div>
 
-                        {% if message.is_over_a_day %}
-                            <span>{{ moment(message.time).format('MMMM Do, h:mm a') }}</span>
-                        {% else %}
-                            <span>{{ moment(message.time).format('h:mm a') }}</span>
-                        {% endif %}
-                    </li>
-            {% endfor %}
-            </ul>
-        </div>
+                            <div class="msg_cotainer">
+                                <p class="text">{{ message.text }}</p>
+                                <span class="msg_time">
+                                    {% if message.is_over_a_day %}
+                                        {{ moment(message.time).format('MMMM Do, h:mm a') }}
+                                    {% else %}
+                                        {{ moment(message.time).format('h:mm a') }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
 
-        <div class="message-input">
-            <div class="wrap">
+            <!-- INPUT -->
+            <div class="card-footer">
                 <form action="" method="post" novalidate>
-                    {{ form.hidden_tag() }}
-                    {{ form.message(autofocus='autofocus', placeholder='Write a message...') }}
-{#                    <i class="fa fa-paperclip attachment" aria-hidden="true"></i>#}
-			        <button class="submit" type="button"><i class="fa fa-paper-plane"
-                                               aria-hidden="true"></i></button>
+                    <div class="input-group">
+                        <div class="input-group-append">
+                            <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                        </div>
+
+                        {{ form.hidden_tag() }}
+                        {{ form.message(class='form-control type_msg', autofocus='autofocus', placeholder='Type your message...') }}
+                        <div class="input-group-append">
+                            <span class="input-group-text send_btn">
+                                <i class="fas fa-location-arrow"></i>
+                            </span>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

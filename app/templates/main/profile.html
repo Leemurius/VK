@@ -2,82 +2,16 @@
 
 {% block head %}
     <title>Profile of {{ user.nick }}</title>
+     <!--===============================================================================================-->
+    <link rel="stylesheet" href="/static/css/main/profile.css"/>
+    <!--===============================================================================================-->
     <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
+    <!--===============================================================================================-->
 {% endblock %}
 
 {% block content %}
     {{ moment.include_jquery() }}
-    {{ moment.include_moment() }}
-    <!--===============================================================================================-->
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,600,600i,700" rel="stylesheet">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" href="/static/css/main/profile.css"/>
-    <!--===============================================================================================-->
 
-	<!-- Hero section start -->
-	<section class="hero-section spad">
-		<div class="container-fluid">
-            <div id="logout">
-                <a href="{{ url_for('auth.logout') }}">Logout</a>
-            </div>
-			<div class="row">
-				<div class="col-xl-10 offset-xl-1">
-					<div class="row">
-						<div class="col-lg-6">
-							<div class="hero-text">
-								<h2>{{ user.name }} {{ user.surname }}</h2>
-                                <p id="status">
-                                    {% if user.status %}
-                                        Status : <i>Online</i>
-                                    {% else %}
-                                        Status : <i>last seen {{ moment(user.last_seen).fromNow() }}</i>
-                                    {% endif %}
-                                </p>
-								<p>
-                                    About me : {{ user.about_me if user.about_me else 'New user of messenger'}}
-                                </p>
-							</div>
-							<div class="hero-info">
-								<h2>General Info</h2>
-								<ul>
-									<li>
-                                        <span>Age</span>
-                                        {{user.age if user.age else 'No information'}}
-                                    </li>
-                                    <li>
-                                        <span>Nick </span>
-                                        {{user.nick if user.nick else 'No information'}}
-                                    </li>
-                                    <li>
-                                        <span>E-mail</span>
-                                        {{user.email if user.email else 'No information'}}
-                                    </li>
-                                    <li>
-                                        <span>Address</span>
-                                        {{user.address if user.address else 'No information'}}
-                                    </li>
-                                </ul>
-							</div>
-
-                            {% if current_user != user %}
-                                <div class="write_message">
-                                    <a class="example_c" href="#" target="_blank" rel="nofollow noopener">
-                                        Write message
-                                    </a>
-                                </div>
-                            {% endif %}
-						</div>
-						<div class="col-lg-6">
-							<figure class="hero-image">
-								<img src="{{ user.photo }}" alt="Oops">
-							</figure>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-	<!-- Hero section end -->
 {% endblock %}
 
 {% block js_files %}

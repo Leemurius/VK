@@ -1,251 +1,201 @@
-#frame .content {
-    float: right;
-    width: 60%;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
+body,html{
+	height: 100%;
+	margin: 0;
+	background: #7F7FD5;
+   	background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
 }
 
-@media screen and (max-width: 735px) {
-    #frame .content {
-        width: calc(100% - 58px);
-        min-width: 300px !important;
-    }
+*::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+	background-color: #4b4f7e;
+	border-radius: 10px;
+}
+*::-webkit-scrollbar {
+	width: 10px;
+	background-color: #4b4f7e;
+}
+*::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+	background-color: #6fe9e3;
 }
 
-@media screen and (min-width: 900px) {
-    #frame .content {
-        width: calc(100% - 340px);
-    }
+.chat{
+	margin-top: auto;
+	margin-bottom: auto;
 }
 
-#frame .content .contact-profile {
-    width: 100%;
-    height: 60px;
-    line-height: 60px;
-    background: #f5f5f5;
+.card{
+	height: 95%;
+	border-radius: 15px !important;
+	background-color: rgba(0,0,0,0.4) !important;
+}
+.contacts_body {
+	padding:  0.75rem 0 !important;
+	overflow-y: auto;
+	white-space: nowrap;
+}
+.msg_card_body {
+	overflow-y: auto;
+	border-top: 1.5px solid rgba(128, 128, 128, 0.3);
 }
 
-#frame .content .contact-profile img {
-    width: 40px;
-    border-radius: 50%;
-    float: left;
-    margin: 9px 12px 0 9px;
-    max-height: 2.5em;
-    max-width: 2.5em;
+.card-header{
+	border-radius: 15px 15px 0 0 !important;
+	border-bottom: 0 !important;
 }
-
-#frame .content .contact-profile p {
-    float: left;
+ .card-footer{
+	border-radius: 0 0 15px 15px !important;
+	border-top: 0 !important;
+ 	margin-bottom: -1em;
 }
-
-#frame .content .contact-profile #logout {
-    float: right;
-    margin-right: 1em;
+.container{
+	align-content: center;
 }
+.type_msg{
+	background-color: rgba(0,0,0,0.3) !important;
+	border:0 !important;
+	color:white !important;
+	height: 100px !important;
+	overflow-y: auto;
 
-#frame .content .contact-profile #logout a {
-    text-decoration: none;
+	resize: none;
+	box-sizing: border-box;
 }
-
-#frame .content .contact-profile #logout:hover {
-    text-decoration: none;
-    color: grey;
+.type_msg:focus{
+    box-shadow:none !important;
+   	outline:0px !important;
 }
-
-#frame .content .messages {
-    height: auto;
-    min-height: calc(100% - 110px);
-    max-height: calc(100% - 110px);
-    overflow-y: scroll;
-    overflow-x: hidden;
+.attach_btn{
+	border-radius: 15px 0 0 15px !important;
+	background-color: rgba(0,0,0,0.3) !important;
+	border:0 !important;
+	color: white !important;
+	cursor: pointer;
 }
-
-@media screen and (max-width: 735px) {
-    #frame .content .messages {
-        max-height: calc(100% - 105px);
-    }
+.send_btn{
+	border-radius: 0 15px 15px 0 !important;
+	background-color: rgba(0,0,0,0.3) !important;
+	border:0 !important;
+	color: white !important;
+	cursor: pointer;
 }
+.user_img{
+	height: 70px;
+	width: 70px;
+	border:1.5px solid #f5f6fa;
 
-#frame .content .messages::-webkit-scrollbar {
-    width: 8px;
-    background: transparent;
 }
+.user_img_msg{
+	height: 40px;
+	width: 40px;
+	border:1.5px solid #f5f6fa;
 
-#frame .content .messages::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
 }
-
-#frame .content .messages ul li {
-    display: inline-block;
-    clear: both;
-    float: left;
-    margin: 15px 15px 5px 15px;
-    width: calc(100% - 25px);
-    font-size: 0.9em;
+.img_cont{
+	position: relative;
+	height: 70px;
+	width: 70px;
 }
-
-#frame .content .messages ul li:nth-last-child(1) {
-    margin-bottom: 1em;
+.img_cont_msg{
+	height: 40px;
+	width: 40px;
 }
-
-#frame .content .messages ul li.replies img {
-    float: left;
-    margin: 6px 8px 0 0;
-    height: 2.3em;
-    width: 2.3em;
+.online_icon{
+	position: absolute;
+	height: 15px;
+	width:15px;
+	background-color: #4cd137;
+	border-radius: 50%;
+	bottom: 0.2em;
+	right: 0.4em;
+	border:1.5px solid white;
 }
-
-#frame .content .messages ul li.replies p {
-    background: #435f7a;
-    color: #f5f5f5;
-    float: left;
-    white-space: pre-wrap;
+.offline{
+	background-color: #c23616 !important;
+}
+.msg_cotainer{
+	margin-top: auto;
+	margin-bottom: auto;
+	margin-left: 10px;
+	border-radius: 25px;
+	background-color: #82ccdd;
+	padding: 10px;
+	position: relative;
+	max-width: 40%;
+}
+.msg_cotainer_send{
+	margin-top: auto;
+	margin-bottom: auto;
+	margin-right: 10px;
+	border-radius: 25px;
+	background-color: #78e08f;
+	padding: 10px;
+	position: relative;
+	max-width: 40%;
+}
+.msg_cotainer .text, .msg_cotainer_send .text{
+	white-space: pre-wrap;
     word-wrap: break-word;
     word-break: break-all;
+	display: inline;
 }
-
-#frame .content .messages ul li.replies span {
-    margin-left: 3px;
+.msg_time{
+	position: absolute;
+	left: 0;
+	bottom: -15px;
+	color: rgba(255,255,255,0.5);
+	font-size: 10px;
 }
-
-
-#frame .content .messages ul li.sent img {
-    float: right;
-    margin: 0px 0 0 8px;
-    height: 2.3em;
-    width: 2.3em;
+.msg_time_send{
+	position: absolute;
+	right:0;
+	bottom: -15px;
+	color: rgba(255,255,255,0.5);
+	font-size: 10px;
 }
-
-#frame .content .messages ul li.sent p {
-    background: #00BCD4;
-    color: black;
-    float: right;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    word-break: break-all;
+.msg_head{
+	position: relative;
 }
-
-#frame .content .messages ul li.sent span {
-    margin-top: 0.7em;
-    margin-right: 3px;
-    float: right;
+#action_menu_btn{
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	color: white;
+	cursor: pointer;
+	font-size: 20px;
 }
-
-#frame .content .messages ul li img {
-    width: 35px;
-    border-radius: 50%;
-    float: left;
-    max-height: 3em;
-    max-width: 3em;
+.action_menu{
+	z-index: 1;
+	position: absolute;
+	padding: 15px 0;
+	background-color: rgba(0,0,0,0.5);
+	color: white;
+	border-radius: 15px;
+	top: 30px;
+	right: 15px;
+	display: none;
 }
-
-#frame .content .messages ul li p {
-    display: inline-block;
-    padding: 10px 15px;
-    border-radius: 20px;
-    max-width: 205px;
-    line-height: 130%;
+.action_menu ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;
 }
-
-@media screen and (min-width: 735px) {
-    #frame .content .messages ul li p {
-        max-width: 400px;
-    }
+.action_menu ul a{
+	text-decoration: none;
+	color: white;
 }
-
-#frame .content .message-input {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    z-index: 99;
+.action_menu ul li{
+	width: 100%;
+	padding: 10px 15px;
+	margin-bottom: 5px;
 }
+.action_menu ul li i{
+	padding-right: 10px;
 
-#frame .content .message-input .wrap {
-    position: relative;
 }
-
-#frame .content .message-input .wrap textarea {
-    font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
-    font-size: 1em;
-    color: #32465a;
-
-    float: left;
-    margin: 5px;
-    margin-bottom: 0.7vh;
-
-    border: none;
-    border-radius: 6px;
-    box-shadow: 2px 2px 8px black;
-
-    width: calc(100% - 90px);
-    height: 2.3em;
-    max-height: 10em;
-    padding: 11px 32px 10px 8px;
-    box-sizing: border-box;
-
-    resize: none;
-    overflow: hidden;
-}
-
-@media screen and (max-width: 735px) {
-    #frame .content .message-input .wrap textarea {
-      padding: 15px 32px 16px 8px;
-    }
-}
-
-#frame .content .message-input .wrap textarea:focus {
-    outline: none;
-}
-
-#frame .content .message-input .wrap .attachment {
-    position: absolute;
-    right: 40px;
-    z-index: 4;
-    margin-top: 7px;
-    font-size: 1.5em;
-    color: #435f7a;
-    opacity: .5;
-    cursor: pointer;
-}
-
-@media screen and (max-width: 735px) {
-    #frame .content .message-input .wrap .attachment {
-        margin-top: 17px;
-        right: 5px;
-    }
-}
-
-#frame .content .message-input .wrap .attachment:hover {
-    opacity: 1;
-}
-
-#frame .content .message-input .wrap button {
-    margin-top: 3px;
-    font-size: 1.2em;
-    opacity: .9;
-    position: absolute;
-    right: 10px;
-    border: none;
-    width: 60px;
-    height: 43px;
-    padding: 10px 0;
-    cursor: pointer;
-    background: #32465a;
-    color: #f5f5f5;
-    border-radius: 15px;
-}
-
-@media screen and (max-width: 735px) {
-  #frame .content .message-input .wrap button {
-    padding: 16px 0;
-  }
-}
-
-#frame .content .message-input .wrap button:hover {
-  background: #435f7a;
-}
-
-#frame .content .message-input .wrap button:focus {
-  outline: none;
+.action_menu ul li:hover{
+	cursor: pointer;
+	background-color: rgba(0,0,0,0.2);
 }

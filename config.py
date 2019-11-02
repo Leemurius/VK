@@ -4,7 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
-    SECRET_KEY = 'vtn73y777ct847ytn7347ct348ctny83378'
+    SECRET_KEY = 'nv93498NKAf32c12cap2ASOuy2vcjo8934cmht39xx20i949y2'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -17,8 +17,6 @@ class Config(object):
     MAIL_USERNAME = 'sidorevich.toxa@mail.ru'
     MAIL_PASSWORD = ''
     ADMINS = ['sidorevich.anton@gmail.com']
-
-    ELASTICSEARCH_URL = 'http://localhost:9200'
 
 
 class Constants(object):
@@ -33,7 +31,7 @@ class Constants(object):
     MESSAGE_PER_PAGE = 20
 
     TIME_OF_ACTUAL_REQUEST = 500
-    TIME_OF_ONLINE = 2  # minutes
+    TIME_OF_ONLINE = 2  # Minutes
 
     MAX_AGE = 150
     NAME_LENGTH = 50

@@ -1,11 +1,40 @@
 body {
-   background-image: url(/static/images/404.gif);
-   background-repeat: no-repeat;
-   background-position: center;
+    background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    font-family: "Roboto Mono", "Liberation Mono", Consolas, monospace;
+    color: rgba(255,255,255,.87);
 }
 
-h1 {
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.container,
+.container > .row,
+.container > .row > div {
+    height: 100%;
+}
+
+#countUp {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.number {
+    font-size: 5rem;
+    font-weight: 500;
+}
+
++ .text {
+    margin: 0 0 1rem;
+}
+
+.text {
+    font-weight: 300;
     text-align: center;
-    margin-top: 10%;
-    font-size: 350%;
+    font-size: 1.3rem;
 }
