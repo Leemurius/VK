@@ -14,10 +14,8 @@
 {% block content %}
     {{ moment.include_jquery() }}
 
-    <div class="page-wrapper p-b-50">
-        <div class="wrapper wrapper--w900">
-            <div class="card card-6">
-                <div class="card-heading">
+            <div class="">
+                <div class="card-header row">
                     <ul>
                         <li id="title1">
                             <a href="{{ url_for('settings.profile') }}">
@@ -37,8 +35,9 @@
                             </a>
                         </li>
                     </ul>
-
                 </div>
+
+
                 <div class="card-body">
                     <form enctype="multipart/form-data" action="" method="post" novalidate>
                         {{ form.hidden_tag() }}
@@ -146,8 +145,7 @@
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
+
 {% endblock %}
 
 {% block js_files %}

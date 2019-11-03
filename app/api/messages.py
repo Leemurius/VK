@@ -9,7 +9,11 @@ from app.api import bp
 @login_required
 def add_message():
     data = request.get_json() or {}
+
     try:
+        if data['message'].strip() == '':  # Empty message
+            return jsonify(False)
+
         current_user.send_message(
             recipient_room=Room.query.get_or_404(data['room_id']),
             text=data['message']

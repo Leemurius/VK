@@ -27,7 +27,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(Constants.EMAIL_LENGTH), unique=True)
     photo = db.Column(
         db.String(Constants.PHOTO_LENGTH),
-        default=Constants.CONST_DEFAULT_USER_PHOTO
+        default=Constants.DEFAULT_USER_PHOTO
     )
     about_me = db.Column(db.String(Constants.ARTICLE_LENGTH))
     last_seen = db.Column(
@@ -75,6 +75,17 @@ class User(UserMixin, db.Model):
             current_app.config['SECRET_KEY'],
             algorithm='HS256'
         ).decode('utf-8')
+
+    def get_profile_information(self):
+        return {
+            'Name': self.name,
+            'Surname': self.surname,
+            'Photo': self.photo,
+            'Age': self.age,
+            'Nick': self.nick,
+            'Email': self.email,
+            'Address': self.address
+        }
 
     def set_profile_form(self, form):
         self.name = form.name.data
@@ -127,7 +138,7 @@ class Room(db.Model):
     title = db.Column(db.String(Constants.ROOM_NAME_LENGTH))
     photo = db.Column(
         db.String(Constants.PHOTO_LENGTH),
-        default=Constants.CONST_DEFAULT_ROOM_PHOTO
+        default=Constants.DEFAULT_ROOM_PHOTO
     )
     is_dialog = db.Column(db.Boolean)
 
@@ -195,15 +206,20 @@ class Room(db.Model):
                 self.sender = User.query.get(message[2])
                 self.time = message[3]
 
-        messages = [Message(message)for message in messages]
+        messages = [Message(message) for message in messages]
         return messages
 
     def get_last_message(self):
         messages = db.session.query(self.chat).all()
+
+        last_message = None
         if messages:
-            return messages[-1].text[0:50] + '...'
-        else:
-            return None
+            last_message = messages[-1].text
+
+        if len(last_message) > 40:
+            last_message = last_message[:40] + '...'
+
+        return last_message
 
     def create_chat(self):
         DynamicBase = declarative_base(class_registry=dict())

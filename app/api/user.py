@@ -21,3 +21,9 @@ def get_self_photo():
 def get_id(nick):
     user = User.query.filter_by(nick=nick).first_or_404()
     return jsonify(user.id)
+
+
+@bp.route('/self/profile_information/<string:nick>', methods=['GET'])
+def get_profile_information(nick):
+    user = User.query.filter_by(nick=nick).first_or_404()
+    return jsonify(user.get_profile_information())

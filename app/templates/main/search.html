@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 
 {% block head %}
-    <title>Search</title>
+    <title>Find contact</title>
     <!--===============================================================================================-->
     <link rel="shortcut icon" type="image/x-icon" href="/static/favicons/search.png"/>
     <!--===============================================================================================-->
@@ -12,82 +12,53 @@
 {% block content %}
     {{ moment.include_jquery() }}
 
-    {# SEARCH BOX #}
-    <div class="col-xl-9 search-box">
-        <div class="card">
+    {# Search line #}
 
-            {#HEADER#}
-            <div class="card-header">
-                <div class="input-group">
-                    <input type="text" placeholder="Search new friend..." class="form-control search">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
-                    </div>
-                </div>
-                <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
-                <div class="action_menu">
-                    <ul>
-                        <a href="{{ url_for('main.profile', nick=current_user.nick) }}">
-                            <li><i class="fas fa-user-circle"></i>View your profile</li>
-                        </a>
 
-                        <a href="{{ url_for('main.search') }}">
-                            <li><i class="fas fa-search"></i>Find user</li>
-                        </a>
-
-                        <a href="{{ url_for('settings.security') }}">
-                            <li><i class="fas fa-plus"></i> Add to chat</li>
-                        </a>
-
-                        <a href="{{ url_for('settings.profile') }}">
-                            <li><i class="fas fa-"></i>Settings</li>
-                        </a>
-
-                        <a href="{{ url_for('auth.logout') }}">
-                            <li><i class="fas fa-ban"></i>Logout</li>
-                        </a>
-                    </ul>
-                </div>
+    {# Content of card #}
+    <div class="container">
+        <div class="input-group">
+            <div class="input-group">
+                <input type="text" placeholder="Search new friend..." class="form-control search search-person">
+                <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
             </div>
+        </div>
 
-            {#USERS#}
-             <div class="container">
-                <table class="table user-list">
-                    <thead>
-                        <tr>
-                            <th><span>User</span></th>
-                            <th><span>Age</span></th>
-                            <th class="text-center"><span>Status</span></th>
-                            <th><span>Email</span></th>
+        <div class="big_table">
+            <table class="table user-list">
+                <thead>
+                    <tr>
+                        <th><span>User</span></th>
+                        <th><span>Age</span></th>
+                        <th class="text-center"><span>Status</span></th>
+                        <th><span>Email</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr data-href="{{ user.nick }}">
+                            <td>
+                                <img src="{{ user.photo }}" alt="" class="rounded-circle user_img">
+                                <span class="name_surname"> {{ user.name }} {{ user.surname }} </span>
+                            </td>
+
+                            <td>{{ user.age }}</td>
+
+                            <td class="text-center">
+                                {% if user.status %}
+                                    <span class="label label-success">Online</span>
+                                {% else %}
+                                    <span class="label label-default">Offline</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <span>{{ user.email }}</span>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in users %}
-                            <tr data-href="{{ url_for('main.profile', nick=user.nick) }}">
-                                <td>
-                                    <img src="{{ user.photo }}" alt="" class="rounded-circle user_img">
-                                    <span class="name_surname"> {{ user.name }} {{ user.surname }}
-                                    </span>
-                                </td>
-
-                                <td>{{ user.age }}</td>
-
-                                <td class="text-center">
-                                    {% if user.status %}
-                                        <span class="label label-success">Online</span>
-                                    {% else %}
-                                        <span class="label label-default">Offline</span>
-                                    {% endif %}
-                                </td>
-
-                                <td>
-                                    <span>{{ user.email }}</span>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}

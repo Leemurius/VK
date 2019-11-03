@@ -9,23 +9,23 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     WTF_CSRF_ENABLED = False
-    WTF_CSRF_SECRET_KEY = 'vtn73y777ct847ytn7347ct348ctny83378'
+    WTF_CSRF_SECRET_KEY = 'fdskcmWocm238mc2387nN940Z213uyg1fv12C451'
 
     MAIL_SERVER = 'smtp.mail.ru'
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
-    MAIL_USERNAME = 'sidorevich.toxa@mail.ru'
+    MAIL_USERNAME = ''
     MAIL_PASSWORD = ''
     ADMINS = ['sidorevich.anton@gmail.com']
 
 
 class Constants(object):
-    IMAGE_UPLOAD_FOLDER = 'Data/UsersPhotos/'
+    IMAGE_UPLOAD_FOLDER = basedir + '/app/static/Data/UsersPhotos/'
     IMAGE_DB_FOLDER = '/static/Data/UsersPhotos'
-    ROOM_IMAGE_UPLOAD_FOLDER = 'Data/RoomPhotos/'
+    ROOM_IMAGE_UPLOAD_FOLDER = basedir + '/app/static/Data/RoomPhotos/'
     ROOM_IMAGE_DB_FOLDER = '/static/Data/RoomPhotos'
-    CONST_DEFAULT_USER_PHOTO = '/static/images/no_photo.png'
-    CONST_DEFAULT_ROOM_PHOTO = '/static/images/no_photo.png'
+    DEFAULT_USER_PHOTO = '/static/images/no_photo.png'
+    DEFAULT_ROOM_PHOTO = '/static/images/no_photo.png'
 
     USER_PER_PAGE = 8
     MESSAGE_PER_PAGE = 20
@@ -41,7 +41,7 @@ class Constants(object):
     REQUEST_LENGTH = 50
     ADDRESS_LENGTH = 50
     SURNAME_LENGTH = 50
-    MIN_PASSWORD_LENGTH = 6
+    MIN_PASSWORD_LENGTH = 3
     MAX_PASSWORD_LENGTH = 30
     ARTICLE_LENGTH = 512
     ROOM_NAME_LENGTH = 50

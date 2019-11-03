@@ -7,14 +7,12 @@ from app.settings.forms import (
     SecSettingsForm,
     AboutSettingsForm,
 )
-from app.main.forms import SearchForm
 
 
 @bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    base_form = SearchForm()
-    rooms = base_form.get_founding_room(current_user)  # validate inside
+    rooms = current_user.rooms
 
     form = ProfSettingsForm(
         name=current_user.name,
@@ -31,7 +29,6 @@ def profile():
 
     return render_template(
         'settings/profile.html',
-        base_form=base_form,  # for base.html
         current_user=current_user,  # for base.html
         rooms=rooms,  # for base.html
         form=form
@@ -41,9 +38,8 @@ def profile():
 @bp.route('/security', methods=['GET', 'POST'])
 @login_required
 def security():
-    base_form = SearchForm()
     form = SecSettingsForm()
-    rooms = base_form.get_founding_room(current_user)  # validate inside
+    rooms = current_user.rooms
 
     if form.validate_on_submit():
         current_user.set_password(form.new_password.data)
@@ -51,7 +47,6 @@ def security():
 
     return render_template(
         'settings/security.html',
-        base_form=base_form,  # for base.html
         current_user=current_user,  # for base.html
         rooms=rooms,  # for base.html
         form=form
@@ -61,9 +56,8 @@ def security():
 @bp.route('/about', methods=['GET', 'POST'])
 @login_required
 def about():
-    base_form = SearchForm()
     form = AboutSettingsForm(about_me=current_user.about_me)
-    rooms = base_form.get_founding_room(current_user)  # validate inside
+    rooms = current_user.rooms  # validate inside
 
     if form.validate_on_submit():
         current_user.set_about_form(form)
@@ -71,7 +65,6 @@ def about():
 
     return render_template(
         'settings/about.html',
-        base_form=base_form,  # for base.html
         current_user=current_user,  # for base.html
         rooms=rooms,  # for base.html
         form=form

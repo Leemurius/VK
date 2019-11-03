@@ -158,7 +158,7 @@ body,html{
 	margin-bottom: auto;
 	margin-left: 15px;
 }
-.user_info span{
+.user_info span {
 	font-size: 20px;
 	color: white;
 }
@@ -171,4 +171,144 @@ body,html{
 	.contacts_card{
 		margin-bottom: 15px !important;
 	}
+}
+
+/* For all templates*/
+
+#action_menu_btn{
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	color: white;
+	cursor: pointer;
+	font-size: 20px;
+}
+.action_menu{
+	z-index: 1;
+	position: absolute;
+	padding: 15px 0;
+	background-color: rgba(0,0,0,0.5);
+	color: white;
+	border-radius: 15px;
+	top: 30px;
+	right: 15px;
+	display: none;
+}
+
+.action_menu ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.action_menu ul a{
+	text-decoration: none;
+	color: white;
+}
+.action_menu ul li{
+	width: 100%;
+	padding: 10px 15px;
+	margin-bottom: 5px;
+}
+.action_menu ul li i{
+	padding-right: 10px;
+
+}
+.action_menu ul li:hover{
+	cursor: pointer;
+	background-color: rgba(0,0,0,0.2);
+}
+
+.box-for-all{
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+
+/*PROFILE ---------------------------------------------------------------------------------------*/
+.profile-box{
+	margin-top: auto;
+	margin-bottom: auto;
+    color: white;
+}
+
+.profile-box .photo-preview {
+    text-align: center;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.profile-box .photo-preview img{
+    min-height: 10em;
+    min-width: 10em;
+    max-height: 20em;
+    max-width: 20em;
+	border-radius: 20px;
+}
+
+.profile-box .name_surname {
+    font-size: 1.25em;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.profile-box .write_message {
+    text-align: center;
+}
+
+.profile-box .write_message button {
+    border-color: white;
+    color: white;
+}
+
+.profile-box .write_message button:hover {
+    background-color: rgb(125,149,218);
+    border-color: grey;
+    color: white;
+}
+
+.hero-info {
+    margin-top: 20px;
+}
+
+.hero-info h2 {
+	margin-bottom: 30px;
+    text-align: center;
+}
+
+.hero-info .list {
+    max-width: 30em;
+    margin: auto;
+}
+
+.hero-info ul {
+	list-style: none;
+    margin: auto;
+}
+
+.hero-info ul li {
+	font-size: 1em;
+	color: white;
+	margin-bottom: 15px;
+}
+
+.hero-info ul li span {
+	color: white;
+	display: inline-block;
+    min-width: 80px;
+}
+/*PROFILE ---------------------------------------------------------------------------------------*/
+
+*::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+	background-color: #4b4f7e;
+	border-radius: 10px;
+}
+*::-webkit-scrollbar {
+	width: 10px;
+	background-color: #4b4f7e;
+}
+*::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+	background-color: white;
 }

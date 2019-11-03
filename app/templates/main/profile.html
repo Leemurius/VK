@@ -1,16 +1,20 @@
 {% extends 'main/base.html' %}
 
 {% block head %}
-    <title>Profile of {{ user.nick }}</title>
+    <title>Profile of {{ current_user.nick }}</title>
      <!--===============================================================================================-->
-    <link rel="stylesheet" href="/static/css/main/profile.css"/>
-    <!--===============================================================================================-->
     <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="/static/css/main/profile.css"/>
     <!--===============================================================================================-->
 {% endblock %}
 
 {% block content %}
     {{ moment.include_jquery() }}
+
+    <div class="start-phrase">
+        <h1>Find a companion of your interest!</h1>
+    </div>
 
 {% endblock %}
 

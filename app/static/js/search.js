@@ -1,12 +1,20 @@
-$(document).ready(function() {
-	$('#action_menu_btn').click(function() {
-		$('.action_menu').toggle();
-	});
+var LastTrClick = undefined;
+$('tr[data-href]').on("click", function() {
+    const nick = $(this).attr("data-href");
+
+    if (LastTrClick == nick) {
+        $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
+        $('.profile-box').hide();
+        LastTrClick = undefined;
+    } else {
+        editVisualProfileBox(nick);
+        $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
+        $('.profile-box').show();
+        LastTrClick = nick;
+    }
 });
 
-function getProfileId(nick) {
-    return getAjaxInformation('http://' + getIP() + '/api/profile_id/' + nick);
-}
+
 
 $(".write_message a").click(function() {
     var nick = $(this).attr("href");

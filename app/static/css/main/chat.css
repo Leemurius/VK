@@ -6,21 +6,6 @@ body,html{
     background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
 }
 
-*::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-	background-color: #4b4f7e;
-	border-radius: 10px;
-}
-*::-webkit-scrollbar {
-	width: 10px;
-	background-color: #4b4f7e;
-}
-*::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-	background-color: #6fe9e3;
-}
-
 .chat{
 	margin-top: auto;
 	margin-bottom: auto;
@@ -147,6 +132,7 @@ body,html{
 	bottom: -15px;
 	color: rgba(255,255,255,0.5);
 	font-size: 10px;
+	width: 40px;
 }
 .msg_time_send{
 	position: absolute;
@@ -154,9 +140,10 @@ body,html{
 	bottom: -15px;
 	color: rgba(255,255,255,0.5);
 	font-size: 10px;
+	width: 40px;
 }
 .msg_head{
-	position: relative;
+	margin-top: -25px;
 }
 #action_menu_btn{
 	position: absolute;
