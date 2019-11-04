@@ -1,37 +1,13 @@
 from flask import render_template, redirect, url_for
-from flask_login import login_user, logout_user, current_user
+from flask_login import logout_user, current_user
 
 from app.auth import bp
 from app.models import User
 from app.auth.email import send_password_reset_email
 from app.auth.forms import (
-    RegistrationForm,
-    LoginForm,
     ResetPassForm,
     ResetPassRequestForm,
 )
-
-
-@bp.route('/registration', methods=['GET', 'POST'])
-def registration():
-    form = RegistrationForm()
-
-    if current_user.is_authenticated:
-        return redirect(url_for('main.profile'))
-
-    if form.validate_on_submit():
-        user = User(
-            name=form.name.data,
-            surname=form.surname.data,
-            username=form.username.data,
-            age=form.age.data,
-            email=form.email.data
-        )
-        user.commit_to_db()
-        user.set_password(form.password.data)
-        return redirect(url_for('auth.login'))
-
-    return render_template('auth/registration.html', form=form)
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -39,13 +15,15 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.profile'))
 
-    form = LoginForm()
+    return render_template('auth/login.html')
 
-    if form.validate_on_submit():
-        login_user(form.get_user(), remember=form.remember.data)
+
+@bp.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if current_user.is_authenticated:
         return redirect(url_for('main.profile'))
 
-    return render_template('auth/login.html', form=form)
+    return render_template('auth/registration.html')
 
 
 @bp.route('/reset_password', methods=['GET', 'POST'])

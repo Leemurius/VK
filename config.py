@@ -14,8 +14,8 @@ class Config(object):
     MAIL_SERVER = 'smtp.mail.ru'
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
-    MAIL_USERNAME = ''
-    MAIL_PASSWORD = ''
+    MAIL_USERNAME = 'sidorevich.toxa@mail.ru'
+    MAIL_PASSWORD = 'SDJKS1vmMSQU3289428A'
     ADMINS = ['sidorevich.anton@gmail.com']
 
 
@@ -41,7 +41,7 @@ class Constants(object):
     REQUEST_LENGTH = 50
     ADDRESS_LENGTH = 50
     SURNAME_LENGTH = 50
-    MIN_PASSWORD_LENGTH = 3     # TODO : min = 6
+    MIN_PASSWORD_LENGTH = 6
     MAX_PASSWORD_LENGTH = 30
     ARTICLE_LENGTH = 512
     ROOM_NAME_LENGTH = 50

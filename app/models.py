@@ -78,23 +78,24 @@ class User(UserMixin, db.Model):
 
     def get_profile_information(self):
         return {
-            'Name': self.name,
-            'Surname': self.surname,
-            'Photo': self.photo,
-            'Age': self.age,
-            'Username': self.username,
-            'Email': self.email,
-            'Address': self.address
+            'name': self.name,
+            'surname': self.surname,
+            'photo': self.photo,
+            'age': self.age,
+            'username': self.username,
+            'email': self.email,
+            'address': self.address
         }
 
-    def set_profile_form(self, form):
-        self.name = form.name.data
-        self.surname = form.surname.data
-        self.username = form.username.data
-        self.age = form.age.data
-        self.email = form.email.data
-        self.address = form.address.data
-        self.upload_photo(form.photo)
+    def set_profile_information(self, **kwargs):
+        self.name = kwargs.get('name', self.name)
+        self.surname = kwargs.get('surname', self.surname)
+        self.username = kwargs.get('username', self.username)
+        self.age = kwargs.get('age', self.age)
+        self.email = kwargs.get('email', self.email)
+        self.address = kwargs.get('address', self.address)
+        print(kwargs.get('photo', self.photo))
+        self.upload_photo(kwargs.get('photo', self.photo))
         db.session.commit()
 
     def set_about_form(self, form):
@@ -109,7 +110,7 @@ class User(UserMixin, db.Model):
         recipient_room.add_message(self.id, text)
 
     def upload_photo(self, photo):
-        if photo.data:
+        if self.photo != photo:
             filename = str(self.id) + "." + photo.data.filename.rsplit('.', 1)[1]
 
             file_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER, filename)
@@ -219,6 +220,9 @@ class Room(db.Model):
         if last_message and len(last_message) > 40:
             last_message = last_message[:40] + '...'
 
+        if last_message is None:
+            last_message = 'It\'s new chat'
+
         return last_message
 
     def create_chat(self):
@@ -238,7 +242,7 @@ class Room(db.Model):
         db.session.commit()
 
     def upload_photo(self, photo):
-        if photo.data:
+        if self.photo != photo:
             filename = str(self.id) + "." + photo.data.filename.rsplit('.', 1)[1]
 
             file_path = os.path.join(Constants.ROOM_IMAGE_UPLOAD_FOLDER, filename)

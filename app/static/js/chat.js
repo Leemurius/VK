@@ -1,7 +1,7 @@
 // - Requests --------------------------------------------------------------------------------------
 
 function getSelfPhoto() {
-    return getAjaxInformation('http://' + getIP() + '/api/self/user_photo');
+    return getAjaxInformation('http://' + getIP() + '/api/self/photo');
 }
 
 function getRoomId() {

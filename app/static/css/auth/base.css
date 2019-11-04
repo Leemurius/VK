@@ -376,7 +376,7 @@ iframe {
   position: relative;
 }
 
-.alert-validate::before {
+.alert-validate:before {
   content: attr(data-validate);
   position: absolute;
   max-width: 70%;

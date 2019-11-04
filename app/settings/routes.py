@@ -2,70 +2,15 @@ from flask import render_template, redirect, url_for
 from flask_login import current_user, login_required
 
 from app.settings import bp
-from app.settings.forms import (
-    ProfSettingsForm,
-    SecSettingsForm,
-    AboutSettingsForm,
-)
 
 
-@bp.route('/profile', methods=['GET', 'POST'])
+@bp.route('/settings', methods=['GET', 'POST'])
 @login_required
-def profile():
+def settings():
     rooms = current_user.rooms
 
-    form = ProfSettingsForm(
-        name=current_user.name,
-        surname=current_user.surname,
-        username=current_user.username,
-        age=current_user.age,
-        email=current_user.email,
-        address=current_user.address
-    )
-
-    if form.validate_on_submit():
-        current_user.set_profile_form(form)
-        return redirect(url_for('settings.profile'))
-
     return render_template(
-        'settings/profile.html',
+        'settings.html',
         current_user=current_user,  # for base.html
-        rooms=rooms,  # for base.html
-        form=form
-    )
-
-
-@bp.route('/security', methods=['GET', 'POST'])
-@login_required
-def security():
-    form = SecSettingsForm()
-    rooms = current_user.rooms
-
-    if form.validate_on_submit():
-        current_user.set_password(form.new_password.data)
-        return redirect(url_for('settings.security'))
-
-    return render_template(
-        'settings/security.html',
-        current_user=current_user,  # for base.html
-        rooms=rooms,  # for base.html
-        form=form
-    )
-
-
-@bp.route('/about', methods=['GET', 'POST'])
-@login_required
-def about():
-    form = AboutSettingsForm(about_me=current_user.about_me)
-    rooms = current_user.rooms  # validate inside
-
-    if form.validate_on_submit():
-        current_user.set_about_form(form)
-        return redirect(url_for('settings.about'))
-
-    return render_template(
-        'settings/about.html',
-        current_user=current_user,  # for base.html
-        rooms=rooms,  # for base.html
-        form=form
+        rooms=rooms  # for base.html
     )

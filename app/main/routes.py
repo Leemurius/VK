@@ -3,7 +3,6 @@ from flask_login import current_user, login_required
 
 from app.main import bp
 from app.models import User, Room
-from app.main.forms import ChatForm
 
 
 @bp.route('/my_profile', methods=['GET', 'POST'])
@@ -24,16 +23,14 @@ def chat(room_id):
     room = Room.query.get_or_404(room_id)
 
     if not room.is_member(current_user):
-        return redirect(url_for('main.profile'))  # TODO: redirect back
+        return redirect(url_for('main.profile'))  # TODO: flash with info, that it impossible
 
-    form = ChatForm()
     rooms = current_user.rooms
 
     return render_template(
         'main/chat.html',
         current_user=current_user,  # for base.html
         rooms=rooms,  # for base.html
-        form=form,
         room=room,
         recipient=room.get_recipient(current_user),  # if chat is dialog
         title=room.get_title(current_user),

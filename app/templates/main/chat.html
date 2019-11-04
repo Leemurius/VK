@@ -22,7 +22,7 @@
             </div>
             <div class="user_info">
                 <span>{{ recipient.name + ' ' + recipient.surname }}</span>
-                <p>{{ 'username: ' + recipient.username }}</p>
+                <p>{{ 'Username: ' + recipient.username }}</p>
             </div>
         </div>
     </div>
@@ -70,21 +70,15 @@
 
     <!-- INPUT -->
     <div class="card-footer">
-        <form action="" method="post" novalidate>
-            <div class="input-group">
-                <div class="input-group-append">
-                    <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
-                </div>
-
-                {{ form.hidden_tag() }}
-                {{ form.message(class='form-control type_msg', autofocus='autofocus', placeholder='Type your message...') }}
-                <div class="input-group-append">
-                    <span class="input-group-text send_btn">
-                        <i class="fas fa-location-arrow"></i>
-                    </span>
-                </div>
+        <div class="input-group-append">
+            <div class="input-group-append">
+                <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
             </div>
-        </form>
+            <textarea autofocus='autofocus' name="" class="form-control type_msg" placeholder="Type your message..."></textarea>
+            <div class="input-group-append">
+                <span class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

@@ -5,7 +5,6 @@ from wtforms import (
     IntegerField,
     PasswordField,
     SubmitField,
-    BooleanField,
 )
 from wtforms.validators import (
     DataRequired,
@@ -92,50 +91,6 @@ class RegistrationForm(FlaskForm):
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).count():
             raise ValueError('This email already taken.')
-
-
-class LoginForm(FlaskForm):
-    def __init__(self):
-        self._user = None
-        super().__init__()
-
-    login = StringField(
-        'Username or email',
-        validators=[
-            DataRequired(),
-            length(max=Constants.NAME_LENGTH, message='Too long login.')
-        ]
-    )
-
-    password = PasswordField(
-        'Password',
-        validators=[
-            DataRequired(),
-            length(
-                min=Constants.MIN_PASSWORD_LENGTH,
-                max=Constants.MAX_PASSWORD_LENGTH,
-                message='Incorrect password.'
-            )
-        ]
-    )
-
-    remember = BooleanField('Remember me')
-
-    @staticmethod
-    def _is_email(email):
-        return re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email)
-
-    def get_user(self):
-        return self._user
-
-    def validate_password(self, password):
-        if self._is_email(self.login.data):
-            self._user = User.query.filter_by(email=self.login.data).first()
-        else:
-            self._user = User.query.filter_by(username=self.login.data).first()
-
-        if self._user is None or not self._user.check_password(password=password.data):
-            raise ValueError('Username or password is incorrect.')
 
 
 class ResetPassRequestForm(FlaskForm):

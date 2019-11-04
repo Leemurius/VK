@@ -31,9 +31,12 @@ function postAjaxInformation(url, data) {
              contentType: 'application/json;charset=UTF-8',
              success : function(text) {
                  response = text;
+             },
+             error: function(xhr, status, error) {
+                 response = xhr.responseText;
              }
     });
-    return response;
+    return response
 }
 
 function getIP() {
@@ -41,29 +44,38 @@ function getIP() {
 }
 
 function getProfileInformation(username) {
-    return getAjaxInformation('http://' + getIP() + '/api/self/profile_information/' + username)
+    return getAjaxInformation('http://' + getIP() + '/api/user/information/' + username)
 }
 
-function editVisualProfileBox(username) {
-    var dict = getProfileInformation(username);
-    $('.profile-box .name_surname p').text(dict['Name'] + ' ' + dict['Surname']);
-    $('.profile-box .photo-preview img').attr('src', dict['Photo']);
-    $('.profile-box .list .age .value').text(dict['Age'] ? dict['Age'] : 'No information');
-    $('.profile-box .list .username .value').text(dict['username'] ? dict['username'] : 'No information');
-    $('.profile-box .list .Email .value').text(dict['Email'] ? dict['Email'] : 'No information');
-    $('.profile-box .list .Address .value').text(dict['Address'] ? dict['Address'] : 'No information');
+function getSelfProfileInformation() {
+    return getAjaxInformation('http://' + getIP() + '/api/self/information')
 }
 
-var LastLiClick = false;
-$('li[data-href]').on("click", function() {
-    const username = $(this).attr("data-href");
+function addInformationInProfileBox(username) {
+    editVisualProfileBox(getProfileInformation(username));
+}
 
+function addSelfInformationInProfileBox() {
+    editVisualProfileBox(getSelfProfileInformation());
+}
+
+function editVisualProfileBox(dict) {
+    $('.profile-box .name_surname p').text(dict['name'] + ' ' + dict['surname']);
+    $('.profile-box .photo-preview img').attr('src', dict['photo']);
+    $('.profile-box .list .age .value').text(dict['age'] ? dict['age'] : 'No information');
+    $('.profile-box .list .username .value').text(dict['username']);
+    $('.profile-box .list .email .value').text(dict['email']);
+    $('.profile-box .list .address .value').text(dict['address'] ? dict['address'] : 'No information');
+}
+
+var LastLiClick = false; // Action menu
+$('.my_profile').on("click", function() {
     if (LastLiClick) {
         $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
         $('.profile-box').hide();
         LastLiClick = false;
     } else {
-        editVisualProfileBox(username);
+        addSelfInformationInProfileBox();
         $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
         $('.profile-box').show();
         LastLiClick = true;
@@ -71,7 +83,7 @@ $('li[data-href]').on("click", function() {
 });
 
 function getProfileId(username) {
-    return getAjaxInformation('http://' + getIP() + '/api/profile_id/' + username);
+    return getAjaxInformation('http://' + getIP() + '/api/user/id/' + username);
 }
 
 $(".write_message button").click(function () {

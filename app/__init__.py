@@ -45,7 +45,7 @@ def create_app(config_class=Config):
 
     with app.app_context():
         from app.settings import bp as settings_bp
-        app.register_blueprint(settings_bp, url_prefix='/my_profile/settings/')
+        app.register_blueprint(settings_bp, url_prefix='/my_profile')
 
     with app.app_context():
         from app.main import bp as main_bp

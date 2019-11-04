@@ -7,14 +7,12 @@ $('tr[data-href]').on("click", function() {
         $('.profile-box').hide();
         LastTrClick = undefined;
     } else {
-        editVisualProfileBox(username);
+        addInformationInProfileBox(username);
         $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
         $('.profile-box').show();
         LastTrClick = username;
     }
 });
-
-
 
 $(".write_message a").click(function() {
     var username = $(this).attr("href");
