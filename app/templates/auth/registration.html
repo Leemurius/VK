@@ -5,116 +5,78 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
-    <link rel="shortcut icon" type="image/x-icon" href="/static/favicons/registration.png"/>
+	<link rel="icon" type="image/png" href="/static/favicons/registration.png"/>
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="/static/css/auth/login_and_reg_util.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/css/bootstrap4.1.1.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="/static/css/auth/login_and_reg.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/css/font-awesome.min.css">
 <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/css/auth/registration.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/css/material-design-iconic-font.min.css">
 <!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/css/auth/utils.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/auth/base.css">
+<!--==============================================================================================-->
 </head>
 <body>
-
 	<div class="limiter">
 		<div class="container-login100">
-			<div class="wrap-login100">
-				<div class="login100-form-title" style="background-image: url(static/images/registration.png);">
-					<span class="login100-form-title-1">
-						Registration Form
+			<div class="wrap-login100 p-l-55 p-r-55 p-t-35 p-b-30">
+				<form class="login100-form validate-form">
+					<span class="login100-form-title p-b-49">
+						Registration
 					</span>
-				</div>
 
-				<form class="login100-form validate-form" action="" method="post" novalidate>
-                    {{ form.hidden_tag() }}
-
-					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100"> {{form.name.label}} </span>
-                          {{ form.name(size=26, class="input100", placeholder="Enter name") }}
-						<span class="focus-input100"></span>
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "Name is required">
+						<span class="label-input100">Name</span>
+						<input class="input100 name-input" type="text" name="name" placeholder="Enter name">
+						<span class="focus-input100" data-symbol="&#xf206;"></span>
 					</div>
-                    <div class="error">
-                        {% for error in form.name.errors %}
-                            <p id="errors">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100"> {{form.surname.label}} </span>
-                          {{ form.surname(size=26, class="input100", placeholder="Enter surname") }}
-						<span class="focus-input100"></span>
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "Surname is required">
+						<span class="label-input100">Surname</span>
+						<input class="input100 surname-input" type="text" name="surname" placeholder="Enter surname">
+						<span class="focus-input100" data-symbol="&#xf20C;"></span>
 					</div>
-                    <div class="error">
-                        {% for error in form.surname.errors %}
-                            <p id="errors">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100"> {{form.nick.label}} </span>
-                          {{ form.nick(size=26, class="input100", placeholder="Enter nick") }}
-						<span class="focus-input100"></span>
+                    <div class="wrap-input100 validate-input m-b-10" data-validate = "Username is required">
+						<span class="label-input100">Username</span>
+						<input class="input100 username-input" type="text" name="username" placeholder="Enter username">
+						<span class="focus-input100" data-symbol="&#xf194;"></span>
 					</div>
-                    <div class="error">
-                        {% for error in form.nick.errors %}
-                            <p id="errors">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100"> {{form.age.label}} </span>
-                          {{ form.age(size=26, class="input100", placeholder="Enter age") }}
-						<span class="focus-input100"></span>
+                    <div class="wrap-input100 validate-input m-b-10" data-validate = "Email is required">
+						<span class="label-input100">Email</span>
+						<input class="input100 email-input" type="text" name="email" placeholder="Enter email">
+						<span class="focus-input100" data-symbol="&#xf15A;"></span>
 					</div>
-                    <div class="error">
-                        {% for error in form.age.errors %}
-                            <p id="errors">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100"> {{form.email.label}} </span>
-                          {{ form.email(size=26, class="input100", placeholder="Enter email") }}
-						<span class="focus-input100"></span>
+                    <div class="wrap-input100 validate-input m-b-10" data-validate="Password is required">
+						<span class="label-input100">Password</span>
+						<input class="input100 password-input" type="password" name="pass" placeholder="Enter password">
+						<span class="focus-input100" data-symbol="&#xf190;"></span>
 					</div>
-                    <div class="error">
-                        {% for error in form.email.errors %}
-                            <p id="errors">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100"> {{form.password.label}} </span>
-                          {{ form.password(size=26, class="input100", placeholder="Enter password") }}
-						<span class="focus-input100"></span>
+                    <div class="wrap-input100 validate-input m-b-20" data-validate="Password is required">
+						<span class="label-input100">Confirm password</span>
+						<input class="input100 confirm-input" type="password" name="pass" placeholder="Confirm password">
+						<span class="focus-input100" data-symbol="&#xf1B9;"></span>
 					</div>
-                    <div class="error">
-                        {% for error in form.password.errors %}
-                            <p id="errors">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-                    <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100"> {{ form.confirm_password.label }} </span>
-                          {{ form.confirm_password(size=26, class="input100", placeholder="Confirm password") }}
-						<span class="focus-input100"></span>
+					<div class="container-login100-form-btn">
+						<div class="wrap-login100-form-btn">
+							<div class="login100-form-bgbtn"></div>
+							<button class="login100-form-btn registration-btn">
+								Registration
+							</button>
+						</div>
 					</div>
-                    <div class="error">
-                        {% for error in form.confirm_password.errors %}
-                            <p id="errors">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-                    <div class="container-login100-form-btn">
-						<button class="login100-form-btn">
-							Registration
-						</button>
-                    </div>
-
-                    <div id="have-account">
-                        <a href="{{ url_for('auth.login') }}">I have an account</a>
-                    </div>
-                </form>
+					<div class="flex-col-c p-t-30">
+						<a href="{{ url_for('auth.login') }}" class="txt2">
+                            Sign in
+						</a>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -122,7 +84,10 @@
 <!--===============================================================================================-->
 	<script src="/static/vendor/js/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
-	<script src="/static/js/login.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/js/base.js"></script>
+	<script src="/static/js/registration.js"></script>
 <!--===============================================================================================-->
 </body>
 </html>

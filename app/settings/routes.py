@@ -17,7 +17,7 @@ def profile():
     form = ProfSettingsForm(
         name=current_user.name,
         surname=current_user.surname,
-        nick=current_user.nick,
+        username=current_user.username,
         age=current_user.age,
         email=current_user.email,
         address=current_user.address

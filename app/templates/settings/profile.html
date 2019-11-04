@@ -68,14 +68,14 @@
                         </div>
 
                         <div class="form-row">
-                            <div class="name">{{ form.nick.label }}</div>
+                            <div class="name">{{ form.username.label }}</div>
                             <div class="value">
                                 <div class="input-group">
-                                    {{ form.nick(class="input--style-6", placeholder="Ivan228") }}
+                                    {{ form.username(class="input--style-6", placeholder="Ivan228") }}
                                 </div>
                             </div>
                             <div class="error">
-                                {% for error in form.nick.errors %}
+                                {% for error in form.username.errors %}
                                     <p id="errors">[{{ error }}]</p>
                                 {% endfor %}
                             </div>

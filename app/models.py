@@ -21,7 +21,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(Constants.NAME_LENGTH))
     surname = db.Column(db.String(Constants.SURNAME_LENGTH))
-    nick = db.Column(db.String(Constants.NICK_LENGTH), unique=True)
+    username = db.Column(db.String(Constants.USERNAME_LENGTH), unique=True)
     age = db.Column(db.Integer)
     address = db.Column(db.String(Constants.ADDRESS_LENGTH))
     email = db.Column(db.String(Constants.EMAIL_LENGTH), unique=True)
@@ -42,12 +42,12 @@ class User(UserMixin, db.Model):
         backref=db.backref('members', lazy="dynamic")
     )
 
-    def __init__(self, name, surname, nick, age, email):
-        self.name = name
-        self.surname = surname
-        self.nick = nick
-        self.age = age
-        self.email = email
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.surname = kwargs.get('surname')
+        self.username = kwargs.get('username')
+        self.age = kwargs.get('age', 0)
+        self.email = kwargs.get('email')
 
     @property
     def status(self):
@@ -82,7 +82,7 @@ class User(UserMixin, db.Model):
             'Surname': self.surname,
             'Photo': self.photo,
             'Age': self.age,
-            'Nick': self.nick,
+            'Username': self.username,
             'Email': self.email,
             'Address': self.address
         }
@@ -90,7 +90,7 @@ class User(UserMixin, db.Model):
     def set_profile_form(self, form):
         self.name = form.name.data
         self.surname = form.surname.data
-        self.nick = form.nick.data
+        self.username = form.username.data
         self.age = form.age.data
         self.email = form.email.data
         self.address = form.address.data
@@ -216,7 +216,7 @@ class Room(db.Model):
         if messages:
             last_message = messages[-1].text
 
-        if len(last_message) > 40:
+        if last_message and len(last_message) > 40:
             last_message = last_message[:40] + '...'
 
         return last_message
@@ -261,7 +261,7 @@ class Room(db.Model):
         return self.members[0]  # Dialog with yourself
 
     def get_title(self, current_user):
-        return (self.get_recipient(current_user).nick
+        return (self.get_recipient(current_user).username
                 if self.is_dialog
                 else self.title)
 

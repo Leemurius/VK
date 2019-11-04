@@ -23,7 +23,7 @@ def registration():
         user = User(
             name=form.name.data,
             surname=form.surname.data,
-            nick=form.nick.data,
+            username=form.username.data,
             age=form.age.data,
             email=form.email.data
         )

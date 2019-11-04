@@ -40,38 +40,38 @@ function getIP() {
     return "192.168.43.86:5000";
 }
 
-function getProfileInformation(nick) {
-    return getAjaxInformation('http://' + getIP() + '/api/self/profile_information/' + nick)
+function getProfileInformation(username) {
+    return getAjaxInformation('http://' + getIP() + '/api/self/profile_information/' + username)
 }
 
-function editVisualProfileBox(nick) {
-    var dict = getProfileInformation(nick);
+function editVisualProfileBox(username) {
+    var dict = getProfileInformation(username);
     $('.profile-box .name_surname p').text(dict['Name'] + ' ' + dict['Surname']);
     $('.profile-box .photo-preview img').attr('src', dict['Photo']);
     $('.profile-box .list .age .value').text(dict['Age'] ? dict['Age'] : 'No information');
-    $('.profile-box .list .nick .value').text(dict['Nick'] ? dict['Nick'] : 'No information');
+    $('.profile-box .list .username .value').text(dict['username'] ? dict['username'] : 'No information');
     $('.profile-box .list .Email .value').text(dict['Email'] ? dict['Email'] : 'No information');
     $('.profile-box .list .Address .value').text(dict['Address'] ? dict['Address'] : 'No information');
 }
 
 var LastLiClick = false;
 $('li[data-href]').on("click", function() {
-    const nick = $(this).attr("data-href");
+    const username = $(this).attr("data-href");
 
     if (LastLiClick) {
         $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
         $('.profile-box').hide();
         LastLiClick = false;
     } else {
-        editVisualProfileBox(nick);
+        editVisualProfileBox(username);
         $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
         $('.profile-box').show();
         LastLiClick = true;
     }
 });
 
-function getProfileId(nick) {
-    return getAjaxInformation('http://' + getIP() + '/api/profile_id/' + nick);
+function getProfileId(username) {
+    return getAjaxInformation('http://' + getIP() + '/api/profile_id/' + username);
 }
 
 $(".write_message button").click(function () {

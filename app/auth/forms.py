@@ -36,11 +36,11 @@ class RegistrationForm(FlaskForm):
         ]
     )
 
-    nick = StringField(
-        'Nick',
+    username = StringField(
+        'Username',
         validators=[
             DataRequired(),
-            length(max=Constants.NICK_LENGTH, message='Too long nick.')
+            length(max=Constants.USERNAME_LENGTH, message='Too long username.')
         ]
     )
 
@@ -82,11 +82,11 @@ class RegistrationForm(FlaskForm):
 
     submit = SubmitField('Submit')
 
-    def validate_nick(self, nick):
-        if User.query.filter_by(nick=nick.data).count():
-            raise ValueError('This nick already taken.')
+    def validate_username(self, username):
+        if User.query.filter_by(username=username.data).count():
+            raise ValueError('This username already taken.')
 
-        if not re.match('[0-9a-zA-Z]', nick.data):
+        if not re.match('[0-9a-zA-Z]', username.data):
             raise ValueError('Only letters and digits are allowed.')
 
     def validate_email(self, email):
@@ -100,7 +100,7 @@ class LoginForm(FlaskForm):
         super().__init__()
 
     login = StringField(
-        'Nick or email',
+        'Username or email',
         validators=[
             DataRequired(),
             length(max=Constants.NAME_LENGTH, message='Too long login.')
@@ -132,7 +132,7 @@ class LoginForm(FlaskForm):
         if self._is_email(self.login.data):
             self._user = User.query.filter_by(email=self.login.data).first()
         else:
-            self._user = User.query.filter_by(nick=self.login.data).first()
+            self._user = User.query.filter_by(username=self.login.data).first()
 
         if self._user is None or not self._user.check_password(password=password.data):
             raise ValueError('Username or password is incorrect.')

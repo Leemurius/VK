@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 
 {% block head %}
-    <title>Profile of {{ current_user.nick }}</title>
+    <title>Profile of {{ current_user.username }}</title>
      <!--===============================================================================================-->
     <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicons/profile.png"/>
     <!--===============================================================================================-->
@@ -13,7 +13,7 @@
     {{ moment.include_jquery() }}
 
     <div class="start-phrase">
-        <h1>Find a companion of your interest!</h1>
+        <h1>Find a companion of your interests!</h1>
     </div>
 
 {% endblock %}

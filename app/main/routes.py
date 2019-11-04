@@ -44,7 +44,8 @@ def chat(room_id):
 @bp.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
-    users = User.query.order_by(User.nick.desc())
+    users = list(User.query.order_by(User.username.desc()))
+    users = sorted(users, key=lambda user: (user.name, user.surname))
     rooms = current_user.rooms  # validate inside
 
     return render_template(

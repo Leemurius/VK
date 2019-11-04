@@ -37,11 +37,11 @@ class ProfSettingsForm(FlaskForm):
         ]
     )
 
-    nick = StringField(
-        'Nick',
+    username = StringField(
+        'Username',
         validators=[
             DataRequired(message='Field is empty'),
-            length(max=Constants.NICK_LENGTH, message='Too long nick')
+            length(max=Constants.USERNAME_LENGTH, message='Too long username')
         ]
     )
 
@@ -77,10 +77,10 @@ class ProfSettingsForm(FlaskForm):
 
     save = SubmitField('Save')
 
-    def validate_nick(self, nick):
-        if (User.query.filter_by(nick=nick.data).count() and
-                nick.data != current_user.nick):
-            raise ValueError('This nick already taken')
+    def validate_username(self, username):
+        if (User.query.filter_by(username=username.data).count() and
+                username.data != current_user.username):
+            raise ValueError('This username already taken')
 
     def validate_email(self, email):
         if (User.query.filter_by(email=email.data).count() and

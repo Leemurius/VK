@@ -5,75 +5,58 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
-    <link rel="shortcut icon" type="image/x-icon" href="/static/favicons/login.png"/>
+	<link rel="icon" type="image/png" href="/static/favicons/login.png"/>
 <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/css/bootstrap4.1.1.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="/static/css/auth/login_and_reg_util.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/css/font-awesome.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="/static/css/auth/login_and_reg.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/css/material-design-iconic-font.min.css">
 <!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/css/auth/utils.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/auth/base.css">
+<!--==============================================================================================-->
 </head>
 <body>
-
 	<div class="limiter">
 		<div class="container-login100">
-			<div class="wrap-login100">
-				<div class="login100-form-title" style="background-image: url(static/images/login.jpg);">
-					<span class="login100-form-title-1">
-						Sign In
+			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+				<form class="login100-form validate-form">
+					<span class="login100-form-title p-b-49">
+						Login
 					</span>
-				</div>
 
-				<form class="login100-form validate-form" action="" method="post" novalidate>
-                    {{ form.hidden_tag() }}
-					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100">Nick or email</span>
-                        {{ form.login(size=26, class="input100", placeholder="Enter username") }}
-						<span class="focus-input100"></span>
+					<div class="wrap-input100 validate-input m-b-23" data-validate = "Username is reauired">
+						<span class="label-input100">Username or email</span>
+						<input class="input100 username-input" type="text" placeholder="Type your username or email">
+						<span class="focus-input100" data-symbol="&#xf206;"></span>
 					</div>
-                    <div class="error1">
-                        {% for error in form.login.errors %}
-                            <p id="error">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-					<div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
+					<div class="wrap-input100 validate-input" data-validate="Password is required">
 						<span class="label-input100">Password</span>
-                        {{ form.password(size=26, class="input100", placeholder="Enter password") }}
-						<span class="focus-input100"></span>
+						<input class="input100 password-input" type="password" placeholder="Type your password">
+						<span class="focus-input100" data-symbol="&#xf190;"></span>
 					</div>
-                    <div class="error2">
-                        {% for error in form.password.errors %}
-                            <p id="error">[{{ error }}]</p>
-                        {% endfor %}
-                    </div>
 
-
-					<div class="flex-sb-m w-full p-b-30">
-						<div class="contact100-form-checkbox">
-                            {{ form.remember(class="input-checkbox100") }}
-							<label class="label-checkbox100" for="remember">
-								Remember me
-							</label>
-						</div>
-
-						<div>
-							<a href="{{ url_for('auth.reset_password_request') }}" class="txt1">
-								Forgot Password?
-							</a>
-						</div>
-                        <div>
-							<a href="{{ url_for('auth.registration') }}" class="txt1">
-								Registration
-							</a>
-						</div>
+					<div class="text-right p-t-8 p-b-31">
+						<a href="{{ url_for('auth.reset_password_request') }}">
+							Forgot password?
+						</a>
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">
-							Login
-						</button>
+						<div class="wrap-login100-form-btn">
+							<div class="login100-form-bgbtn"></div>
+							<button class="login100-form-btn login_button">
+								login
+							</button>
+						</div>
+					</div>
+
+					<div class="flex-col-c p-t-30">
+						<a href="{{ url_for('auth.registration') }}" class="txt2">
+							Sign Up
+						</a>
 					</div>
 				</form>
 			</div>
@@ -83,6 +66,9 @@
 <!--===============================================================================================-->
 	<script src="/static/vendor/js/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/js/base.js"></script>
 	<script src="/static/js/login.js"></script>
 <!--===============================================================================================-->
 </body>
