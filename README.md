@@ -1,5 +1,3 @@
 # Messenger
 
-This project coded as a part of practice in programming...
-
-You can try it [here](http://leemurchat.xionix.xyz).
+Simple messenger based on 'Telegram'. Every user can send and receive messages from other users, and find new people for conversation.
