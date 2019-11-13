@@ -19,3 +19,8 @@ $(".write_message a").click(function() {
     var room_id = getAjaxInformation('http://' + getIP() + '/api/rooms/' + getProfileId(username));
    $(".write_message a").attr('href', 'chat/' + room_id);
 });
+
+
+$(".search-person").click(function (e) {
+    // TODO: realize this:(
+});

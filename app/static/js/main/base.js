@@ -11,7 +11,7 @@ $(window).on('load', function() {
 });
 
 function getAjaxInformation(url) {
-    let response = '';
+    let response = null;
     $.ajax({ type: "GET",
              url: url,
              async: false,
@@ -23,7 +23,7 @@ function getAjaxInformation(url) {
 }
 
 function postAjaxInformation(url, data) {
-    let response = '';
+    let response = null;
     $.ajax({ type: "POST",
              url: url,
              async: false,
@@ -56,16 +56,17 @@ function addInformationInProfileBox(username) {
 }
 
 function addSelfInformationInProfileBox() {
+    $('.write_message').hide();
     editVisualProfileBox(getSelfProfileInformation());
 }
 
 function editVisualProfileBox(dict) {
     $('.profile-box .name_surname p').text(dict['name'] + ' ' + dict['surname']);
     $('.profile-box .photo-preview img').attr('src', dict['photo']);
-    $('.profile-box .list .age .value').text(dict['age'] ? dict['age'] : 'No information');
-    $('.profile-box .list .username .value').text(dict['username']);
-    $('.profile-box .list .email .value').text(dict['email']);
-    $('.profile-box .list .address .value').text(dict['address'] ? dict['address'] : 'No information');
+    $('.profile-box .list .age-base .value').text(dict['age'] ? dict['age'] : 'No information');
+    $('.profile-box .list .username-base .value').text(dict['username']);
+    $('.profile-box .list .email-base .value').text(dict['email']);
+    $('.profile-box .list .address-base .value').text(dict['address'] ? dict['address'] : 'No information');
 }
 
 var LastLiClick = false; // Action menu
@@ -89,4 +90,46 @@ function getProfileId(username) {
 $(".write_message button").click(function () {
     var room_id = getAjaxInformation('http://' + getIP() + '/api/rooms/' + getProfileId(LastTrClick));
     window.location.assign("http://" + getIP() + "/chat/" + room_id);
+});
+
+
+function searchRoom(data) {
+    const response = postAjaxInformation('http://' + getIP() + '/api/self/find/room', data);
+    return response;
+}
+
+function updateListOfRooms(data) {
+    $('.room-links').remove();  // delete all links on rooms
+
+    rooms = searchRoom(data);
+    for (let i = 0; i < rooms.length; i++) {
+        var room = rooms[i];
+        if (room['is_dialog']) {
+            $('<a class="room-links" href="/chat/' + room['room_id'] + '">' +
+                    '<li>' +
+                        '<div class="d-flex bd-highlight">' +
+                            '<div class="img_cont">' +
+                                '<img src="' + room['photo'] + '" class="rounded-circle user_img">' +
+                                '<span class="online_icon ' + (room['status'] ? 'online' : 'offline') + '"></span>' +
+                            '</div>' +
+                            '<div class="user_info">' +
+                                '<span class="name">' + room['title'] + '</span>' +
+                                '<p class="preview">' + room['last_message'] + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                    '</li>' +
+                '</a>'
+            ).appendTo($('.contacts'))
+        } else {
+            // TODO: for conversations
+        }
+    }
+}
+
+$(".search-room").click(function (e) {
+    const data = JSON.stringify({
+       'request': $('.search-room-input').val()
+    });
+
+    updateListOfRooms(data);
 });

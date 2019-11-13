@@ -3,11 +3,10 @@ $('.validate-form').on('submit',function(){
     const password = $('.password-input').val();
     const data = JSON.stringify({'login' : login, 'password' : password});
 
-    var response = postAjaxInformation('http://' + getIP() + '/api/user/login', data);
+    var response = postAjaxInformation('http://' + getIP() + '/api/login', data);
     if (response != true) {
-        const error_text = JSON.parse(response).message;
-        // This line add text in alert, usual solve doesn't work!
-        $('.password-input').append("<style>.alert-validate::before{content:'" + error_text + "'}</style>");
+        const error_text = JSON.parse(JSON.parse(response).message);
+        $('.password-input-div').attr('data-validate', error_text);
         showValidate($('.password-input'));
         return false;
     } else {

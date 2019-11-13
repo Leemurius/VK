@@ -15,7 +15,7 @@ class Config(object):
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
     MAIL_USERNAME = 'sidorevich.toxa@mail.ru'
-    MAIL_PASSWORD = 'SDJKS1vmMSQU3289428A'
+    MAIL_PASSWORD = ''
     ADMINS = ['sidorevich.anton@gmail.com']
 
 
@@ -33,14 +33,14 @@ class Constants(object):
     TIME_OF_ACTUAL_REQUEST = 500
     TIME_OF_ONLINE = 2  # Minutes
 
-    MAX_AGE = 150
     NAME_LENGTH = 50
+    SURNAME_LENGTH = 50
     USERNAME_LENGTH = 50
     EMAIL_LENGTH = 50
-    PHOTO_LENGTH = 256
-    REQUEST_LENGTH = 50
+    MIN_AGE = 14
+    MAX_AGE = 150
     ADDRESS_LENGTH = 50
-    SURNAME_LENGTH = 50
+    PHOTO_LENGTH = 256
     MIN_PASSWORD_LENGTH = 6
     MAX_PASSWORD_LENGTH = 30
     ARTICLE_LENGTH = 512

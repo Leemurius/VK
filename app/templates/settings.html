@@ -19,60 +19,63 @@
     <div class="form-v10">
         <div class="page-content">
             <div class="form-v10-content">
-                <form class="form-detail" action="#" method="post" id="myform">
+                <div class="form-detail">
 
                     {# LEFT #}
-                    <div class="form-left">
-                        <h2>General Infomation</h2>
-                        <div class="form-group">
-                            <div class="form-row form-row-1">
-                                <input type="text" name="first_name" id="first_name" class="name" placeholder="First Name">
+                    <form class="left-form" action="#" method="post" id="myform">
+                        <div class="form-left">
+                            <h2>General Infomation</h2>
+                            <div class="form-group">
+                                <div class="form-row form-row-1 validate-input">
+                                    <input type="text" name="first_name" id="first_name" class="input100 name-field" placeholder="First Name">
+                                </div>
+                                <div class="form-row form-row-2 validate-input">
+                                    <input type="text" name="last_name" id="last_name" class="input100 surname" placeholder="Last Name">
+                                </div>
                             </div>
-                            <div class="form-row form-row-2">
-                                <input type="text" name="last_name" id="last_name" class="surname" placeholder="Last Name">
+
+                            <div class="form-row validate-input">
+                                <input type="text" name="username" class="input100 username" id="username" placeholder="Username">
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-row form-row-3 validate-input">
+                                    <input type="text" name="email" class="input100 email" id="email" placeholder="Email">
+                                </div>
+                                <div class="form-row form-row-2 validate-input">
+                                    <input type="text" name="age" id="age" class="input100 age" placeholder="Age">
+                                </div>
+                            </div>
+
+                            <div class="form-row validate-input">
+                                <input type="text" name="address" class="input100 address " id="address" placeholder="Address">
+                            </div>
+
+                            <div class="form-row-last">
+                                <input type="submit" name="save-information" class="save-information" value="Save information">
                             </div>
                         </div>
-
-                        <div class="form-row">
-                            <input type="text" name="username" class="username" id="username" placeholder="Username">
-                        </div>
-
-                        <div class="form-group">
-                            <div class="form-row form-row-3">
-                                <input type="text" name="email" class="email" id="email" placeholder="Email">
-                            </div>
-                            <div class="form-row form-row-2">
-                                <input type="text" name="age" id="age" class="age" placeholder="Age">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <input type="text" name="address" class="address" id="address" placeholder="Address">
-                        </div>
-
-                        <div class="form-row-last">
-                            <input type="submit" name="save-information" class="save-information" value="Save information">
-                        </div>
-                    </div>
+                    </form>
 
                     {# RIGHT #}
-                    <div class="form-right">
-                        <h2>Security information</h2>
-                        <div class="form-row">
-                            <input type="password" name="old-password" class="old-password" id="old-password" placeholder="Old password">
+                    <form class="right-form" action="#" method="post" id="myform2">
+                        <div class="form-right">
+                            <h2>Security information</h2>
+                            <div class="form-row validate-input">
+                                <input type="password" name="old-password" class="input100 old-password" id="old-password" placeholder="Old password">
+                            </div>
+                            <div class="form-row validate-input">
+                                <input type="password" name="new-password" class="input100 new-password" id="new-password" placeholder="New password">
+                            </div>
+                            <div class="form-row validate-input">
+                                <input type="password" name="confirm-password" class="input100 confirm-password" id="confirm-password" placeholder="Confirm new password">
+                            </div>
+                            <div class="form-row-last validate-input">
+                                <input type="submit" name="save-password" class="save-password" value="Save password">
+                            </div>
                         </div>
-                        <div class="form-row">
-                            <input type="password" name="new-password" class="new-password" id="new-password" placeholder="New password">
-                        </div>
-                        <div class="form-row">
-                            <input type="password" name="confirm-password" class="confirm-password" id="confirm-password" placeholder="Confirm new password">
-                        </div>
-                        <div class="form-row-last">
-                            <input type="submit" name="save-password" class="save-password" value="Save password">
-                        </div>
-                    </div>
-
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

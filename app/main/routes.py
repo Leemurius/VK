@@ -23,14 +23,12 @@ def chat(room_id):
     room = Room.query.get_or_404(room_id)
 
     if not room.is_member(current_user):
-        return redirect(url_for('main.profile'))  # TODO: flash with info, that it impossible
-
-    rooms = current_user.rooms
+        return redirect(url_for('main.profile'))  # TODO: flash with info, that it is not impossible
 
     return render_template(
         'main/chat.html',
         current_user=current_user,  # for base.html
-        rooms=rooms,  # for base.html
+        rooms=current_user.rooms,  # for base.html
         room=room,
         recipient=room.get_recipient(current_user),  # if chat is dialog
         title=room.get_title(current_user),
@@ -42,6 +40,7 @@ def chat(room_id):
 @login_required
 def search():
     users = list(User.query.order_by(User.username.desc()))
+    users.remove(current_user)  # fixed bug with button on yourself
     users = sorted(users, key=lambda user: (user.name, user.surname))
     rooms = current_user.rooms  # validate inside
 

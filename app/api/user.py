@@ -1,10 +1,14 @@
+import re
+
 from flask import jsonify, request
 from flask_login import login_required, current_user, login_user
 
 from app.api.errors import bad_request
-from app.auth.validates import LoginValidator, RegistrationValidator
+from app.auth.validate import LoginValidator, RegistrationValidator, ResetPasswordValidator
+from app.settings.validate import PersonalSettingsValidator, PasswordSettingsValidator
 from app.models import User
 from app.api import bp
+from app.auth.email import send_password_reset_email
 
 
 @bp.route('/self/id', methods=['GET'])
@@ -30,21 +34,40 @@ def get_self_information():
 def update_self_information():
     data = request.get_json() or {}
 
+    required_fields = ('name', 'surname', 'username', 'age', 'email', 'address')
+    if not all(field in data for field in required_fields):
+        return bad_request('Must include ' + str(required_fields) + ' fields!')
+
     try:
-        # TODO: check that fields are normal
+        validator = PersonalSettingsValidator(
+            name=data['name'],
+            surname=data['surname'],
+            username=data['username'],
+            age=data['age'],
+            email=data['email'],
+            address=data['address']
+        )
+        errors = validator.validate()
+
+        # Check that we don't have exceptions
+        if any(errors):
+            raise Exception(errors)
+
+        # Accept changes
         current_user.set_profile_information(
             name=data['name'],
             surname=data['surname'],
             username=data['username'],
             age=data['age'],
             email=data['email'],
-            address=data['address'],
+            address=data['address']
         )
+
         if 'photo' in data['photo']:
             current_user.set_profile_information(photo=data['photo'])
 
-    except Exception:
-        return jsonify(False)
+    except Exception as exception:
+        return bad_request(exception.args[0])
     return jsonify(True)
 
 
@@ -53,12 +76,92 @@ def update_self_information():
 def update_self_password():
     data = request.get_json() or {}
 
+    # TODO: Man-in-the-middle
+    required_fields = ('old_password', 'new_password', 'confirm_password')
+    if not all(field in data for field in required_fields):
+        return bad_request('Must include ' + str(required_fields) + ' fields!')
+
     try:
-        # TODO: Man-in-the-middle
-        current_user.set_password(data['password'])
-    except Exception:
-        return jsonify(False)
+        validator = PasswordSettingsValidator(
+            old_password=data['old_password'],
+            new_password=data['new_password'],
+            confirm_password=data['confirm_password'],
+        )
+        errors = validator.validate()
+
+        # Check that we don't have exceptions
+        if any(errors):
+            raise Exception(errors)
+
+        # Accept changes
+        current_user.set_password(data['new_password'])
+    except Exception as exception:
+        return bad_request(exception.args[0])
     return jsonify(True)
+
+
+@bp.route('/user/update/password/<token>', methods=['POST'])
+def update_user_password(token):
+    data = request.get_json() or {}
+
+    # TODO: Man-in-the-middle
+    required_fields = ('new_password', 'confirm_password')
+    if not all(field in data for field in required_fields):
+        return bad_request('Must include ' + str(required_fields) + ' fields!')
+
+    try:
+        validator = ResetPasswordValidator(
+            new_password=data['new_password'],
+            confirm_password=data['confirm_password']
+        )
+        errors = validator.validate()
+
+        # Check that we don't have exceptions
+        if any(errors):
+            raise Exception(errors)
+
+        # Accept changes
+        user = User.verify_reset_password_token(token)
+        user.set_password(data['new_password'])
+    except Exception as exception:
+        return bad_request(exception.args[0])
+    return jsonify(True)
+
+
+@bp.route('/self/find/room', methods=['POST'])
+@login_required
+def find_rooms():
+    data = request.get_json() or {}
+
+    if 'request' not in data:
+        return bad_request('Must include request field!')
+    try:
+        rooms_list = []
+        for room in current_user.rooms:
+            if re.match('^' + data['request'], room.get_title(current_user)):
+                if room.is_dialog:
+                    recipient = room.get_recipient(current_user)
+                    rooms_list.append({
+                        'is_dialog': True,
+                        'status': recipient.status,
+                        'title': recipient.name + ' ' + recipient.surname,
+                        'photo': recipient.photo,
+                        'last_message': room.get_last_message(),
+                        'room_id': room.id
+                    })
+                else:
+                    rooms_list.append({
+                        'is_dialog': False,
+                        'title': room.get_title(current_user),
+                        'photo': room.photo,
+                        'last_message': room.get_last_message(),
+                        'room_id': room.id
+                    })
+
+        print(rooms_list)
+        return jsonify(rooms_list)
+    except Exception as exception:
+        return bad_request(str(exception))
 
 
 @bp.route('/user/information/<string:username>', methods=['GET'])
@@ -75,7 +178,26 @@ def get_id(username):
     return jsonify(user.id)
 
 
-@bp.route('/user/login', methods=['POST'])
+@bp.route('/reset', methods=['POST'])
+def reset_password():
+    data = request.get_json() or {}
+
+    if 'email' not in data:
+        return bad_request('Must include email field!')
+
+    try:
+        user = User.query.filter_by(email=data['email']).first()
+
+        if user is None:
+            raise Exception('This email doesn\'t registered on the website')
+
+        send_password_reset_email(user)
+    except Exception as exception:
+        return bad_request(exception.args[0])
+    return jsonify(True)
+
+
+@bp.route('/login', methods=['POST'])
 def sign_in_user():
     data = request.get_json() or {}
 
@@ -111,10 +233,21 @@ def create_user():
             confirm_password=data['confirm_password']
         )
         errors = validator.validate()
-        if errors:
+
+        # Check that we don't have exceptions
+        if any(errors):
             raise Exception(errors)
 
+        # Add new user to db
+        new_user = User(
+            name=data['name'],
+            surname=data['surname'],
+            username=data['username'],
+            email=data['email']
+        )
+        new_user.set_password(data['password'])
+        new_user.commit_to_db()
+
     except Exception as exception:
-        print(str(exception))
-        return bad_request(str(exception))
+        return bad_request(exception.args[0])
     return jsonify(True)

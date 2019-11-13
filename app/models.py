@@ -94,7 +94,6 @@ class User(UserMixin, db.Model):
         self.age = kwargs.get('age', self.age)
         self.email = kwargs.get('email', self.email)
         self.address = kwargs.get('address', self.address)
-        print(kwargs.get('photo', self.photo))
         self.upload_photo(kwargs.get('photo', self.photo))
         db.session.commit()
 

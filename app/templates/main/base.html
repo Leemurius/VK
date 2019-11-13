@@ -35,8 +35,8 @@
 				<div class="col-md-4 col-xl-3 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
 					<div class="card-header">
 						<div class="input-group">
-							<input type="text" placeholder="Search..." name="" class="form-control search">
-							<div class="input-group-prepend">
+							<input type="text" placeholder="Search..." name="" class="form-control search search-room-input">
+							<div class="input-group-prepend search-room">
 								<span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
 							</div>
 						</div>
@@ -45,7 +45,7 @@
 						<ui class="contacts">
 
                             {% for room in rooms %}
-                            <a href={{ url_for('main.chat', room_id=room.id) }}>
+                            <a class='room-links' href={{ url_for('main.chat', room_id=room.id) }}>
                                 <li>
                                     <div class="d-flex bd-highlight">
                                         {% if room.is_dialog %}
@@ -132,19 +132,19 @@
                             <h2>General Info</h2>
                             <div class="list">
                                 <ul>
-                                    <li class="age">
+                                    <li class="age-base">
                                         <span class="field">Age</span>
                                         <span class="value">Default</span>
                                     </li>
-                                    <li class="username">
+                                    <li class="username-base">
                                         <span class="field">Username</span>
                                         <span class="value">Default</span>
                                     </li>
-                                    <li class="email">
+                                    <li class="email-base">
                                         <span class="field">Email</span>
                                         <span class="value">Default</span>
                                     </li>
-                                    <li class="address">
+                                    <li class="address-base">
                                         <span class="field">Address</span>
                                         <span class="value">Default</span>
                                     </li>
@@ -161,9 +161,7 @@
         <!--===============================================================================================-->
         <script src="/static/vendor/css/bootstrap4.1.1.min.css"></script>
         <!--===============================================================================================-->
-        <script type="text/javascript" src="/static/vendor/js/jquery.mCustomScrollbar.min.js"></script>
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="/static/js/base.js"></script>
+        <script type="text/javascript" src="/static/js/main/base.js"></script>
         <!--===============================================================================================-->
         {% block js_files %}{% endblock %}
         <!--===============================================================================================-->
