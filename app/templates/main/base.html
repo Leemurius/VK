@@ -94,9 +94,13 @@
                                             <li><i class="fas fa-search"></i>Find user</li>
                                         </a>
 
-    {#                                    <a href="#">#}
-    {#                                        <li><i class="fas fa-plus"></i> Add to chat</li>#}
-    {#                                    </a>#}
+                                        <a href="{{ url_for('main.add_to_queue') }}">
+                                            <li><i class="fas fa-plus"></i> Add to queue</li>
+                                        </a>
+
+                                        <a href="{{ url_for('main.queue') }}">
+                                            <li><i class="fas fa-address-book"></i>Open queue</li>
+                                        </a>
 
                                         <a href="{{ url_for('settings.settings') }}">
                                             <li><i class="fas fa-gear"></i>Settings</li>

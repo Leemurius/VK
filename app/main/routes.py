@@ -52,6 +52,18 @@ def search():
     )
 
 
+@bp.route('/add_to_queue', methods=['GET', 'POST'])
+@login_required
+def add_to_queue():
+    return render_template('main/add_to_queue.html')
+
+
+@bp.route('/queue', methods=['GET', 'POST'])
+@login_required
+def queue():
+    return render_template('main/queue.html')
+
+
 @bp.before_request
 def before_request():
     if current_user.is_authenticated:

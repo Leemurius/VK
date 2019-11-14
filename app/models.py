@@ -16,6 +16,11 @@ rooms = db.Table('rooms',
     db.Column('room_id', db.Integer, db.ForeignKey('room.id'))
 )
 
+queues = db.Table('queues',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('queue_id', db.Integer, db.ForeignKey('queue.id'))
+)
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,7 +51,7 @@ class User(UserMixin, db.Model):
         self.name = kwargs.get('name')
         self.surname = kwargs.get('surname')
         self.username = kwargs.get('username')
-        self.age = kwargs.get('age', 0)
+        self.age = kwargs.get('age', None)
         self.email = kwargs.get('email')
 
     @property
@@ -127,6 +132,39 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def commit_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+class Queue(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lab_number = db.Column(db.Integer)
+    status = db.Column(db.String(10))
+    priority = db.Column(db.Integer)
+    owner = db.relationship(
+        'User',
+        secondary=queues,
+        backref=db.backref('queues', lazy="dynamic")
+    )
+
+    def __lt__(self, other):
+        if self.lab_number < other.lab_number:
+            return True
+        elif self.lab_number > other.lab_number:
+            return False
+
+        if self.priority < other.priority:
+            return True
+        elif self.priority > other.priority:
+            return False
+
+        return True
+
+    def set_owner(self, user):
+        self.owner.append(user)
+        db.session.commit()
 
     def commit_to_db(self):
         db.session.add(self)
