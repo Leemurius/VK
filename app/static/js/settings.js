@@ -1,26 +1,22 @@
 $(document).ready(function() {
     addGeneralInformationInFields();
+});
 
-    // $('.input-file').click(function() {
-    //     input = document.getElementById('photo');
-    //     input.addEventListener('change', readSingleFile, false);
-    //     input.click();
-    // });
-    //
-    // function readSingleFile(evt) {
-    //     var f = evt.target.files[0];
-    //
-    //     if (f) {
-    //         $('.input-file__info').text(f.name);
-    //
-    //     } else {
-    //         alert("Failed to load file");
-    //     }
-    // }
+$('.choose-photo-link').on('click', function (e) {
+    $('.choose-photo input').click();
+});
+
+$('.choose-photo input').bind('input',function (e) {
+    var photo_path = $(this).val();
+    if (photo_path.length > 40) {
+        photo_path = photo_path.substring(0, 20) + '...' +
+            photo_path.substring(photo_path.length - 10, photo_path.length);
+    }
+    $("#upload-file-info").html(photo_path);
 });
 
 function addGeneralInformationInFields() {
-    const data = getAjaxInformation('http://' + getIP() + '/api/self/information');
+    const data = getAjaxInformation('http://' + getServerName() + '/api/self/information');
     $('.name-field').val(data['name']);
     $('.surname').val(data['surname']);
     $('.username').val(data['username']);
@@ -43,40 +39,48 @@ $('.left-form').on('submit',function() {
         'age': Number.parseInt(age),
         'email': email,
         'address': address,
-        'photo' : 'none'
     });
+    const file = $('.choose-photo input').prop('files')[0];
 
-    var response = postAjaxInformation('http://' + getIP() + '/api/self/update/information', data);
-    if (response != true) {
-        const errors_list = JSON.parse(JSON.parse(response).message);
-        for (let i = 0; i < errors_list.length; i++) {
-            if (errors_list[i] == null) {
-                continue;
-            }
+    var responseData = postAjaxInformation('http://' + getServerName() + '/api/self/update/information', data);
+    var responsePhoto = postAjaxPhoto('http://' + getServerName() + '/api/self/update/photo', file);
+    if (responseData != true || responsePhoto != true) {
+        if (responseData != true) {
+            const errors_list = JSON.parse(JSON.parse(responseData).message);
+            for (let i = 0; i < errors_list.length; i++) {
+                if (errors_list[i] == null) {
+                    continue;
+                }
 
-            if (errors_list[i][0] == 'name') {
-                addValidateMessage('.name-field', errors_list[i][1]);
-            }
+                if (errors_list[i][0] == 'name') {
+                    addValidateMessage('.name-field', errors_list[i][1]);
+                }
 
-            if (errors_list[i][0] == 'surname') {
-                addValidateMessage('.surname', errors_list[i][1]);
-            }
+                if (errors_list[i][0] == 'surname') {
+                    addValidateMessage('.surname', errors_list[i][1]);
+                }
 
-            if (errors_list[i][0] == 'username') {
-                addValidateMessage('.username', errors_list[i][1]);
-            }
+                if (errors_list[i][0] == 'username') {
+                    addValidateMessage('.username', errors_list[i][1]);
+                }
 
-            if (errors_list[i][0] == 'age') {
-                addValidateMessage('.age', errors_list[i][1]);
-            }
+                if (errors_list[i][0] == 'age') {
+                    addValidateMessage('.age', errors_list[i][1]);
+                }
 
-            if (errors_list[i][0] == 'email') {
-                addValidateMessage('.email', errors_list[i][1]);
-            }
+                if (errors_list[i][0] == 'email') {
+                    addValidateMessage('.email', errors_list[i][1]);
+                }
 
-            if (errors_list[i][0] == 'address') {
-                addValidateMessage('.address', errors_list[i][1]);
+                if (errors_list[i][0] == 'address') {
+                    addValidateMessage('.address', errors_list[i][1]);
+                }
             }
+        }
+
+        if (responsePhoto != true) {
+            var error = JSON.parse(JSON.parse(responsePhoto).message);
+            addValidateMessage('.photo-path', error);
         }
         return false;
     } else {
@@ -94,7 +98,7 @@ $('.right-form').on('submit',function() {
         'confirm_password' : confirm_password
     });
 
-    var response = postAjaxInformation('http://' + getIP() + '/api/self/update/password', data);
+    var response = postAjaxInformation('http://' + getServerName() + '/api/self/update/password', data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);
         for (let i = 0; i < errors_list.length; i++) {

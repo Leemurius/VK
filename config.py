@@ -33,6 +33,8 @@ class Constants(object):
     TIME_OF_ACTUAL_REQUEST = 500
     TIME_OF_ONLINE = 2  # Minutes
 
+    MAX_PHOTO_SIZE = 3  # MB
+
     NAME_LENGTH = 50
     SURNAME_LENGTH = 50
     USERNAME_LENGTH = 50
@@ -45,4 +47,4 @@ class Constants(object):
     MAX_PASSWORD_LENGTH = 30
     ARTICLE_LENGTH = 512
     ROOM_NAME_LENGTH = 50
-    MESSAGE_LENGTH = 2048
+    MAX_MESSAGE_LENGTH = 2048

@@ -1,13 +1,10 @@
 $(document).ready(function() {  // FOR ALL TEMPLATES
+    $('#preloader').delay(450).fadeOut('slow');
+
 	$('#action_menu_btn').click(function() {
 		$('.action_menu').toggle();
 	});
     $('.profile-box').hide();
-});
-
-$(window).on('load', function() {
-	$(".loader").fadeOut();
-	$("#preloder").delay(400).fadeOut("slow");
 });
 
 function getAjaxInformation(url) {
@@ -24,7 +21,8 @@ function getAjaxInformation(url) {
 
 function postAjaxInformation(url, data) {
     let response = null;
-    $.ajax({ type: "POST",
+    $.ajax({
+             type: "POST",
              url: url,
              async: false,
              data: data,
@@ -39,16 +37,40 @@ function postAjaxInformation(url, data) {
     return response
 }
 
-function getIP() {
-    return "192.168.43.86:5000";
+function postAjaxPhoto(url, photo) {
+     var form_data = new FormData();
+     form_data.append('photo', photo);
+
+     let response = null;
+     $.ajax({
+        type: 'POST',
+        url: url,
+        data: form_data,
+        contentType: false,
+        async: false,
+        cache: false,
+        processData: false,
+        success : function(text) {
+             response = text;
+        },
+        error: function(xhr, status, error) {
+            response = xhr.responseText;
+        }
+    });
+
+    return response;
+}
+
+function getServerName() {
+    return (window.location.href).split('/')[2];
 }
 
 function getProfileInformation(username) {
-    return getAjaxInformation('http://' + getIP() + '/api/user/information/' + username)
+    return getAjaxInformation('http://' + getServerName() + '/api/user/information/' + username)
 }
 
 function getSelfProfileInformation() {
-    return getAjaxInformation('http://' + getIP() + '/api/self/information')
+    return getAjaxInformation('http://' + getServerName() + '/api/self/information')
 }
 
 function addInformationInProfileBox(username) {
@@ -72,29 +94,30 @@ function editVisualProfileBox(dict) {
 var LastLiClick = false; // Action menu
 $('.my_profile').on("click", function() {
     if (LastLiClick) {
-        $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
         $('.profile-box').hide();
+        $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
         LastLiClick = false;
     } else {
         addSelfInformationInProfileBox();
         $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
         $('.profile-box').show();
+        LastPhotoClick = false;
         LastLiClick = true;
     }
 });
 
 function getProfileId(username) {
-    return getAjaxInformation('http://' + getIP() + '/api/user/id/' + username);
+    return getAjaxInformation('http://' + getServerName() + '/api/user/id/' + username);
 }
 
 $(".write_message button").click(function () {
-    var room_id = getAjaxInformation('http://' + getIP() + '/api/rooms/' + getProfileId(LastTrClick));
-    window.location.assign("http://" + getIP() + "/chat/" + room_id);
+    var room_id = getAjaxInformation('http://' + getServerName() + '/api/rooms/' + getProfileId(LastTrClick));
+    window.location.assign("http://" + getServerName() + "/chat/" + room_id);
 });
 
 
 function searchRoom(data) {
-    const response = postAjaxInformation('http://' + getIP() + '/api/self/find/room', data);
+    const response = postAjaxInformation('http://' + getServerName() + '/api/self/find/room', data);
     return response;
 }
 

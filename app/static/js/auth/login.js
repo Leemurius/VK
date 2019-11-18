@@ -3,7 +3,7 @@ $('.validate-form').on('submit',function(){
     const password = $('.password-input').val();
     const data = JSON.stringify({'login' : login, 'password' : password});
 
-    var response = postAjaxInformation('http://' + getIP() + '/api/login', data);
+    var response = postAjaxInformation('http://' + getServerName() + '/api/login', data);
     if (response != true) {
         const error_text = JSON.parse(JSON.parse(response).message);
         $('.password-input-div').attr('data-validate', error_text);

@@ -1,3 +1,4 @@
+import os
 import re
 
 from flask import jsonify, request
@@ -8,6 +9,7 @@ from app.auth.validate import LoginValidator, RegistrationValidator, ResetPasswo
 from app.settings.validate import PersonalSettingsValidator, PasswordSettingsValidator
 from app.models import User, Queue
 from app.api import bp
+from config import Constants
 from app.auth.email import send_password_reset_email
 from app.main.queue import QueueControl
 
@@ -70,9 +72,23 @@ def update_self_information():
             address=data['address']
         )
 
-        if 'photo' in data['photo']:
-            current_user.set_profile_information(photo=data['photo'])
+    except Exception as exception:
+        return bad_request(exception.args[0])
+    return jsonify(True)
 
+
+@bp.route('/self/update/photo', methods=['POST'])
+@login_required
+def update_photo():
+    try:
+        photo = request.files.get('photo')
+        # TODO: separate function for validation
+
+        photo.seek(0, os.SEEK_END)  # Go to the end of file
+        if photo.tell() / 1024 / 1024 > Constants.MAX_PHOTO_SIZE:
+            raise Exception('Max size of photo is {} MB'.format(Constants.MAX_PHOTO_SIZE))
+
+        current_user.set_profile_information(photo=photo)
     except Exception as exception:
         return bad_request(exception.args[0])
     return jsonify(True)
@@ -164,8 +180,6 @@ def find_rooms():
                         'last_message': room.get_last_message(),
                         'room_id': room.id
                     })
-
-        print(rooms_list)
         return jsonify(rooms_list)
     except Exception as exception:
         return bad_request(str(exception))

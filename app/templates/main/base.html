@@ -6,6 +6,8 @@
     <head>
         <meta charset='UTF-8'>
         <meta name="robots" content="noindex">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 
         {% block head %} {% endblock %}
 
@@ -23,14 +25,20 @@
     </head>
 
     <body>
-        <!-- Page Preloder -->
-        <div id="preloder">
-            <div class="loader"></div>
+        <!-- Preloader -->
+        <div id="preloader">
+              <div class="transition-loader-inner">
+                <label></label>
+                <label></label>
+                <label></label>
+                <label></label>
+                <label></label>
+                <label></label>
+              </div>
         </div>
 
         <div class="container-fluid">
 			<div class="row justify-content-center h-100">
-
 				<!-- HEAD -->
 				<div class="col-md-4 col-xl-3 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
 					<div class="card-header">
@@ -80,7 +88,7 @@
                     <div class="card">
 
                         {#HEADER OF CARD#}
-                        <div class="card-header">
+                        <div class="card-header big-window">
                             <div class="for-hover">
                                 <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
                                 <div class="action_menu">
@@ -121,7 +129,7 @@
 
 
                 {# PROFILE BOX #}
-                <div class="col-xl-3 profile-box">
+                <div class="col-xl-3 profile-box" style="display: none;">
                     <div class="card">
                         <div class="name_surname">
                             <p>Name Surname</p>
@@ -141,8 +149,10 @@
                                         <span class="value">Default</span>
                                     </li>
                                     <li class="username-base">
+                                        <p>
                                         <span class="field">Username</span>
                                         <span class="value">Default</span>
+                                        </p>
                                     </li>
                                     <li class="email-base">
                                         <span class="field">Email</span>
