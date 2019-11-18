@@ -23,7 +23,7 @@ def chat(room_id):
     room = Room.query.get_or_404(room_id)
 
     if not room.is_member(current_user):
-        return redirect(url_for('main.profile'))  # TODO: flash with info, that it is not impossible
+        return redirect(url_for('main.profile'))
 
     return render_template(
         'main/chat.html',

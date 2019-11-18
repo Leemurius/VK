@@ -1,5 +1,5 @@
 .big_table {
-    overflow-x: auto;
+    overflow-x: hidden;
     max-height: 90%;
     margin-top: 15px;
 }

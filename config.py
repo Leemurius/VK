@@ -15,7 +15,7 @@ class Config(object):
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
     MAIL_USERNAME = 'sidorevich.toxa@mail.ru'
-    MAIL_PASSWORD = ''
+    MAIL_PASSWORD = 'JFDJ2390cm23hmhMGc12'
     ADMINS = ['sidorevich.anton@gmail.com']
 
 
