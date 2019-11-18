@@ -9,8 +9,14 @@ $('.validate-form').on('submit',function() {
         showValidate($('.email-input'));
         return false;
     } else {
-        window.location.assign("http://" + getServerName() + "/");  // TODO: redirect back
-        return true;
+        $('.toast').stop().fadeIn(400).delay(3000).fadeOut(500);
+        setTimeout(
+            function () {
+                window.location.assign("http://" + getServerName() + "/")
+            },
+            3000
+        );
+        return false;
     }
 });
 

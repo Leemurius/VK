@@ -15,7 +15,6 @@ def get_room_or_create(profile_id):
 
 @bp.route('/rooms/get/recipient/<int:room_id>', methods=['GET'])
 def get_recipient_username(room_id):
-    print(room_id)
     user = Room.query.get(room_id).get_recipient(current_user)
     if user is None:
         return bad_request('This room is not chat')
