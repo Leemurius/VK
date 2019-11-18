@@ -16,7 +16,7 @@ $('tr[data-href]').on("click", function() {
 
 $(".write_message a").click(function() {
     var username = $(this).attr("href");
-    var room_id = getAjaxInformation('http://' + getIP() + '/api/rooms/' + getProfileId(username));
+    var room_id = getAjaxInformation('http://' + getServerName() + '/api/rooms/' + getProfileId(username));
    $(".write_message a").attr('href', 'chat/' + room_id);
 });
 

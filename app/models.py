@@ -110,15 +110,21 @@ class User(UserMixin, db.Model):
 
     def upload_photo(self, photo):
         if self.photo != photo:
-            filename = str(self.id) + "." + photo.data.filename.rsplit('.', 1)[1]
+            # Delete old photo
+            old_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER, os.path.basename(self.photo))
+            if os.path.isfile(old_path):
+                os.unlink(old_path)
 
-            file_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER, filename)
-            file_path_db = os.path.join(Constants.IMAGE_DB_FOLDER, filename)
-
+            # Crate folder for photos
             if not os.path.isdir(Constants.IMAGE_UPLOAD_FOLDER):
                 os.makedirs(Constants.IMAGE_UPLOAD_FOLDER)
 
-            photo.data.save(file_path)
+            filename = '{}_{}.{}'.format(self.id, int(time()), photo.filename.rsplit('.', 1)[-1])
+            file_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER, filename)
+            file_path_db = os.path.join(Constants.IMAGE_DB_FOLDER, filename)
+
+            photo.seek(0)  # put cursor at the beginning
+            photo.save(file_path)
             self.photo = file_path_db
 
     def set_password(self, password):
@@ -175,7 +181,7 @@ class Room(db.Model):
             chat_table = db.Table(
                 'chat_{}'.format(self.id), db.metadata,
                 db.Column('id', db.Integer, primary_key=True),
-                db.Column('text', db.String(Constants.MESSAGE_LENGTH)),
+                db.Column('text', db.String(Constants.MAX_MESSAGE_LENGTH)),
                 db.Column('sender_id', db.Integer),
                 db.Column('time', db.DateTime, index=True)
             )
@@ -230,7 +236,7 @@ class Room(db.Model):
         class Message(DynamicBase):
             __tablename__ = 'chat_{}'.format(self.id)
             id = db.Column(db.Integer, primary_key=True)
-            text = db.Column(db.String(Constants.MESSAGE_LENGTH))
+            text = db.Column(db.String(Constants.MAX_MESSAGE_LENGTH))
             sender_id = db.Column(db.Integer)
             time = db.Column(db.DateTime, index=True)
 
@@ -242,15 +248,22 @@ class Room(db.Model):
 
     def upload_photo(self, photo):
         if self.photo != photo:
-            filename = str(self.id) + "." + photo.data.filename.rsplit('.', 1)[1]
+            # Delete old photo
+            old_path = os.path.join(
+                Constants.ROOM_IMAGE_UPLOAD_FOLDER, os.path.basename(self.photo)
+            )
+            if os.path.isfile(old_path):
+                os.unlink(old_path)
 
-            file_path = os.path.join(Constants.ROOM_IMAGE_UPLOAD_FOLDER, filename)
-            file_path_db = os.path.join(Constants.ROOM_IMAGE_DB_FOLDER, filename)
-
+            # Crate folder for photos
             if not os.path.isdir(Constants.ROOM_IMAGE_UPLOAD_FOLDER):
                 os.makedirs(Constants.ROOM_IMAGE_UPLOAD_FOLDER)
 
-            photo.data.save(file_path)
+            filename = '{}_{}.{}'.format(self.id, int(time()), photo.filename.rsplit('.', 1)[-1])
+            file_path = os.path.join(Constants.ROOM_IMAGE_UPLOAD_FOLDER, filename)
+            file_path_db = os.path.join(Constants.ROOM_IMAGE_DB_FOLDER, filename)
+
+            photo.save(file_path)
             self.photo = file_path_db
 
     def get_recipient(self, user):
