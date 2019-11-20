@@ -34,7 +34,7 @@
                 </thead>
                 <tbody>
                     {% for user in users %}
-                        <tr data-href="{{ user.username }}">
+                        <tr class="user-information" ng-click="resizeObjectsWithInformation({{ '\'' + user.username + '\'' }})">
                             <td>
                                 <img src="{{ user.photo }}" alt="" class="rounded-circle user_img">
                                 <span class="name_surname"> {{ user.name }} {{ user.surname }} </span>

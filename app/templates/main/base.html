@@ -2,7 +2,7 @@
 <!------ Include the above in your HEAD tag ---------->
 
 <!DOCTYPE html>
-<html>
+<html ng-app="myApp">
     <head>
         <meta charset='UTF-8'>
         <meta name="robots" content="noindex">
@@ -24,7 +24,7 @@
         <link rel="stylesheet" type="text/css" href="/static/css/main/base.css">
     </head>
 
-    <body>
+    <body ng-controller="baseController">
         <!-- Preloader -->
         <div id="preloader">
               <div class="transition-loader-inner">
@@ -81,7 +81,35 @@
                             {% endfor %}
 						</ui>
 					</div>
-					<div class="card-footer"></div>
+					<div class="card-footer">
+                        <div class="sidebar">
+                            <ul>
+                                <a href="{{ url_for('auth.logout') }}">
+                                    <li><i class="fas fa-ban"></i></li>
+                                </a>
+
+                                <a href="{{ url_for('main.search') }}">
+                                    <li><i class="fas fa-search"></i></li>
+                                </a>
+
+                                <a href="{{ url_for('settings.settings') }}">
+                                    <li><i class="fas fa-gear"></i></li>
+                                </a>
+
+                                <a href="{{ url_for('main.add_to_queue') }}">
+                                    <li><i class="fas fa-plus"></i> Add to queue</li>
+                                </a>
+
+                                <a href="{{ url_for('main.queue') }}">
+                                    <li><i class="fas fa-address-book"></i>Open queue</li>
+                                </a>
+
+                                <li class="my_profile" ng-click="resizeObjectsWithInformation({{ '\'' + current_user.username + '\'' }})">
+                                    <i class="fas fa-user-circle"></i>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 				</div></div>
 
                 <div class="col-xl-9 box-for-all">
@@ -90,18 +118,6 @@
                         {#HEADER OF CARD#}
                         <div class="card-header big-window">
                             <div class="for-hover">
-                                <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
-                                <div class="action_menu">
-                                    <ul>
-                                        <li class="my_profile">
-                                            <i class="fas fa-user-circle"></i>
-                                            View your profile
-                                        </li>
-
-                                        <a href="{{ url_for('main.search') }}">
-                                            <li><i class="fas fa-search"></i>Find user</li>
-                                        </a>
-
                                         <a href="{{ url_for('main.add_to_queue') }}">
                                             <li><i class="fas fa-plus"></i> Add to queue</li>
                                         </a>
@@ -129,7 +145,7 @@
 
 
                 {# PROFILE BOX #}
-                <div class="col-xl-3 profile-box" style="display: none;">
+                <div class="col-xl-1 profile-box" style="display: none;">
                     <div class="card">
                         <div class="name_surname">
                             <p>Name Surname</p>
@@ -172,6 +188,8 @@
 
         <!--===============================================================================================-->
 	    <script src="/static/vendor/js/jquery-3.2.1.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="/static/vendor/js/angular.js"></script>
         <!--===============================================================================================-->
         <script src="/static/vendor/css/bootstrap4.1.1.min.css"></script>
         <!--===============================================================================================-->
