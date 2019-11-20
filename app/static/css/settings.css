@@ -78,6 +78,29 @@
 	padding-left: 60px;
     padding-right: 50px;
 }
+
+.form-v10-content .form-detail .form-row-choose-photo {
+	position: relative;
+	margin-bottom: 24px;
+	margin-left: 60px;
+}
+
+.form-v10-content .form-detail .form-left .choose-photo input {
+	position:absolute;
+	z-index:2;
+	top:0;
+	left:0;
+	filter: alpha(opacity=0);
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	opacity:0;
+	background-color:transparent;
+	color:transparent;
+}
+
+.form-v10-content .form-detail .form-row-choose-photo-link:hover {
+	cursor: pointer;
+}
+
 .form-v10-content .form-detail .form-left .form-group .form-row.form-row-1 {
 	width: 60%;
 	padding: 0 12px 0 60px;
@@ -235,8 +258,9 @@
 }
 .form-v10-content .form-detail .form-row-last {
     padding-left: 60px;
-    margin: 44px 0 10px;
+    margin: 34px 0 10px;
 }
+
 .form-v10-content .form-detail .form-left .save-information {
 	text-align: center;
 	background: #fff;
@@ -447,7 +471,7 @@
   font-family: FontAwesome;
   display: block;
   position: absolute;
-  color: grey;
+  color: #00a3b6;
   font-size: 16px;
   bottom: calc((100% + 10px) / 2);
   -webkit-transform: translateY(50%);

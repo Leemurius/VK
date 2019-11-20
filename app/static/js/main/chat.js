@@ -1,7 +1,7 @@
 // - Requests --------------------------------------------------------------------------------------
 
 function getSelfPhoto() {
-    return getAjaxInformation('http://' + getIP() + '/api/self/photo');
+    return getAjaxInformation('http://' + getServerName() + '/api/self/photo');
 }
 
 function getRoomId() {
@@ -15,7 +15,7 @@ function addMessage(text) {
         return null;
     }
     var data = JSON.stringify({'room_id' : Number(getRoomId()), 'message' : text});
-    var response = JSON.parse(postAjaxInformation('http://' + getIP() + '/api/messages', data));
+    var response = JSON.parse(postAjaxInformation('http://' + getServerName() + '/api/messages', data));
     return response;
 }
 
@@ -32,6 +32,14 @@ $(window).on('keydown', function(e) {
             addMessageVisualFromYou(message);
             beginState();
         }
+    }
+});
+
+$(".send_btn").click(function() {
+    var message = getMessageFromArea();
+    if (addMessage(message)) {
+        addMessageVisualFromYou(message);
+        beginState();
     }
 });
 
@@ -67,12 +75,21 @@ function addMessageVisualFromYou(message) {
             '</div>' +
         '</div>'
     ).appendTo($('.msg_card_body'));
-}
+};
 
-$(".send_btn").click(function() {
-    var message = getMessageFromArea();
-    if (addMessage(message)) {
-        addMessageVisualFromYou(message);
-        beginState();
+var LastPhotoClick = false;  // Click on avatar in chat
+$(".img_cont img").on("click", function() {
+    if (LastPhotoClick) {
+        $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
+        $('.profile-box').hide();
+        LastPhotoClick = false;
+        LastLiClick = false;
+    } else {
+        var username = getAjaxInformation('http://' + getServerName() + '/api/rooms/get/recipient/' + getRoomId());
+        addInformationInProfileBox(username);
+        $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
+        $('.profile-box').show();
+        LastPhotoClick = true;
+        LastLiClick = false;
     }
 });

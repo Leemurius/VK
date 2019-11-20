@@ -14,7 +14,7 @@ $('.validate-form').on('submit',function() {
         'password' : password,
         'confirm_password': confirm_password
     });
-    var response = postAjaxInformation('http://' + getIP() + '/api/user/create', data);
+    var response = postAjaxInformation('http://' + getServerName() + '/api/user/create', data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);
         for (let i = 0; i < errors_list.length; i++) {
@@ -48,8 +48,14 @@ $('.validate-form').on('submit',function() {
         }
         return false;
     } else {
-        window.location.assign("http://" + getIP() + "/");  // TODO: redirect back
-        return true;
+        $('.toast').stop().fadeIn(400).delay(3000).fadeOut(500);
+        setTimeout(
+            function () {
+                window.location.assign("http://" + getServerName() + "/")
+            },
+            3000
+        );
+        return false;
     }
 });
 

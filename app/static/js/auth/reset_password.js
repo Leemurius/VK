@@ -7,7 +7,7 @@ $('.validate-form').on('submit',function() {
         'confirm_password': confirm_password
     });
     const token = window.location.pathname.split('/')[2];
-    var response = postAjaxInformation('http://' + getIP() + '/api/user/update/password/' + token, data);
+    var response = postAjaxInformation('http://' + getServerName() + '/api/user/update/password/' + token, data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);
         for (let i = 0; i < errors_list.length; i++) {
@@ -25,8 +25,14 @@ $('.validate-form').on('submit',function() {
         }
         return false;
     } else {
-        window.location.assign("http://" + getIP() + "/");  // TODO: redirect back
-        return true;
+        $('.toast').stop().fadeIn(400).delay(3000).fadeOut(500);
+        setTimeout(
+            function () {
+                window.location.assign("http://" + getServerName() + "/")
+            },
+            3000
+        );
+        return false;
     }
 });
 
