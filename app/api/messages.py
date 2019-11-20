@@ -28,6 +28,6 @@ def add_message():
             recipient_room=Room.query.get_or_404(data['room_id']),
             text=data['message']
         )
-    except Exception as exception:
+    except Exception:
         return jsonify(False)
     return jsonify(True)

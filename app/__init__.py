@@ -9,7 +9,7 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
-from config import Config
+from config import Config, Constants
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -50,6 +50,14 @@ def create_app(config_class=Config):
     with app.app_context():
         from app.main import bp as main_bp
         app.register_blueprint(main_bp)
+
+    # Create folder for user photos
+    if not os.path.isdir(Constants.IMAGE_UPLOAD_FOLDER):
+        os.makedirs(Constants.IMAGE_UPLOAD_FOLDER)
+
+    # Create folder for room photos
+    if not os.path.isdir(Constants.ROOM_IMAGE_UPLOAD_FOLDER):
+        os.makedirs(Constants.ROOM_IMAGE_UPLOAD_FOLDER)
 
     if not app.debug:
         if app.config['MAIL_SERVER']:

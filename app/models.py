@@ -115,10 +115,6 @@ class User(UserMixin, db.Model):
             if os.path.isfile(old_path):
                 os.unlink(old_path)
 
-            # Crate folder for photos
-            if not os.path.isdir(Constants.IMAGE_UPLOAD_FOLDER):
-                os.makedirs(Constants.IMAGE_UPLOAD_FOLDER)
-
             filename = '{}_{}.{}'.format(self.id, int(time()), photo.filename.rsplit('.', 1)[-1])
             file_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER, filename)
             file_path_db = os.path.join(Constants.IMAGE_DB_FOLDER, filename)
@@ -255,14 +251,11 @@ class Room(db.Model):
             if os.path.isfile(old_path):
                 os.unlink(old_path)
 
-            # Crate folder for photos
-            if not os.path.isdir(Constants.ROOM_IMAGE_UPLOAD_FOLDER):
-                os.makedirs(Constants.ROOM_IMAGE_UPLOAD_FOLDER)
-
             filename = '{}_{}.{}'.format(self.id, int(time()), photo.filename.rsplit('.', 1)[-1])
             file_path = os.path.join(Constants.ROOM_IMAGE_UPLOAD_FOLDER, filename)
             file_path_db = os.path.join(Constants.ROOM_IMAGE_DB_FOLDER, filename)
 
+            photo.seek(0)  # put cursor at the beginning
             photo.save(file_path)
             self.photo = file_path_db
 
