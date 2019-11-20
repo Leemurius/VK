@@ -1,3 +1,4 @@
+var myApp = angular.module('myApp', []);
 $(document).ready(function() {  // FOR ALL TEMPLATES
     $('#preloader').delay(450).fadeOut('slow');
 
@@ -91,20 +92,44 @@ function editVisualProfileBox(dict) {
     $('.profile-box .list .address-base .value').text(dict['address'] ? dict['address'] : 'No information');
 }
 
-var LastLiClick = false; // Action menu
-$('.my_profile').on("click", function() {
-    if (LastLiClick) {
-        $('.profile-box').hide();
-        $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
-        LastLiClick = false;
-    } else {
-        addSelfInformationInProfileBox();
-        $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
-        $('.profile-box').show();
-        LastPhotoClick = false;
-        LastLiClick = true;
-    }
-});
+var LastClickOn = undefined;  // Search menu
+// var LastLiClick = false; // Action menu
+myApp.controller('baseController',['$scope',function($scope) {
+    $scope.name = {};
+    $scope.resizeObjectsWithInformation = function (username) {
+        if (LastClickOn == username) {
+            setTimeout(
+                function () {
+                    $('.profile-box').removeClass('col-xl-3').addClass('col-xl-1');
+                    setTimeout(
+                        function () {
+                            $('.profile-box').hide();
+                        },
+                        150);
+                },
+                200);
+            setTimeout(
+                function () {
+                    $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
+                },
+                400);
+
+            LastClickOn = undefined;
+        } else {
+            addInformationInProfileBox(username);
+            $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
+
+            setTimeout(
+                function () {
+                    $('.profile-box').show();
+                    $('.profile-box').removeClass('col-xl-1').addClass('col-xl-3');
+                },
+                200);
+
+            LastClickOn = username;
+        }
+    };
+}]);
 
 function getProfileId(username) {
     return getAjaxInformation('http://' + getServerName() + '/api/user/id/' + username);
@@ -155,4 +180,10 @@ $(".search-room").click(function (e) {
     });
 
     updateListOfRooms(data);
+});
+
+$(".write_message a").click(function() {
+    var username = $(this).attr("href");
+    var room_id = getAjaxInformation('http://' + getServerName() + '/api/rooms/' + getProfileId(username));
+   $(".write_message a").attr('href', 'chat/' + room_id);
 });

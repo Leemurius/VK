@@ -75,21 +75,4 @@ function addMessageVisualFromYou(message) {
             '</div>' +
         '</div>'
     ).appendTo($('.msg_card_body'));
-};
-
-var LastPhotoClick = false;  // Click on avatar in chat
-$(".img_cont img").on("click", function() {
-    if (LastPhotoClick) {
-        $('.box-for-all').removeClass('col-xl-6').addClass('col-xl-9');
-        $('.profile-box').hide();
-        LastPhotoClick = false;
-        LastLiClick = false;
-    } else {
-        var username = getAjaxInformation('http://' + getServerName() + '/api/rooms/get/recipient/' + getRoomId());
-        addInformationInProfileBox(username);
-        $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
-        $('.profile-box').show();
-        LastPhotoClick = true;
-        LastLiClick = false;
-    }
-});
+}
