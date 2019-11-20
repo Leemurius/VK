@@ -1,16 +1,15 @@
 import os
-import re
 
 from flask import jsonify, request
 from flask_login import login_required, current_user, login_user
 
-from app.api.errors import bad_request
-from app.auth.validate import LoginValidator, RegistrationValidator, ResetPasswordValidator
-from app.settings.validate import PersonalSettingsValidator, PasswordSettingsValidator
-from app.models import User
 from app.api import bp
-from config import Constants
+from app.api.errors import bad_request
 from app.auth.email import send_password_reset_email
+from app.auth.validate import LoginValidator, RegistrationValidator, ResetPasswordValidator
+from app.models import User
+from app.settings.validate import PersonalSettingsValidator, PasswordSettingsValidator
+from config import Constants
 
 
 @bp.route('/self/id', methods=['GET'])
@@ -23,6 +22,12 @@ def get_self_id():
 @login_required
 def get_self_photo():
     return jsonify(current_user.photo)
+
+
+@bp.route('/self/username', methods=['GET'])
+@login_required
+def get_self_username():
+    return jsonify(current_user.username)
 
 
 @bp.route('/self/information', methods=['GET'])
@@ -142,40 +147,6 @@ def update_user_password(token):
     except Exception as exception:
         return bad_request(exception.args[0])
     return jsonify(True)
-
-
-@bp.route('/self/find/room', methods=['POST'])
-@login_required
-def find_rooms():
-    data = request.get_json() or {}
-
-    if 'request' not in data:
-        return bad_request('Must include request field!')
-    try:
-        rooms_list = []
-        for room in current_user.rooms:
-            if re.match('^' + data['request'], room.get_title(current_user)):
-                if room.is_dialog:
-                    recipient = room.get_recipient(current_user)
-                    rooms_list.append({
-                        'is_dialog': True,
-                        'status': recipient.status,
-                        'title': recipient.name + ' ' + recipient.surname,
-                        'photo': recipient.photo,
-                        'last_message': room.get_last_message(),
-                        'room_id': room.id
-                    })
-                else:
-                    rooms_list.append({
-                        'is_dialog': False,
-                        'title': room.get_title(current_user),
-                        'photo': room.photo,
-                        'last_message': room.get_last_message(),
-                        'room_id': room.id
-                    })
-        return jsonify(rooms_list)
-    except Exception as exception:
-        return bad_request(str(exception))
 
 
 @bp.route('/user/information/<string:username>', methods=['GET'])

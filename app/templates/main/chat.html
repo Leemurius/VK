@@ -28,7 +28,7 @@
     </div>
 
     <!-- DIALOG -->
-    <div class="card-body msg_card_body">
+    <div class="card-body msg_card_body" id="chatController" ng-controller="chatController">
         {% for message in messages %}
             {% if message.sender.id == current_user.id %}
                 <div class="d-flex justify-content-end mb-4">

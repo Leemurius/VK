@@ -1,4 +1,8 @@
-// - Requests --------------------------------------------------------------------------------------
+$(document).ready(function() {
+    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
+});
+
+// - API ------------------------------------------------------------------------------------------
 
 function getSelfPhoto() {
     return getAjaxInformation('http://' + getServerName() + '/api/self/photo');
@@ -21,33 +25,38 @@ function addMessage(text) {
 
 // - JS --------------------------------------------------------------------------------------------
 
-$(document).ready(function() {
-    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
-});
 
-$(window).on('keydown', function(e) {
-    if (e.which == 13 && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        var message = getMessageFromArea();
-        if (addMessage(message)) {
-            addMessageVisualFromYou(message);
-            beginState();
-        }
+myApp.controller('chatController',['$scope', '$compile',function($scope, $compile) {
+    $scope.addMessageVisualFromYou = function(message) {
+        const cur_date = new Date();
+        let date = cur_date.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+        date = date.replace("AM", "am").replace("PM", "pm");
+
+        var element = '<div class="d-flex justify-content-end mb-4">' +
+                '<div class="msg_cotainer_send">' +
+                    '<p class="text">' + message + '</p>' +
+                    '<span class="msg_time_send">' + date + '</span>' +
+                '</div>' +
+
+                '<div class="img_cont_msg">' +
+                   '<img src="' + getSelfPhoto() + '" class="rounded-circle user_img_msg" ng-click="resizeObjectsWithInformation(' +'\'' + getSelfUsername() + '\''+ ')">' +
+                '</div>' +
+            '</div>';
+
+        var compiledElement = $compile(element)($scope);
+        (compiledElement).appendTo($('.msg_card_body'));
     }
-});
+}]);
 
-$(".send_btn").click(function() {
+// Send message ----------------------------------------------------------------------------------------
+
+function sendMessage() {
     var message = getMessageFromArea();
     if (addMessage(message)) {
-        addMessageVisualFromYou(message);
+        angular.element(document.getElementById('chatController')).scope().addMessageVisualFromYou(message);
         beginState();
     }
-});
-
-$('textarea').keypress(function(event) {   // Delete new line after sending message
-    if (event.keyCode == 13 && !event.shiftKey) {
-        event.preventDefault();
-    }
-});
+}
 
 function beginState() {
     $('textarea').val('');
@@ -59,20 +68,20 @@ function getMessageFromArea() {
     return message;
 }
 
-function addMessageVisualFromYou(message) {
-    const cur_date = new Date();
-    let date = cur_date.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
-    date = date.replace("AM", "am").replace("PM", "pm");
+$(window).on('keydown', function(e) {
+    if (e.which == 13 && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        sendMessage()
+    }
+});
 
-    $('<div class="d-flex justify-content-end mb-4">' +
-            '<div class="msg_cotainer_send">' +
-                '<p class="text">' + message + '</p>' +
-                '<span class="msg_time_send">' + date + '</span>' +
-            '</div>' +
+$(".send_btn").click(function() {
+    sendMessage();
+});
 
-            '<div class="img_cont_msg">' +
-               '<img src="' + getSelfPhoto() + '" class="rounded-circle user_img_msg" >' +
-            '</div>' +
-        '</div>'
-    ).appendTo($('.msg_card_body'));
-}
+$('textarea').keypress(function(event) {   // Delete new line after sending message
+    if (event.keyCode == 13 && !event.shiftKey) {
+        event.preventDefault();
+    }
+});
+
+
