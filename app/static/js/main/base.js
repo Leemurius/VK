@@ -1,4 +1,5 @@
-var myApp = angular.module('myApp', []);
+var myApp = angular.module('myApp', []);  // ANGULAR FOR ALL TEMPLATES
+
 $(document).ready(function() {  // FOR ALL TEMPLATES
     $('#preloader').delay(450).fadeOut('slow');
 
@@ -7,6 +8,8 @@ $(document).ready(function() {  // FOR ALL TEMPLATES
 	});
     $('.profile-box').hide();
 });
+
+// Requests -----------------------------------------------------------------------------------------
 
 function getAjaxInformation(url) {
     let response = null;
@@ -62,26 +65,42 @@ function postAjaxPhoto(url, photo) {
     return response;
 }
 
+// API ----------------------------------------------------------------------------------------------
+
 function getServerName() {
     return (window.location.href).split('/')[2];
+}
+
+function getProfileId(username) {
+    return getAjaxInformation('http://' + getServerName() + '/api/user/id/' + username);
+}
+
+function getRoomList(data) {
+    const response = postAjaxInformation('http://' + getServerName() + '/api/self/find/room', data);
+    return response;
+}
+
+function getSelfUsername() {
+    return getAjaxInformation('http://' + getServerName() + '/api/self/username')
 }
 
 function getProfileInformation(username) {
     return getAjaxInformation('http://' + getServerName() + '/api/user/information/' + username)
 }
 
-function getSelfProfileInformation() {
-    return getAjaxInformation('http://' + getServerName() + '/api/self/information')
-}
-
 function addInformationInProfileBox(username) {
+    if (username == getSelfUsername()) {
+        $('.write_message').hide();
+    } else {
+        $('.write_message').show();
+    }
     editVisualProfileBox(getProfileInformation(username));
 }
 
-function addSelfInformationInProfileBox() {
-    $('.write_message').hide();
-    editVisualProfileBox(getSelfProfileInformation());
-}
+$(".write_message button").click(function () {
+    var room_id = getAjaxInformation('http://' + getServerName() + '/api/rooms/' + getProfileId(LastClickOn));
+    window.location.assign("http://" + getServerName() + "/chat/" + room_id);
+});
 
 function editVisualProfileBox(dict) {
     $('.profile-box .name_surname p').text(dict['name'] + ' ' + dict['surname']);
@@ -92,8 +111,9 @@ function editVisualProfileBox(dict) {
     $('.profile-box .list .address-base .value').text(dict['address'] ? dict['address'] : 'No information');
 }
 
+// Angular for profile box animation ------------------------------------------------------------------------------
+
 var LastClickOn = undefined;  // Search menu
-// var LastLiClick = false; // Action menu
 myApp.controller('baseController',['$scope',function($scope) {
     $scope.name = {};
     $scope.resizeObjectsWithInformation = function (username) {
@@ -131,25 +151,20 @@ myApp.controller('baseController',['$scope',function($scope) {
     };
 }]);
 
-function getProfileId(username) {
-    return getAjaxInformation('http://' + getServerName() + '/api/user/id/' + username);
-}
+// Search of rooms ------------------------------------------------------------------------------------------------
 
-$(".write_message button").click(function () {
-    var room_id = getAjaxInformation('http://' + getServerName() + '/api/rooms/' + getProfileId(LastTrClick));
-    window.location.assign("http://" + getServerName() + "/chat/" + room_id);
-});
+function searchRooms() {
+    const data = JSON.stringify({
+       'request': $('.search-room-input').val()
+    });
 
-
-function searchRoom(data) {
-    const response = postAjaxInformation('http://' + getServerName() + '/api/self/find/room', data);
-    return response;
+    updateListOfRooms(data);
 }
 
 function updateListOfRooms(data) {
     $('.room-links').remove();  // delete all links on rooms
 
-    rooms = searchRoom(data);
+    var rooms = getRoomList(data);
     for (let i = 0; i < rooms.length; i++) {
         var room = rooms[i];
         if (room['is_dialog']) {
@@ -175,15 +190,11 @@ function updateListOfRooms(data) {
 }
 
 $(".search-room").click(function (e) {
-    const data = JSON.stringify({
-       'request': $('.search-room-input').val()
-    });
-
-    updateListOfRooms(data);
+    searchRooms();
 });
 
-$(".write_message a").click(function() {
-    var username = $(this).attr("href");
-    var room_id = getAjaxInformation('http://' + getServerName() + '/api/rooms/' + getProfileId(username));
-   $(".write_message a").attr('href', 'chat/' + room_id);
+$(".search-room-input").on('keyup', function (e) {
+    if (e.keyCode == 13) {
+        searchRooms();
+    }
 });

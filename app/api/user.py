@@ -151,40 +151,6 @@ def update_user_password(token):
     return jsonify(True)
 
 
-@bp.route('/self/find/room', methods=['POST'])
-@login_required
-def find_rooms():
-    data = request.get_json() or {}
-
-    if 'request' not in data:
-        return bad_request('Must include request field!')
-    try:
-        rooms_list = []
-        for room in current_user.rooms:
-            if re.match('^' + data['request'], room.get_title(current_user)):
-                if room.is_dialog:
-                    recipient = room.get_recipient(current_user)
-                    rooms_list.append({
-                        'is_dialog': True,
-                        'status': recipient.status,
-                        'title': recipient.name + ' ' + recipient.surname,
-                        'photo': recipient.photo,
-                        'last_message': room.get_last_message(),
-                        'room_id': room.id
-                    })
-                else:
-                    rooms_list.append({
-                        'is_dialog': False,
-                        'title': room.get_title(current_user),
-                        'photo': room.photo,
-                        'last_message': room.get_last_message(),
-                        'room_id': room.id
-                    })
-        return jsonify(rooms_list)
-    except Exception as exception:
-        return bad_request(str(exception))
-
-
 @bp.route('/user/information/<string:username>', methods=['GET'])
 @login_required
 def get_user_information(username):

@@ -308,9 +308,11 @@ class Room(db.Model):
         return self.members[0]  # Dialog with yourself
 
     def get_title(self, current_user):
-        return (self.get_recipient(current_user).username
-                if self.is_dialog
-                else self.title)
+        if self.is_dialog:
+            recipient = self.get_recipient(current_user)
+            return recipient.name + ' ' + recipient.surname + ' ' + recipient.username
+        else:
+            return self.title
 
     def is_member(self, user):
         if user in self.members:

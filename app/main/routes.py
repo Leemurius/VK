@@ -31,7 +31,7 @@ def chat(room_id):
         rooms=current_user.rooms,  # for base.html
         room=room,
         recipient=room.get_recipient(current_user),  # if chat is dialog
-        title=room.get_title(current_user),
+        title=room.get_recipient(current_user).username,
         messages=room.get_messages()
     )
 
