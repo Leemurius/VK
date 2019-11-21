@@ -14,7 +14,7 @@ $('.validate-form').on('submit',function() {
         'password' : password,
         'confirm_password': confirm_password
     });
-    var response = postAjaxInformation('http://' + getServerName() + '/api/user/create', data);
+    var response = postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/user/create', data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);
         for (let i = 0; i < errors_list.length; i++) {

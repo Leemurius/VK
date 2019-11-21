@@ -10,7 +10,7 @@ def settings():
     rooms = current_user.rooms
 
     return render_template(
-        'settings.html',
+        'main/settings.html',
         current_user=current_user,  # for base.html
         rooms=rooms  # for base.html
     )

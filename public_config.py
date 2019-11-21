@@ -4,19 +4,16 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
-    SECRET_KEY = 'nv93498NKAf32c12cap2ASOuy2vcjo8934cmht39xx20i949y2'
+    SECRET_KEY = ''
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    WTF_CSRF_ENABLED = False
-    WTF_CSRF_SECRET_KEY = 'fdskcmWocm238mc2387nN940Z213uyg1fv12C451'
-
-    MAIL_SERVER = 'smtp.mail.ru'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = 1
-    MAIL_USERNAME = 'sidorevich.toxa@mail.ru'
-    MAIL_PASSWORD = 'JFDJ2390cm23hmhMGc12'
-    ADMINS = ['sidorevich.anton@gmail.com']
+    MAIL_SERVER = 'smtp.yandex.ru'
+    MAIL_USE_SSL = 1
+    MAIL_PORT = 465
+    MAIL_USERNAME = 'chat@leemur.ru'
+    MAIL_PASSWORD = ''
+    ADMINS = ['']
 
 
 class Constants(object):
