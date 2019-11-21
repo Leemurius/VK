@@ -271,10 +271,10 @@ class Room(db.Model):
 
     def get_time_of_last_message(self):
         messages = db.session.query(self.chat).all()
-        if messages is not None:
+        if len(messages):
             return messages[-1][3]
         else:
-            return None
+            return datetime.datetime.now()
 
     def create_chat(self):
         DynamicBase = declarative_base(class_registry=dict())
