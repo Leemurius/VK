@@ -9,8 +9,8 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER = 'smtp.yandex.ru'
-    MAIL_USE_SSL = 1
-    MAIL_PORT = 465
+    MAIL_USE_TLS = 1
+    MAIL_PORT = 587
     MAIL_USERNAME = 'chat@leemur.ru'
     MAIL_PASSWORD = ''
     ADMINS = ['']
