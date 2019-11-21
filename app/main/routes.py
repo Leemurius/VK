@@ -8,12 +8,10 @@ from app.models import User, Room
 @bp.route('/my_profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    rooms = current_user.rooms  # validate inside
-
     return render_template(
         'main/profile.html',
         current_user=current_user,  # for base.html
-        rooms=rooms,  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
     )
 
 
@@ -28,7 +26,7 @@ def chat(room_id):
     return render_template(
         'main/chat.html',
         current_user=current_user,  # for base.html
-        rooms=current_user.rooms,  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
         room=room,
         recipient=room.get_recipient(current_user),  # if chat is dialog
         title=room.get_recipient(current_user).username,
@@ -42,12 +40,11 @@ def search():
     users = list(User.query.order_by(User.username.desc()))
     users.remove(current_user)  # fixed bug with button on yourself
     users = sorted(users, key=lambda user: (user.name, user.surname))
-    rooms = current_user.rooms  # validate inside
 
     return render_template(
         'main/search.html',
         current_user=current_user,  # for base.html
-        rooms=rooms,  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
         users=users,
     )
 

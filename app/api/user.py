@@ -80,7 +80,7 @@ def update_self_information():
 
 @bp.route('/self/update/photo', methods=['POST'])
 @login_required
-def update_photo():
+def update_self_photo():
     try:
         photo = request.files.get('photo')
         # TODO: separate function for validation
@@ -101,7 +101,6 @@ def update_photo():
 def update_self_password():
     data = request.get_json() or {}
 
-    # TODO: Man-in-the-middle
     required_fields = ('old_password', 'new_password', 'confirm_password')
     if not all(field in data for field in required_fields):
         return bad_request('Must include ' + str(required_fields) + ' fields!')
@@ -129,7 +128,6 @@ def update_self_password():
 def update_user_password(token):
     data = request.get_json() or {}
 
-    # TODO: Man-in-the-middle
     required_fields = ('new_password', 'confirm_password')
     if not all(field in data for field in required_fields):
         return bad_request('Must include ' + str(required_fields) + ' fields!')
@@ -194,7 +192,6 @@ def sign_in_user():
         return bad_request('Must include login and password fields!')
 
     try:
-        # TODO: Man-in-the-middle
         validator = LoginValidator(login=data['login'], password=data['password'])
         user = validator.get_user()
         login_user(user, remember=True)
@@ -212,7 +209,6 @@ def create_user():
         return bad_request('Must include ' + str(required_fields) + ' fields!')
 
     try:
-        # TODO: Man-in-the-middle
         validator = RegistrationValidator(
             name=data['name'],
             surname=data['surname'],

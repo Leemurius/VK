@@ -81,6 +81,11 @@ class User(UserMixin, db.Model):
             algorithm='HS256'
         ).decode('utf-8')
 
+    def get_sorted_rooms_by_timestamp(self):
+        return sorted(self.rooms,
+                      key=lambda room: (room.get_time_of_last_message()),
+                      reverse=True)
+
     def get_profile_information(self):
         return {
             'name': self.name,
@@ -191,7 +196,7 @@ class Room(db.Model):
 
     @staticmethod
     def get_or_create_room(user1, user2):
-        if user1 == user2:  # TODO: next time
+        if user1 == user2:  # Not create room with yourself
             return None
 
         for room1 in user1.rooms:       # FIXME: make faster
@@ -263,6 +268,13 @@ class Room(db.Model):
             last_message = 'It\'s new chat'
 
         return last_message
+
+    def get_time_of_last_message(self):
+        messages = db.session.query(self.chat).all()
+        if messages is not None:
+            return messages[-1][3]
+        else:
+            return None
 
     def create_chat(self):
         DynamicBase = declarative_base(class_registry=dict())

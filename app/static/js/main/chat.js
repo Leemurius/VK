@@ -5,7 +5,7 @@ $(document).ready(function() {
 // - API ------------------------------------------------------------------------------------------
 
 function getSelfPhoto() {
-    return getAjaxInformation('http://' + getServerName() + '/api/self/photo');
+    return getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/photo');
 }
 
 function getRoomId() {
@@ -19,7 +19,7 @@ function addMessage(text) {
         return null;
     }
     var data = JSON.stringify({'room_id' : Number(getRoomId()), 'message' : text});
-    var response = JSON.parse(postAjaxInformation('http://' + getServerName() + '/api/messages', data));
+    var response = JSON.parse(postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/messages', data));
     return response;
 }
 

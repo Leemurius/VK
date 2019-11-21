@@ -16,7 +16,7 @@ $('.choose-photo input').bind('input',function (e) {
 });
 
 function addGeneralInformationInFields() {
-    const data = getAjaxInformation('http://' + getServerName() + '/api/self/information');
+    const data = getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/information');
     $('.name-field').val(data['name']);
     $('.surname').val(data['surname']);
     $('.username').val(data['username']);
@@ -42,8 +42,8 @@ $('.left-form').on('submit',function() {
     });
     const file = $('.choose-photo input').prop('files')[0];
 
-    var responseData = postAjaxInformation('http://' + getServerName() + '/api/self/update/information', data);
-    var responsePhoto = postAjaxPhoto('http://' + getServerName() + '/api/self/update/photo', file);
+    var responseData = postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/update/information', data);
+    var responsePhoto = postAjaxPhoto(getProtocol() + '://' + getServerName() + '/api/self/update/photo', file);
     if (responseData != true || responsePhoto != true) {
         if (responseData != true) {
             const errors_list = JSON.parse(JSON.parse(responseData).message);
@@ -98,7 +98,7 @@ $('.right-form').on('submit',function() {
         'confirm_password' : confirm_password
     });
 
-    var response = postAjaxInformation('http://' + getServerName() + '/api/self/update/password', data);
+    var response = postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/update/password', data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);
         for (let i = 0; i < errors_list.length; i++) {

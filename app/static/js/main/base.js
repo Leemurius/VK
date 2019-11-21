@@ -67,25 +67,29 @@ function postAjaxPhoto(url, photo) {
 
 // API ----------------------------------------------------------------------------------------------
 
+function getProtocol() {
+    return (window.location.href).split(':')[0];
+}
+
 function getServerName() {
     return (window.location.href).split('/')[2];
 }
 
 function getProfileId(username) {
-    return getAjaxInformation('http://' + getServerName() + '/api/user/id/' + username);
+    return getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/user/id/' + username);
 }
 
 function getRoomList(data) {
-    const response = postAjaxInformation('http://' + getServerName() + '/api/self/find/room', data);
+    const response = postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/find/room', data);
     return response;
 }
 
 function getSelfUsername() {
-    return getAjaxInformation('http://' + getServerName() + '/api/self/username')
+    return getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/username')
 }
 
 function getProfileInformation(username) {
-    return getAjaxInformation('http://' + getServerName() + '/api/user/information/' + username)
+    return getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/user/information/' + username)
 }
 
 function addInformationInProfileBox(username) {
@@ -98,7 +102,7 @@ function addInformationInProfileBox(username) {
 }
 
 $(".write_message button").click(function () {
-    var room_id = getAjaxInformation('http://' + getServerName() + '/api/rooms/' + getProfileId(LastClickOn));
+    var room_id = getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/rooms/' + getProfileId(LastClickOn));
     window.location.assign("http://" + getServerName() + "/chat/" + room_id);
 });
 
