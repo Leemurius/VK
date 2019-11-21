@@ -7,10 +7,8 @@ from app.settings import bp
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    rooms = current_user.rooms
-
     return render_template(
         'main/settings.html',
         current_user=current_user,  # for base.html
-        rooms=rooms  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp()  # for base.html
     )
