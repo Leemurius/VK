@@ -85,11 +85,12 @@ def update_photo():
         photo = request.files.get('photo')
         # TODO: separate function for validation
 
-        photo.seek(0, os.SEEK_END)  # Go to the end of file
-        if photo.tell() / 1024 / 1024 > Constants.MAX_PHOTO_SIZE:
-            raise Exception('Max size of photo is {} MB'.format(Constants.MAX_PHOTO_SIZE))
+        if photo:
+            photo.seek(0, os.SEEK_END)  # Go to the end of file
+            if photo.tell() / 1024 / 1024 > Constants.MAX_PHOTO_SIZE:
+                raise Exception('Max size of photo is {} MB'.format(Constants.MAX_PHOTO_SIZE))
 
-        current_user.set_profile_information(photo=photo)
+            current_user.set_profile_information(photo=photo)
     except Exception as exception:
         return bad_request(exception.args[0])
     return jsonify(True)
