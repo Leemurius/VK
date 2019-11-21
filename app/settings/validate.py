@@ -66,6 +66,9 @@ class PersonalSettingsValidator(RegistrationValidator):
 
     def validate_age(self):
         try:
+            if self._age is None:
+                return None
+
             if self._age < Constants.MIN_AGE:
                 raise Exception('You too young for this website')
 

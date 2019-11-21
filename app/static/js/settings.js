@@ -20,7 +20,7 @@ function addGeneralInformationInFields() {
     $('.name-field').val(data['name']);
     $('.surname').val(data['surname']);
     $('.username').val(data['username']);
-    $('.age').val(data['age']);
+    $('.age').val((data['age'] == 0 ? '' : data['age']));
     $('.email').val(data['email']);
     $('.address').val(data['address']);
 }
