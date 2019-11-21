@@ -51,7 +51,7 @@ $('.validate-form').on('submit',function() {
         $('.toast').stop().fadeIn(400).delay(3000).fadeOut(500);
         setTimeout(
             function () {
-                window.location.assign("http://" + getServerName() + "/")
+                window.location.assign(getProtocol() + '://' + getServerName() + "/")
             },
             3000
         );
