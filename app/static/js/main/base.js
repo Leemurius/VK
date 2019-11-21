@@ -103,7 +103,7 @@ function addInformationInProfileBox(username) {
 
 $(".write_message button").click(function () {
     var room_id = getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/rooms/' + getProfileId(LastClickOn));
-    window.location.assign("http://" + getServerName() + "/chat/" + room_id);
+    window.location.assign(getProtocol() + '://' + getServerName() + "/chat/" + room_id);
 });
 
 function editVisualProfileBox(dict) {
