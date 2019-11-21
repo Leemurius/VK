@@ -10,7 +10,7 @@ setInterval(function() {
 function updateQueue() {
     $('tbody tr').remove();
 
-    var queue = getAjaxInformation('http://' + getIP() + '/api/queue/get');
+    var queue = getAjaxInformation('http://' + getServerName() + '/api/queue/get');
     for (let i = 0; i < queue.length; i++) {
         const row = queue[i];
         $(  '<tr>' +
@@ -26,12 +26,12 @@ function updateQueue() {
 $('.switch input').click(function (e) {
     const value = $('.switch input').is(":checked");
     const data = JSON.stringify({'status': value ? 'Ready' : 'Not ready'});
-    postAjaxInformation('http://' + getIP() + '/api/queue/change/status', data);
+    postAjaxInformation('http://' + getServerName() + '/api/queue/change/status', data);
 });
 
 function printNextUser() {
-    var username = getAjaxInformation('http://' + getIP() + '/api/queue/next');
-    var cur_username = getAjaxInformation('http://' + getIP() + '/api/self/username');
+    var username = getAjaxInformation('http://' + getServerName() + '/api/queue/next');
+    var cur_username = getAjaxInformation('http://' + getServerName() + '/api/self/username');
     if (username == cur_username) {
         //let result = confirm('Are you ready?');
         if (result) {

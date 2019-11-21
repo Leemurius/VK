@@ -53,3 +53,12 @@ def terminate_queue():
         return jsonify(QueueControl.terminate_queue())
     except Exception as exception:
         return bad_request(str(exception))
+
+
+@bp.route('/queue/next', methods=['POST'])
+@login_required
+def get_next():
+    try:
+        return jsonify(QueueControl.get_next())
+    except Exception as exception:
+        return bad_request(str(exception))

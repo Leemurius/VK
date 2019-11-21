@@ -96,12 +96,12 @@
                                     <li><i class="fas fa-gear"></i></li>
                                 </a>
 
-                                <a href="{{ url_for('main.add_to_queue') }}">
-                                    <li><i class="fas fa-plus"></i> Add to queue</li>
+                                <a href="{{ url_for('main.add_to_queue') }}" alt="Add to queue">
+                                    <li><i class="fas fa-plus"></i></li>
                                 </a>
 
-                                <a href="{{ url_for('main.queue') }}">
-                                    <li><i class="fas fa-address-book"></i>Open queue</li>
+                                <a href="{{ url_for('main.queue') }}" alt="Open queue">
+                                    <li><i class="fas fa-address-book"></i></li>
                                 </a>
 
                                 <li class="my_profile" ng-click="resizeObjectsWithInformation({{ '\'' + current_user.username + '\'' }})">
@@ -118,23 +118,6 @@
                         {#HEADER OF CARD#}
                         <div class="card-header big-window">
                             <div class="for-hover">
-                                        <a href="{{ url_for('main.add_to_queue') }}">
-                                            <li><i class="fas fa-plus"></i> Add to queue</li>
-                                        </a>
-
-                                        <a href="{{ url_for('main.queue') }}">
-                                            <li><i class="fas fa-address-book"></i>Open queue</li>
-                                        </a>
-
-                                        <a href="{{ url_for('settings.settings') }}">
-                                            <li><i class="fas fa-gear"></i>Settings</li>
-                                        </a>
-
-                                        <a href="{{ url_for('auth.logout') }}">
-                                            <li><i class="fas fa-ban"></i>Logout</li>
-                                        </a>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
 
