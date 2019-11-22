@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from logging.handlers import SMTPHandler
+from logging.handlers import RotatingFileHandler
 
 from config import Config, Constants
 
@@ -59,18 +59,16 @@ def create_app(config_class=Config):
     if not os.path.isdir(Constants.ROOM_IMAGE_UPLOAD_FOLDER):
         os.makedirs(Constants.ROOM_IMAGE_UPLOAD_FOLDER)
 
-    if not app.debug:
-        if app.config['MAIL_SERVER']:
-            mail_handler = SMTPHandler(
-                mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
-                fromaddr=app.config['MAIL_USERNAME'],
-                toaddrs=app.config['ADMINS'],
-                subject='Your server broke down',
-                credentials=(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD']),
-                secure=(() if app.config['MAIL_USE_TLS'] else None)
-            )
-            mail_handler.setLevel(logging.ERROR)
-            app.logger.addHandler(mail_handler)
+    if not os.path.isdir(Constants.LOGS_DIR):
+        os.mkdir(Constants.LOGS_DIR)
+    file_handler = RotatingFileHandler(Constants.LOGS_FILE, maxBytes=65536,
+                                       backupCount=5)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('Starting server')
 
     return app
 

@@ -3,7 +3,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-class Config(object):
+class Config:
     SECRET_KEY = ''
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -16,13 +16,16 @@ class Config(object):
     ADMINS = ['']
 
 
-class Constants(object):
-    IMAGE_UPLOAD_FOLDER = basedir + '/app/static/Data/UsersPhotos/'
+class Constants:
+    IMAGE_UPLOAD_FOLDER = os.path.join(basedir, 'app/static/Data/UsersPhotos/')
     IMAGE_DB_FOLDER = '/static/Data/UsersPhotos'
-    ROOM_IMAGE_UPLOAD_FOLDER = basedir + '/app/static/Data/RoomPhotos/'
+    ROOM_IMAGE_UPLOAD_FOLDER = os.path.join(basedir,
+                                            'app/static/Data/RoomPhotos/')
     ROOM_IMAGE_DB_FOLDER = '/static/Data/RoomPhotos'
     DEFAULT_USER_PHOTO = '/static/images/no_photo.png'
     DEFAULT_ROOM_PHOTO = '/static/images/no_photo.png'
+    LOGS_DIR = os.path.join(basedir, 'logs')
+    LOGS_FILE = os.path.join(basedir, 'logs/console.log')
 
     USER_PER_PAGE = 8
     MESSAGE_PER_PAGE = 20
