@@ -1,28 +1,21 @@
-body, html{
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background: #FC466B;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #3F5EFB, #FC466B);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #3F5EFB, #FC466B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    overflow: hidden;
-}
-
 .main {
     margin: auto;
     text-align: center;
-    width: 40%;
-    margin-top: 10%;
+    width: 60%;
+    margin-top: 0px;
+    max-height: 2em;
+}
+
+.main table {
+    position: relative;
+    background-color: white;
+    height: 1em;
+    overflow: scroll;
 }
 
 .ready {
     font-size: 25px;
     color: white;
-}
-
-.table {
-    background-color: white;
 }
 
 .switch {

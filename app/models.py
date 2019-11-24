@@ -148,7 +148,7 @@ class User(UserMixin, db.Model):
 class Queue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lab_number = db.Column(db.Integer)
-    status = db.Column(db.String(10))
+    status = db.Column(db.Integer)
     priority = db.Column(db.Integer)
     owner = db.relationship(
         'User',

@@ -52,13 +52,21 @@ def search():
 @bp.route('/add_to_queue', methods=['GET', 'POST'])
 @login_required
 def add_to_queue():
-    return render_template('main/add_to_queue.html')
+    return render_template(
+        'main/add_to_queue.html',
+        current_user=current_user,  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
+    )
 
 
 @bp.route('/queue', methods=['GET', 'POST'])
 @login_required
 def queue():
-    return render_template('main/queue.html')
+    return render_template(
+        'main/queue.html',
+        current_user=current_user,  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
+    )
 
 
 @bp.before_request

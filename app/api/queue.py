@@ -21,7 +21,16 @@ def add_to_queue():
 @login_required
 def get_queue():
     try:
-        return jsonify(QueueControl.get_queue())
+        return jsonify(QueueControl.get_queue_in_dict())
+    except Exception as exception:
+        return bad_request(str(exception))
+
+
+@bp.route('/queue/self/get/status', methods=['GET'])
+@login_required
+def get_status():
+    try:
+        return jsonify(QueueControl.get_status(current_user))
     except Exception as exception:
         return bad_request(str(exception))
 
@@ -37,7 +46,7 @@ def change_queue_status():
     return jsonify(True)
 
 
-@bp.route('/queue/start', methods=['POST'])
+@bp.route('/queue/start', methods=['POST', 'GET'])
 @login_required
 def start_queue():
     try:
@@ -46,19 +55,10 @@ def start_queue():
         return bad_request(str(exception))
 
 
-@bp.route('/queue/terminate', methods=['POST'])
-@login_required
-def terminate_queue():
-    try:
-        return jsonify(QueueControl.terminate_queue())
-    except Exception as exception:
-        return bad_request(str(exception))
-
-
-@bp.route('/queue/next', methods=['POST'])
+@bp.route('/queue/next', methods=['GET'])
 @login_required
 def get_next():
     try:
-        return jsonify(QueueControl.get_next())
+        return jsonify(QueueControl.get_next_user().username)
     except Exception as exception:
         return bad_request(str(exception))
