@@ -98,25 +98,35 @@
 					<div class="card-footer">
                         <div class="sidebar">
                             <ul>
-                                <a href="{{ url_for('auth.logout') }}">
-                                    <li><i class="fas fa-ban"></i></li>
-                                </a>
+                                <li>
+                                    <a href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-ban"></i>
+                                    </a>
+                                <li>
 
-                                <a href="{{ url_for('main.search') }}">
-                                    <li><i class="fas fa-search"></i></li>
-                                </a>
+                                <li>
+                                    <a href="{{ url_for('main.search') }}">
+                                        <i class="fas fa-search"></i>
+                                    </a>
+                                </li>
 
-                                <a href="{{ url_for('settings.settings') }}">
-                                    <li><i class="fas fa-gear"></i></li>
-                                </a>
+                                <li>
+                                    <a href="{{ url_for('settings.settings') }}">
+                                        <i class="fas fa-gear"></i>
+                                    </a>
+                                </li>
 
-                                <a href="{{ url_for('main.add_to_queue') }}" alt="Add to queue">
-                                    <li><i class="fas fa-plus"></i></li>
-                                </a>
+                                <li>
+                                    <a href="{{ url_for('main.add_to_queue') }}" alt="Add to queue">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                </li>
 
-                                <a href="{{ url_for('main.queue') }}" alt="Open queue">
-                                    <li><i class="fas fa-address-book"></i></li>
-                                </a>
+                                <li>
+                                    <a href="{{ url_for('main.queue') }}" alt="Open queue">
+                                        <i class="fas fa-address-book"></i>
+                                    </a>
+                                </li>
 
                                 <li class="my_profile" ng-click="resizeObjectsWithInformation({{ '\'' + current_user.username + '\'' }})">
                                     <i class="fas fa-user-circle"></i>

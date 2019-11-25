@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from app.api.errors import bad_request
 from app.api import bp
 from app.main.queue import QueueControl
+from config import Config
 
 
 @bp.route('/self/queue/add', methods=['POST'])
@@ -13,8 +14,8 @@ def add_to_queue():
     try:
         QueueControl.add_to_queue(current_user, data['lab_number'])
     except Exception as exception:
-        return bad_request(str(exception))
-    return jsonify(True)
+        return bad_request(exception.args[0])
+    return jsonify('You have been successfully registered')
 
 
 @bp.route('/queue/get', methods=['GET'])
@@ -50,9 +51,12 @@ def change_queue_status():
 @login_required
 def start_queue():
     try:
-        return jsonify(QueueControl.start_queue())
+        if current_user.email not in Config.ADMINS:
+            raise Exception("You are not admin")
+        QueueControl.start_queue()
     except Exception as exception:
         return bad_request(str(exception))
+    return jsonify(True)
 
 
 @bp.route('/queue/next', methods=['GET'])

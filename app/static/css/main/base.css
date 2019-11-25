@@ -255,31 +255,26 @@ body,html{
 /* For all templates*/
 
 .sidebar{
-	z-index: 999999;
-	display: inline-block;
+	width:100%;
 }
 
 .sidebar ul{
-	display: flex;
-	list-style: none;
-	margin: 0px;
-	margin-left: -1.7vw;
-}
-
-.sidebar ul a{
-	text-decoration: none;
+	width:100%;
+	color: white;
+	display:table;
+	margin: 0;
 }
 
 .sidebar ul li{
-	width: 100%;
-	padding-left: 1.5vw;
-	color: white;
 	font-size: 20px;
+	display:table-cell;
 }
-.sidebar ul li i{
-	padding-right: 10px;
 
+.sidebar ul li a {
+	color: white;
+	text-decoration: none;
 }
+
 .sidebar ul li i:hover{
 	cursor: pointer;
 	color: grey;
@@ -289,7 +284,6 @@ body,html{
 	margin-top: auto;
 	margin-bottom: auto;
 }
-
 
 /*PROFILE ---------------------------------------------------------------------------------------*/
 

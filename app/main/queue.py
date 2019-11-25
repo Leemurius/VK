@@ -3,6 +3,8 @@ import enum
 
 from app.models import Queue, db
 
+INFINITY = 10 ** 15  # MySQL doesn't have infinity
+
 
 class Statuses(enum.Enum):
     PROCESSING_HW = 0
@@ -88,7 +90,7 @@ class QueueControl:
     def get_first_index_in_queue_for(current_user):
         QueueControl.validate(current_user)
 
-        min_queue = float('Inf')
+        min_queue = INFINITY
         result_queue_element = None
         for queue_element in current_user.queues:
             if queue_element.lab_number < min_queue:
@@ -143,11 +145,11 @@ class QueueControl:
         if new_status == 'Ready':
             if edited_queue.status == Statuses.DOING_HW.value:
                 edited_queue.status = Statuses.READY_HW.value
-                edited_queue.priority = float('Inf')
+                edited_queue.priority = INFINITY
                 QueueControl.update_queue()
             if edited_queue.status == Statuses.DOING_TASK.value:
                 edited_queue.status = Statuses.READY_TASK.value
-                edited_queue.priority = float('Inf')
+                edited_queue.priority = INFINITY
                 QueueControl.update_queue()
         elif new_status == 'Not ready':
             if edited_queue.status == Statuses.READY_HW.value:
@@ -174,14 +176,13 @@ class QueueControl:
 
     @staticmethod
     def add_to_queue(current_user, lab_number):
-        for queue_element in current_user.queues:
-            if queue_element.lab_number == lab_number:
-                raise Exception('You have been already registered')
+        if len(list(current_user.queues)):
+            raise Exception('You can register in the queue only once')
 
         queue_element = Queue(
             lab_number=lab_number,
             status=Statuses.NOT_SHUFFLED.value,
-            priority=float('Inf')
+            priority=INFINITY
         )
         queue_element.commit_to_db()
         queue_element.set_owner(current_user)

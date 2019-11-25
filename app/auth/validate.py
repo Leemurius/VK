@@ -111,7 +111,7 @@ class RegistrationValidator:
             if User.query.filter_by(email=self._email).first():
                 raise Exception('This email already registered')
 
-            if not re.match('^[0-9a-zA-Zа-яА-Я.-]+@[0-9a-zA-Zа-яА-Я]+(\.[0-9a-zA-Zа-яА-Я]+)+$',
+            if not re.match('^[0-9a-zA-Zа-яА-Я.-_]+@[0-9a-zA-Zа-яА-Я]+(\.[0-9a-zA-Zа-яА-Я]+)+$',
                             self._email):
                 raise Exception('Email has incorrect format')
 

@@ -1,16 +1,15 @@
 .main {
     margin: auto;
+    margin-top: 0px;
     text-align: center;
     width: 60%;
-    margin-top: 0px;
-    max-height: 2em;
+    overflow-y: auto;
 }
 
 .main table {
-    position: relative;
     background-color: white;
-    height: 1em;
-    overflow: scroll;
+    height: 100px;
+    table-layout: fixed;
 }
 
 .ready {
