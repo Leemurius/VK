@@ -3,7 +3,7 @@ import enum
 
 from app.models import Queue, db
 
-INFINITY = 10 ** 15  # MySQL doesn't have infinity
+INFINITY = 10 ** 3  # MySQL doesn't have infinity
 
 
 class Statuses(enum.Enum):
