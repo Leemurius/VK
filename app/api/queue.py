@@ -15,7 +15,7 @@ def add_to_queue():
         QueueControl.add_to_queue(current_user, data['lab_number'])
     except Exception as exception:
         return bad_request(exception.args[0])
-    return jsonify('You have been successfully registered')
+    return jsonify(True)
 
 
 @bp.route('/queue/get', methods=['GET'])

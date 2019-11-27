@@ -4,7 +4,7 @@ $('.btn').click(function (e) {
     var response = postAjaxInformation(getProtocol() + '://' + getServerName() + "/api/self/queue/add", data);
 
     if (response == true) {
-        alert(response);
+        alert('You have been successfully registered');
     } else {
         alert("Error: " + JSON.parse(JSON.parse(response).message))
     }

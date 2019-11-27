@@ -1,6 +1,4 @@
-import re
 import os
-import re
 
 from flask import jsonify, request
 from flask_login import login_required, current_user, login_user
@@ -8,11 +6,10 @@ from flask_login import login_required, current_user, login_user
 from app.api.errors import bad_request
 from app.auth.validate import LoginValidator, RegistrationValidator, ResetPasswordValidator
 from app.settings.validate import PersonalSettingsValidator, PasswordSettingsValidator
-from app.models import User, Queue
+from app.models import User
 from app.api import bp
 from config import Constants
 from app.auth.email import send_password_reset_email
-from app.main.queue import QueueControl
 
 
 @bp.route('/self/id', methods=['GET'])
