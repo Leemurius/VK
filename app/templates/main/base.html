@@ -98,17 +98,23 @@
 					<div class="card-footer">
                         <div class="sidebar">
                             <ul>
-                                <a href="{{ url_for('auth.logout') }}">
-                                    <li><i class="fas fa-ban"></i></li>
-                                </a>
+                                <li>
+                                    <a href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-ban"></i>
+                                    </a>
+                                <li>
 
-                                <a href="{{ url_for('main.search') }}">
-                                    <li><i class="fas fa-search"></i></li>
-                                </a>
+                                <li>
+                                    <a href="{{ url_for('main.search') }}">
+                                        <i class="fas fa-search"></i>
+                                    </a>
+                                </li>
 
-                                <a href="{{ url_for('settings.settings') }}">
-                                    <li><i class="fas fa-gear"></i></li>
-                                </a>
+                                <li>
+                                    <a href="{{ url_for('settings.settings') }}">
+                                        <i class="fas fa-gear"></i>
+                                    </a>
+                                </li>
 
                                 <li class="my_profile" ng-click="resizeObjectsWithInformation({{ '\'' + current_user.username + '\'' }})">
                                     <i class="fas fa-user-circle"></i>

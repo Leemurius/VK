@@ -1,7 +1,11 @@
+.container {
+    max-height: 100%;
+}
+
 .big_table {
-    overflow-x: hidden;
-    max-height: 90%;
     margin-top: 15px;
+    max-height: 91%;
+    overflow-x: hidden;
 }
 
 thead {

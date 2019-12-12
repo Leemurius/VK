@@ -59,6 +59,10 @@ def create_app(config_class=Config):
     if not os.path.isdir(Constants.ROOM_IMAGE_UPLOAD_FOLDER):
         os.makedirs(Constants.ROOM_IMAGE_UPLOAD_FOLDER)
 
+    # Create folder for logs
+    if not os.path.isdir('logs'):
+        os.mkdir('logs')
+
     if not app.debug:
         if app.config['MAIL_SERVER']:
             mail_handler = SMTPHandler(
