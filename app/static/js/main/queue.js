@@ -20,7 +20,6 @@ function updateQueue() {
     var cur_username = getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/username');
 
     var queue = getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/queue/get');
-    for (let j = 0; j < 4; j++)
     for (let i = 0; i < queue.length; i++) {
         const row = queue[i];
         var block = $(
