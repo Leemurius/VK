@@ -35,13 +35,13 @@ def edit_index():
             raise Exception("You are not admin")
 
         data = request.get_json() or {}
-        QueueControl.edit_index(data['number_in_queue'], data['new_number'])
+        QueueControl.edit_index(data['number'], data['new_number'])
     except Exception as exception:
         return bad_request(str(exception))
     return jsonify(True)
 
 
-@bp.route('/queue/edit/status', methods=['POST', 'GET'])
+@bp.route('/queue/edit/status', methods=['POST'])
 @login_required
 def edit_status():
     try:
@@ -49,13 +49,13 @@ def edit_status():
             raise Exception("You are not admin")
         data = request.get_json() or {}
         print(data)
-        QueueControl.edit_status(data['number_in_queue'], data['new_status'])
+        QueueControl.edit_status(data['number'], data['status'])
     except Exception as exception:
         return bad_request(str(exception))
     return jsonify(True)
 
 
-@bp.route('/queue/delete/user', methods=['POST', 'GET'])
+@bp.route('/queue/delete/user', methods=['POST'])
 @login_required
 def delete_user():
     try:
@@ -63,7 +63,17 @@ def delete_user():
             raise Exception("You are not admin")
 
         data = request.get_json() or {}
-        QueueControl.delete_user(data['number_in_queue'])
+        QueueControl.delete_user(data['number'])
+    except Exception as exception:
+        return bad_request(str(exception))
+    return jsonify(True)
+
+
+@bp.route('/queue/delete/self/user', methods=['POST'])
+@login_required
+def delete_self_user():
+    try:
+        QueueControl.delete_self_user(current_user)
     except Exception as exception:
         return bad_request(str(exception))
     return jsonify(True)

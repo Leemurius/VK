@@ -67,9 +67,23 @@ class QueueControl:
     @staticmethod
     def edit_index(number, new_number):
         queue = QueueControl.get_queue()
+        number -= 1
+        new_number -= 1
 
-        for index in range(len(queue)):
-            pass
+        user_count = 0
+        for queue_num in range(len(queue)):
+            if max(number, new_number) <= user_count + len(queue[queue_num]):
+                new_queue = list(queue[queue_num])
+
+                for index_element in range(len(queue[queue_num])):
+                    if user_count + index_element == number:
+                        new_queue.remove(queue[queue_num][index_element])
+                        new_queue.insert(new_number - user_count, queue[queue_num][index_element])
+
+                QueueControl.set_new_priority_for_isolated_queue(new_queue)
+                break
+
+            user_count += len(queue[queue_num])
 
     @staticmethod
     def edit_status(number, new_status):
@@ -93,9 +107,15 @@ class QueueControl:
             for index_element in range(len(queue[queue_num])):
                 index += 1
                 if index == number:
-                    db.session.remove(queue[queue_num][index_element])
+                    db.session.delete(queue[queue_num][index_element])
 
         db.session.commit()
+
+    @staticmethod
+    def delete_self_user(current_user):
+        if len(current_user.queues.all()):
+            db.session.delete(current_user.queues[0])
+            db.session.commit()
 
     @staticmethod
     def get_queue_in_dict():
