@@ -65,25 +65,56 @@ class QueueControl:
         return queue
 
     @staticmethod
+    def edit_index(number, new_number):
+        queue = QueueControl.get_queue()
+
+        for index in range(len(queue)):
+            pass
+
+    @staticmethod
+    def edit_status(number, new_status):
+        queue = QueueControl.get_queue()
+        index = 0
+
+        for queue_num in range(len(queue)):
+            for index_element in range(len(queue[queue_num])):
+                index += 1
+                if index == number:
+                    queue[queue_num][index_element].status = new_status
+
+        db.session.commit()
+
+    @staticmethod
+    def delete_user(number):
+        queue = QueueControl.get_queue()
+        index = 0
+
+        for queue_num in range(len(queue)):
+            for index_element in range(len(queue[queue_num])):
+                index += 1
+                if index == number:
+                    db.session.remove(queue[queue_num][index_element])
+
+        db.session.commit()
+
+    @staticmethod
     def get_queue_in_dict():
         queue = QueueControl.get_queue()
         for index in range(len(queue)):
             queue[index] = QueueControl.sort_isolated_queue(queue[index])
 
         result = []
-        index = 0
         next_queue_element = QueueControl.get_next_queue_element()
         for isolated_queue in queue:
             for queue_element in isolated_queue:
                 result.append({
-                    'number': index + 1,
+                    'username': queue_element.owner[0].username,
                     'name_surname': queue_element.owner[0].name + ' ' +
                                     queue_element.owner[0].surname,
                     'lab_number': queue_element.lab_number,
                     'status': Statuses(queue_element.status).name,
                     'is_next': queue_element == next_queue_element
                 })
-                index += 1
         return result
 
     @staticmethod

@@ -12,24 +12,41 @@
 {% block content %}
     {{ moment.include_jquery() }}
 
-   <div class="main">
-        <p class="ready">Ready?</p>
-        <label class="switch">
-            <input type="checkbox" id="checkbox" value="1">
-            <span class="slider"></span>
-        </label>
-        <table class="table">
-              <thead class="thead-dark">
-                <tr>
-                    <th scope="col">№</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Lab №</th>
-                    <th scope="col">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-        </table>
+    <div class="limiter">
+        <div class="some-slider">
+            <p class="ready">Ready?</p>
+            <label class="switch">
+                <input type="checkbox" id="checkbox" value="1">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="container-table100">
+            <div class="wrap-table100">
+                <div class="table100 ver1 m-b-110">
+                    <div class="table100-head">
+                        <table>
+                            <thead>
+                                <tr class="row100 head">
+                                    <th class="cell100 column1">№</th>
+                                    <th class="cell100 column2">Name</th>
+                                    <th class="cell100 column3">Lab №</th>
+                                    <th class="cell100 column4">Status</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+
+
+                    <div class="table100-body js-pscroll">
+                        <table>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
 {% endblock %}

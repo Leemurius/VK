@@ -27,6 +27,48 @@ def get_queue():
         return bad_request(str(exception))
 
 
+@bp.route('/queue/edit/index', methods=['POST', 'GET'])
+@login_required
+def edit_index():
+    try:
+        if current_user.email not in Config.ADMINS:
+            raise Exception("You are not admin")
+
+        data = request.get_json() or {}
+        QueueControl.edit_index(data['number_in_queue'], data['new_number'])
+    except Exception as exception:
+        return bad_request(str(exception))
+    return jsonify(True)
+
+
+@bp.route('/queue/edit/status', methods=['POST', 'GET'])
+@login_required
+def edit_status():
+    try:
+        if current_user.email not in Config.ADMINS:
+            raise Exception("You are not admin")
+        data = request.get_json() or {}
+        print(data)
+        QueueControl.edit_status(data['number_in_queue'], data['new_status'])
+    except Exception as exception:
+        return bad_request(str(exception))
+    return jsonify(True)
+
+
+@bp.route('/queue/delete/user', methods=['POST', 'GET'])
+@login_required
+def delete_user():
+    try:
+        if current_user.email not in Config.ADMINS:
+            raise Exception("You are not admin")
+
+        data = request.get_json() or {}
+        QueueControl.delete_user(data['number_in_queue'])
+    except Exception as exception:
+        return bad_request(str(exception))
+    return jsonify(True)
+
+
 @bp.route('/queue/self/get/status', methods=['GET'])
 @login_required
 def get_status():

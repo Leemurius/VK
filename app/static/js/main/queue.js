@@ -17,18 +17,27 @@ function updateReady() {
 
 function updateQueue() {
     $('tbody tr').remove();
+    var cur_username = getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/username');
 
     var queue = getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/queue/get');
     for (let i = 0; i < queue.length; i++) {
         const row = queue[i];
-        $(  '<tr>' +
-                '<th class="number" scope="row">' + row['number'] + '</th>' +
-                '<td class="name_surname">' + row['name_surname'] + '</td>' +
-                '<td class="lab_number">' + row['lab_number'] + '</td>' +
-                '<td class="status">' + row['status'] +
-                        (row['is_next'] ? ' <b style="color: red;">NEXT</b>' : '') + '</td>' +
+        var block = $(
+            '<tr className="row100 body">' +
+            '<td class="cell100 column1">' + (i + 1).toString() + '</td>' +
+            '<td class="cell100 column2">' + row['name_surname'] + '</td>' +
+            '<td class="cell100 column3">' + row['lab_number'] + '</td>' +
+            '<td class="cell100 column4"' +
+                (row['is_next'] ? ' style="color: red;  font-weight: 700;"' : '') + '>'
+                + row['status'] + '</td>' +
             '</tr>'
-        ).appendTo($('tbody'))
+        );
+
+        if (cur_username == row['username']) {
+            block.css('background-color', '#aae9e8');
+        }
+
+        block.appendTo($('tbody'));
     }
 }
 
@@ -46,7 +55,7 @@ function printNextUser() {
 
         var status = getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/queue/self/get/status');
         if (status.substring(0, 10) == 'PROCESSING') {
-            let result = confirm('Have you passed?');
+            let result = confirm('Ты сдал?');
             if (result) {
                 data = JSON.stringify({'status': 'Passed'});
                 postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/queue/change/status', data);
@@ -58,7 +67,7 @@ function printNextUser() {
         }
 
         if (status.substring(0, 5) == 'READY') {
-            let result = confirm('Are you ready?');
+            let result = confirm('Ты готов идти сдавать?');
             if (result) {
                 var data = JSON.stringify({'status': 'Processing'});
                 postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/queue/change/status', data);
