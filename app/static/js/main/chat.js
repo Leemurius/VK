@@ -1,11 +1,20 @@
+var sio = io.connect(getPrefixUrl() + "/chat");
+
 $(document).ready(function() {
     $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
+});
+
+// - SIO ------------------------------------------------------------------------------------------
+
+sio.on('get_message', function (message, photo) {
+    angular.element(document.getElementById('chatController')).scope().addMessageVisualFromOther(message, photo);
+    setBeginState();
 });
 
 // - API ------------------------------------------------------------------------------------------
 
 function getSelfPhoto() {
-    return getAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/photo');
+    return getAjaxInformation(getPrefixUrl() + '/api/self/photo');
 }
 
 function getRoomId() {
@@ -18,9 +27,8 @@ function addMessage(text) {
     if (text == '') {
         return null;
     }
-    var data = JSON.stringify({'room_id' : Number(getRoomId()), 'message' : text});
-    var response = JSON.parse(postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/messages', data));
-    return response;
+    sio.emit('send_message', Number(getRoomId()), text);
+    return true;
 }
 
 // - JS --------------------------------------------------------------------------------------------
@@ -45,7 +53,30 @@ myApp.controller('chatController',['$scope', '$compile',function($scope, $compil
 
         var compiledElement = $compile(element)($scope);
         (compiledElement).appendTo($('.msg_card_body'));
-    }
+    };
+
+    $scope.addMessageVisualFromOther = function(message, photo) {
+        const cur_date = new Date();
+        let date = cur_date.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+        date = date.replace("AM", "am").replace("PM", "pm");
+
+        var element = '<div class="d-flex justify-content-start mb-4">' +
+                '<div class="img_cont_msg">' +
+                   '<img src="' + photo + '" ' +
+            '           class="rounded-circle user_img_msg" ' +
+            '           ng-click="resizeObjectsWithInformation(' +'\'' + "LOL" + '\''+ ')"' +
+            '       >' +
+                '</div>' +
+
+                '<div class="msg_cotainer">' +
+                    '<p class="text">' + message + '</p>' +
+                    '<span class="msg_time">' + date + '</span>' +
+                '</div>' +
+            '</div>';
+
+        var compiledElement = $compile(element)($scope);
+        (compiledElement).appendTo($('.msg_card_body'));
+    };
 }]);
 
 // Send message ----------------------------------------------------------------------------------------
@@ -54,11 +85,11 @@ function sendMessage() {
     var message = getMessageFromArea();
     if (addMessage(message)) {
         angular.element(document.getElementById('chatController')).scope().addMessageVisualFromYou(message);
-        beginState();
+        setBeginState();
     }
 }
 
-function beginState() {
+function setBeginState() {
     $('textarea').val('');
     $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
 }

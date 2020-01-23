@@ -1,6 +1,8 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, jsonify
 from flask_login import current_user, login_required
 
+from app import sio
+from flask_socketio import emit
 from app.main import bp
 from app.models import User, Room
 
@@ -13,6 +15,15 @@ def profile():
         current_user=current_user,  # for base.html
         rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
     )
+
+
+@sio.on('send_message', namespace='/chat')
+def send_message(room_id, message):
+    current_user.send_message(
+        recipient_room=Room.query.get_or_404(room_id),
+        text=message
+    )
+    emit('get_message', (message, current_user.photo), namespace='/chat', broadcast=True)
 
 
 @bp.route('/chat/<room_id>', methods=['GET'])

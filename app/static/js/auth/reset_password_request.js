@@ -2,7 +2,7 @@ $('.validate-form').on('submit',function() {
     const email = $('.email-input').val();
     const data = JSON.stringify({'email': email});
 
-    var response = postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/reset', data);
+    var response = postAjaxInformation(getPrefixUrl() + '/api/reset', data);
     if (response != true) {
         const error_text = JSON.parse(JSON.parse(response).message);
         $('.email-input-div').attr('data-validate', error_text);
@@ -12,7 +12,7 @@ $('.validate-form').on('submit',function() {
         $('.toast').stop().fadeIn(400).delay(3000).fadeOut(500);
         setTimeout(
             function () {
-                window.location.assign(getProtocol() + '://' + getServerName() + "/")
+                window.location.assign(getPrefixUrl() + "/")
             },
             3000
         );

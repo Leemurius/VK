@@ -7,7 +7,7 @@ $('.validate-form').on('submit',function() {
         'confirm_password': confirm_password
     });
     const token = window.location.pathname.split('/')[2];
-    var response = postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/user/update/password/' + token, data);
+    var response = postAjaxInformation(getPrefixUrl() + '/api/user/update/password/' + token, data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);
         for (let i = 0; i < errors_list.length; i++) {
@@ -28,7 +28,7 @@ $('.validate-form').on('submit',function() {
         $('.toast').stop().fadeIn(400).delay(3000).fadeOut(500);
         setTimeout(
             function () {
-                window.location.assign(getProtocol() + '://' + getServerName() + "/")
+                window.location.assign(getPrefixUrl() + "/")
             },
             3000
         );

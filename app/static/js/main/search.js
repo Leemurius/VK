@@ -1,7 +1,7 @@
 // Search user ------------------------------------------------------------------------------------------------
 
 function getUsersList(data) {
-    const response = postAjaxInformation(getProtocol() + '://' + getServerName() + '/api/self/find/user', data);
+    const response = postAjaxInformation(getPrefixUrl() + '/api/self/find/user', data);
     return response;
 }
 

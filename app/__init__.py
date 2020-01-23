@@ -6,6 +6,7 @@ from flask_moment import Moment
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import SMTPHandler
 
@@ -14,14 +15,16 @@ from config import Config, Constants
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
-login.login_view = 'auth.registration'
+login.login_view = 'auth.login'
 bootstrap = Bootstrap()
 moment = Moment()
 mail = Mail()
+sio = SocketIO()
 
 
-def create_app(config_class=Config):
+def create_app(config_class=Config, debug=False):
     app = Flask(__name__)
+    app.debug = debug
     app.config.from_object(config_class)
 
     db.init_app(app)
@@ -30,6 +33,7 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     moment.init_app(app)
     mail.init_app(app)
+    sio.init_app(app, async_mode='eventlet')
 
     with app.app_context():
         from app.api import bp as api_bp
