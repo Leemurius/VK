@@ -1,6 +1,6 @@
 // Search user ------------------------------------------------------------------------------------------------
 
-function getUsersList(data) {
+function getUserList(data) {
     const response = postAjaxInformation(getPrefixUrl() + '/api/self/find/user', data);
     return response;
 }
@@ -15,10 +15,9 @@ function searchUser() {
 }
 
 myApp.controller('searchController',['$scope', '$compile',function($scope, $compile) {
-
     $scope.updateListOfUsers = function (data) {
         $('.user-links').remove();  // delete all links on user
-        var users = getUsersList(data);
+        var users = getUserList(data);
         for (let i = 0; i < users.length; i++) {
             var user = users[i];
             var element = '<tr class="user-links" ng-click="resizeObjectsWithInformation(' + '\'' + user.username +  '\'' + ')">' +

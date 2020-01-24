@@ -10,5 +10,5 @@ def settings():
     return render_template(
         'main/settings.html',
         current_user=current_user,  # for base.html
-        rooms=current_user.get_sorted_rooms_by_timestamp()  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(current_user),  # for base.html
     )

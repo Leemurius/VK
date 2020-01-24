@@ -1,12 +1,16 @@
 var myApp = angular.module('myApp', []);  // ANGULAR FOR ALL TEMPLATES
+var rooms_sio = io.connect(getPrefixUrl() + "/rooms");
+// Profile information
+var me = getAjaxInformation(getPrefixUrl() + '/api/self/information');
 
 $(document).ready(function() {  // FOR ALL TEMPLATES
     $('#preloader').delay(450).fadeOut('slow');
 
-	$('#action_menu_btn').click(function() {
-		$('.action_menu').toggle();
-	});
+    $('#action_menu_btn').click(function() {
+        $('.action_menu').toggle();
+    });
     $('.profile-box').hide();
+    rooms_sio.emit('join');  // Connect with all rooms for giving message
 });
 
 // Requests -----------------------------------------------------------------------------------------
@@ -65,6 +69,12 @@ function postAjaxPhoto(url, photo) {
     return response;
 }
 
+// SIO ----------------------------------------------------------------------------------------------
+
+rooms_sio.on('get_new_list', function () {
+    updateListOfRooms(getRoomList(JSON.stringify({'request': ''})));
+});
+
 // API ----------------------------------------------------------------------------------------------
 
 function getProtocol() {
@@ -87,16 +97,12 @@ function getRoomList(data) {
     return postAjaxInformation(getPrefixUrl() + '/api/self/find/room', data);
 }
 
-function getSelfUsername() {
-    return getAjaxInformation(getPrefixUrl() + '/api/self/username')
-}
-
 function getProfileInformation(username) {
     return getAjaxInformation(getPrefixUrl() + '/api/user/information/' + username)
 }
 
 function addInformationInProfileBox(username) {
-    if (username == getSelfUsername()) {
+    if (username == me['username']) {
         $('.write_message').hide();
     } else {
         $('.write_message').show();
@@ -165,17 +171,16 @@ function searchRooms() {
        'request': $('.search-room-input').val()
     });
 
-    updateListOfRooms(data);
+    updateListOfRooms(getRoomList(data));
 }
 
-function updateListOfRooms(data) {
+function updateListOfRooms(rooms) {
     $('.room-links').remove();  // delete all links on rooms
 
-    var rooms = getRoomList(data);
     for (let i = 0; i < rooms.length; i++) {
         var room = rooms[i];
         if (room['is_dialog']) {
-            $('<a class="room-links" href="/chat/' + room['room_id'] + '">' +
+            $('<a class="room-links" href="/chat/' + room['id'] + '">' +
                     '<li>' +
                         '<div class="d-flex bd-highlight">' +
                             '<div class="img_cont">' +
@@ -186,6 +191,10 @@ function updateListOfRooms(data) {
                                 '<span class="name">' + room['title'] + '</span>' +
                                 '<p class="preview">' + room['last_message'] + '</p>' +
                             '</div>' +
+                            (room['unread_messages_count'] > 0 ?
+                            '<div class="message_info">' +
+                               '<p>' + room['unread_messages_count'] + '</p>' +
+                            '</div>' : '') +
                         '</div>' +
                     '</li>' +
                 '</a>'

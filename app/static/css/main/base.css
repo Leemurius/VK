@@ -246,6 +246,26 @@ body,html{
 	color: rgba(255,255,255,0.6);
 }
 
+.message_info {
+	width: 10px;
+	margin-left: 50px;
+    text-align: center;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message_info p {
+	padding-left: 3px;
+	padding-right: 3px;
+	border-radius: 10px;
+	background: white;
+	color: black;
+	font-weight: bold;
+	font-size: 20px;
+}
+
 @media(max-width: 576px) {
 	.contacts_card{
 		margin-bottom: 15px !important;

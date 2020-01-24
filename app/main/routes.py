@@ -1,8 +1,6 @@
 from flask import render_template, redirect, url_for, jsonify
 from flask_login import current_user, login_required
 
-from app import sio
-from flask_socketio import emit
 from app.main import bp
 from app.models import User, Room
 
@@ -13,17 +11,8 @@ def profile():
     return render_template(
         'main/profile.html',
         current_user=current_user,  # for base.html
-        rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(current_user),  # for base.html
     )
-
-
-@sio.on('send_message', namespace='/chat')
-def send_message(room_id, message):
-    current_user.send_message(
-        recipient_room=Room.query.get_or_404(room_id),
-        text=message
-    )
-    emit('get_message', (message, current_user.photo), namespace='/chat', broadcast=True)
 
 
 @bp.route('/chat/<room_id>', methods=['GET'])
@@ -37,7 +26,7 @@ def chat(room_id):
     return render_template(
         'main/chat.html',
         current_user=current_user,  # for base.html
-        rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(current_user),  # for base.html
         room=room,
         recipient=room.get_recipient(current_user),  # if chat is dialog
         title=room.get_recipient(current_user).username,
@@ -55,7 +44,7 @@ def search():
     return render_template(
         'main/search.html',
         current_user=current_user,  # for base.html
-        rooms=current_user.get_sorted_rooms_by_timestamp(),  # for base.html
+        rooms=current_user.get_sorted_rooms_by_timestamp(current_user),  # for base.html
         users=users,
     )
 

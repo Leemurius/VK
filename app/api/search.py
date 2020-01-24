@@ -17,26 +17,9 @@ def find_room():
         return bad_request('Must include request field!')
     try:
         rooms_list = []
-        for room in current_user.rooms:
-            if re.search(data['request'].lower(), room.get_title(current_user).lower()):
-                if room.is_dialog:
-                    recipient = room.get_recipient(current_user)
-                    rooms_list.append({
-                        'is_dialog': True,
-                        'status': recipient.status,
-                        'title': recipient.name + ' ' + recipient.surname,
-                        'photo': recipient.photo,
-                        'last_message': room.get_last_message(),
-                        'room_id': room.id
-                    })
-                else:
-                    rooms_list.append({
-                        'is_dialog': False,
-                        'title': room.get_title(current_user),
-                        'photo': room.photo,
-                        'last_message': room.get_last_message(),
-                        'room_id': room.id
-                    })
+        for room in current_user.get_sorted_rooms_by_timestamp(current_user):
+            if re.search(data['request'].lower(), room['title'].lower()):
+                rooms_list.append(room)
         return jsonify(rooms_list)
     except Exception as exception:
         return bad_request(str(exception))

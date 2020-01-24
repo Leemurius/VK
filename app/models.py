@@ -76,12 +76,20 @@ class User(UserMixin, db.Model):
             algorithm='HS256'
         ).decode('utf-8')
 
-    def get_sorted_rooms_by_timestamp(self):
-        return sorted(self.rooms,
-                      key=lambda room: (room.get_time_of_last_message()),
-                      reverse=True)
+    def get_sorted_rooms_by_timestamp(self, current_user):
+        rooms = []
+        for room in sorted(self.rooms,
+                           key=lambda room: (room.get_time_of_last_message()),
+                           reverse=True):
+            rooms.append(room.to_dict(current_user))
+        return rooms
 
-    def get_profile_information(self):
+    @staticmethod
+    def get_user_from_login(login):
+        return User.query.filter_by(username=login).first() or \
+               User.query.filter_by(email=login).first()
+
+    def to_dict(self):
         return {
             'name': self.name,
             'surname': self.surname,
@@ -147,6 +155,7 @@ class Room(db.Model):
         db.String(Constants.PHOTO_LENGTH),
         default=Constants.DEFAULT_ROOM_PHOTO
     )
+    unread_messages_count = db.Column(db.Integer, default=0)
     is_dialog = db.Column(db.Boolean)
 
     @staticmethod
@@ -184,7 +193,8 @@ class Room(db.Model):
                 db.Column('id', db.Integer, primary_key=True),
                 db.Column('text', db.String(Constants.MAX_MESSAGE_LENGTH)),
                 db.Column('sender_id', db.Integer),
-                db.Column('time', db.DateTime, index=True)
+                db.Column('time', db.DateTime, index=True),
+                db.Column('read', db.Boolean)
             )
         else:
             chat_table = db.metadata.tables[chat_name]
@@ -197,7 +207,9 @@ class Room(db.Model):
             sender_id=sender_id,
             time=datetime.datetime.utcnow()
         )
+        self.unread_messages_count += 1
         db.engine.connect().execute(insert)
+        self.commit_to_db()
 
     @staticmethod
     def get_message_sender(sender_id):
@@ -223,8 +235,8 @@ class Room(db.Model):
         if messages:
             last_message = messages[-1].text
 
-        if last_message and len(last_message) > 40:
-            last_message = last_message[:40] + '...'
+        if last_message and len(last_message) > 30:
+            last_message = last_message[:30] + '...'
 
         if last_message is None:
             last_message = 'It\'s new chat'
@@ -247,6 +259,7 @@ class Room(db.Model):
             text = db.Column(db.String(Constants.MAX_MESSAGE_LENGTH))
             sender_id = db.Column(db.Integer)
             time = db.Column(db.DateTime, index=True)
+            read = db.Column(db.Boolean)
 
         Message.__table__.create(db.engine)
 
@@ -282,17 +295,41 @@ class Room(db.Model):
         return self.members[0]  # Dialog with yourself
 
     def get_title(self, current_user):
+        title = self.title
         if self.is_dialog:
             recipient = self.get_recipient(current_user)
-            return recipient.name + ' ' + recipient.surname + ' ' + recipient.username
+            title = recipient.name + ' ' + recipient.surname
+        return title if len(title) <= 25 else title[:25] + '...'
+
+    def get_photo(self, current_user):
+        if self.is_dialog:
+            return self.get_recipient(current_user).photo
         else:
-            return self.title
+            return self.photo
+
+    def get_status(self, current_user):
+        if self.is_dialog:
+            return self.get_recipient(current_user).status
+        else:
+            return None
 
     def is_member(self, user):
         if user in self.members:
             return True
         else:
             return False
+
+    def to_dict(self, current_user):
+        return {
+            'id': self.id,
+            'status': self.get_status(current_user),
+            'is_dialog': self.is_dialog,
+            'title': self.get_title(current_user),
+            'photo': self.get_photo(current_user),
+            'last_message': self.get_last_message(),
+            'unread_messages_count': self.unread_messages_count,
+            'time_of_last_message': str(self.get_time_of_last_message())
+        }
 
     def commit_to_db(self):
         db.session.add(self)

@@ -40,6 +40,10 @@ def create_app(config_class=Config, debug=False):
         app.register_blueprint(api_bp, url_prefix='/api')
 
     with app.app_context():
+        from app.socketIO import bp as sio_bp
+        app.register_blueprint(sio_bp)
+
+    with app.app_context():
         from app.auth import bp as auth_bp
         app.register_blueprint(auth_bp)
 

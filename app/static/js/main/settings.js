@@ -16,13 +16,12 @@ $('.choose-photo input').bind('input',function (e) {
 });
 
 function addGeneralInformationInFields() {
-    const data = getAjaxInformation(getPrefixUrl() + '/api/self/information');
-    $('.name-field').val(data['name']);
-    $('.surname').val(data['surname']);
-    $('.username').val(data['username']);
-    $('.age').val((data['age'] == 0 ? '' : data['age']));
-    $('.email').val(data['email']);
-    $('.address').val(data['address']);
+    $('.name-field').val(me['name']);
+    $('.surname').val(me['surname']);
+    $('.username').val(me['username']);
+    $('.age').val((me['age'] == 0 ? '' : me['age']));
+    $('.email').val(me['email']);
+    $('.address').val(me['address']);
 }
 
 $('.left-form').on('submit',function() {
@@ -44,6 +43,7 @@ $('.left-form').on('submit',function() {
 
     var responseData = postAjaxInformation(getPrefixUrl() + '/api/self/update/information', data);
     var responsePhoto = postAjaxPhoto(getPrefixUrl() + '/api/self/update/photo', file);
+
     if (responseData != true || responsePhoto != true) {
         if (responseData != true) {
             const errors_list = JSON.parse(JSON.parse(responseData).message);

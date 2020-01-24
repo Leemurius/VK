@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from app.api.errors import bad_request
 from app.models import Room
 from app.api import bp
-from config import Constants
+from app.utils.validator import MessageValidator
 
 
 @bp.route('/messages', methods=['POST'])
@@ -12,22 +12,13 @@ from config import Constants
 def add_message():
     data = request.get_json() or {}
 
-    required_fields = ('room_id', 'message')
-    if not all(field in data for field in required_fields):
-        return bad_request('Must include ' + str(required_fields) + ' fields!')
-
     try:
-        # TODO: separate function for validation
-        if data['message'].strip() == '':  # Empty message
-            return jsonify(False)
+        MessageValidator().validate(('room_id', 'message'), data)
+    except ValueError as exception:
+        return bad_request(exception.args[0])
 
-        if len(data['message']) > Constants.MAX_MESSAGE_LENGTH:  # Check length
-            return jsonify(False)
-
-        current_user.send_message(
-            recipient_room=Room.query.get_or_404(data['room_id']),
-            text=data['message']
-        )
-    except Exception:
-        return jsonify(False)
+    current_user.send_message(
+        recipient_room=Room.query.get_or_404(data['room_id']),
+        text=data['message']
+    )
     return jsonify(True)

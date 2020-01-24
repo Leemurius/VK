@@ -11,12 +11,13 @@ $('.validate-form').on('submit',function() {
         'surname': surname,
         'username': username,
         'email': email,
-        'password' : password,
+        'new_password' : password,
         'confirm_password': confirm_password
     });
     var response = postAjaxInformation(getPrefixUrl() + '/api/user/create', data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);
+        alert(errors_list);
         for (let i = 0; i < errors_list.length; i++) {
             if (errors_list[i] == null) {
                 continue;
@@ -38,7 +39,7 @@ $('.validate-form').on('submit',function() {
                 addValidateMessage('.email-input', errors_list[i][1]);
             }
 
-            if (errors_list[i][0] == 'password') {
+            if (errors_list[i][0] == 'new_password') {
                 addValidateMessage('.password-input', errors_list[i][1]);
             }
 

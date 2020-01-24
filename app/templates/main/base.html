@@ -67,26 +67,30 @@
 						<ui class="contacts">
 
                             {% for room in rooms %}
-                            <a class='room-links' href={{ url_for('main.chat', room_id=room.id) }}>
+                            <a class='room-links' href={{ url_for('main.chat', room_id=room['id']) }}>
                                 <li>
                                     <div class="d-flex bd-highlight">
-                                        {% if room.is_dialog %}
-                                            {% set recipient = room.get_recipient(current_user) %}
+                                        {% if room['is_dialog'] %}
                                             <div class="img_cont">
-                                                <img src="{{ recipient.photo }}" class="rounded-circle user_img">
-                                                <span class="online_icon {{ 'online' if recipient.status else 'offline' }}"></span>
+                                                <img src="{{ room['photo'] }}" class="rounded-circle user_img">
+                                                <span class="online_icon {{ 'online' if room['status'] else 'offline' }}"></span>
                                             </div>
 
                                             <div class="user_info">
-                                                <span class="name"> {{ recipient.name }} {{recipient.surname }} </span>
-                                                <p class="preview"> {{ room.get_last_message() }}</p>
+                                                <span class="name"> {{ room['title'] }} </span>
+                                                <p class="preview"> {{ room['last_message'] }}</p>
                                             </div>
+                                            {% if room['unread_messages_count'] > 0 %}
+                                                <div class="message_info">
+                                                    <p>{{ room['unread_messages_count'] }}</p>
+                                                </div>
+                                            {% endif %}
                                         {% else %}
-                                            <img src="{{ room.photo }}" class="rounded-circle user_img">
+                                            <img src="{{ room['photo'] }}" class="rounded-circle user_img">
 
                                             <div class="meta">
-                                                <span class="name mx-1"> {{ room.title }} </span>
-                                                <p class="preview"> <span> {{ room.get_last_message() }} </span></p>
+                                                <span class="name mx-1"> {{ room['title'] }} </span>
+                                                <p class="preview"> <span> {{ room['last_message'] }} </span></p>
                                             </div>
                                         {% endif %}
                                     </div>
@@ -100,7 +104,7 @@
                             <ul>
                                 <li>
                                     <a href="{{ url_for('auth.logout') }}">
-                                        <i class="fas fa-ban"></i>
+                                        <i class="fas fa-sign-out-alt"></i>
                                     </a>
                                 <li>
 

@@ -1,21 +1,22 @@
-var sio = io.connect(getPrefixUrl() + "/chat");
+var chat_sio = io.connect(getPrefixUrl() + "/chat");
 
 $(document).ready(function() {
     $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
+    chat_sio.emit('join', getRoomId());
 });
 
 // - SIO ------------------------------------------------------------------------------------------
 
-sio.on('get_message', function (message, photo) {
-    angular.element(document.getElementById('chatController')).scope().addMessageVisualFromOther(message, photo);
-    setBeginState();
+chat_sio.on('get_message', function (message, sender) {
+    if (sender['username'] == me['username']) {
+        angular.element(document.getElementById('chatController')).scope().addMessageVisualFromYou(message);
+    } else {
+        angular.element(document.getElementById('chatController')).scope().addMessageVisualFromOther(message, sender);
+    }
+    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);  // scroll chat to down
 });
 
-// - API ------------------------------------------------------------------------------------------
-
-function getSelfPhoto() {
-    return getAjaxInformation(getPrefixUrl() + '/api/self/photo');
-}
+// - JS --------------------------------------------------------------------------------------------
 
 function getRoomId() {
     const split_url = (window.location.href).split('/'); // current link
@@ -27,17 +28,14 @@ function addMessage(text) {
     if (text == '') {
         return null;
     }
-    sio.emit('send_message', Number(getRoomId()), text);
+    chat_sio.emit('send_message', Number(getRoomId()), text);
     return true;
 }
 
-// - JS --------------------------------------------------------------------------------------------
-
-
 myApp.controller('chatController',['$scope', '$compile',function($scope, $compile) {
     $scope.addMessageVisualFromYou = function(message) {
-        const cur_date = new Date();
-        let date = cur_date.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+        let date = new Date().toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+
         date = date.replace("AM", "am").replace("PM", "pm");
 
         var element = '<div class="d-flex justify-content-end mb-4">' +
@@ -47,24 +45,22 @@ myApp.controller('chatController',['$scope', '$compile',function($scope, $compil
                 '</div>' +
 
                 '<div class="img_cont_msg">' +
-                   '<img src="' + getSelfPhoto() + '" class="rounded-circle user_img_msg" ng-click="resizeObjectsWithInformation(' +'\'' + getSelfUsername() + '\''+ ')">' +
+                   '<img src="' + me['photo'] + '" class="rounded-circle user_img_msg" ng-click="resizeObjectsWithInformation(' +'\'' + me['username'] + '\''+ ')">' +
                 '</div>' +
             '</div>';
-
         var compiledElement = $compile(element)($scope);
         (compiledElement).appendTo($('.msg_card_body'));
     };
 
-    $scope.addMessageVisualFromOther = function(message, photo) {
-        const cur_date = new Date();
-        let date = cur_date.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+    $scope.addMessageVisualFromOther = function(message, sender) {
+        let date = new Date().toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
         date = date.replace("AM", "am").replace("PM", "pm");
 
         var element = '<div class="d-flex justify-content-start mb-4">' +
                 '<div class="img_cont_msg">' +
-                   '<img src="' + photo + '" ' +
+                   '<img src="' + sender['photo'] + '" ' +
             '           class="rounded-circle user_img_msg" ' +
-            '           ng-click="resizeObjectsWithInformation(' +'\'' + "LOL" + '\''+ ')"' +
+            '           ng-click="resizeObjectsWithInformation(' +'\'' + sender['username'] + '\''+ ')"' +
             '       >' +
                 '</div>' +
 
@@ -82,16 +78,8 @@ myApp.controller('chatController',['$scope', '$compile',function($scope, $compil
 // Send message ----------------------------------------------------------------------------------------
 
 function sendMessage() {
-    var message = getMessageFromArea();
-    if (addMessage(message)) {
-        angular.element(document.getElementById('chatController')).scope().addMessageVisualFromYou(message);
-        setBeginState();
-    }
-}
-
-function setBeginState() {
-    $('textarea').val('');
-    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
+    addMessage(getMessageFromArea());
+    $('textarea').val('');  // clear textarea
 }
 
 function getMessageFromArea() {
@@ -114,5 +102,3 @@ $('textarea').keypress(function(event) {   // Delete new line after sending mess
         event.preventDefault();
     }
 });
-
-
