@@ -178,6 +178,7 @@ body,html{
     box-shadow:none !important;
    	outline:0px !important;
 }
+
 .search_btn{
 	border-radius: 0 15px 15px 0 !important;
 	background-color: rgba(0,0,0,0.3) !important;
@@ -247,8 +248,9 @@ body,html{
 }
 
 .message_info {
-	width: 10px;
-	margin-left: 50px;
+    height: 60px;
+	position: absolute;
+	right: 5px;
     text-align: center;
     display: -webkit-flex;
     display: flex;
@@ -257,13 +259,12 @@ body,html{
 }
 
 .message_info p {
-	padding-left: 3px;
-	padding-right: 3px;
+	padding: 0px 3px 0px 3px;
 	border-radius: 10px;
-	background: white;
-	color: black;
+	color: lawngreen;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 1em;
+    margin: auto;
 }
 
 @media(max-width: 576px) {

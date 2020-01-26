@@ -8,15 +8,18 @@ from app.models import Room
 
 @sio.on('send_message', namespace='/chat')
 def send_message(room_id, message):
-    if not current_user in Room.query.get_or_404(room_id).members:
+    room = Room.query.get_or_404(room_id)
+
+    if current_user not in room.members:
         return
 
     current_user.send_message(
-        recipient_room=Room.query.get_or_404(room_id),
+        recipient_room=room,
         text=message
     )
+
     emit('get_message', (message, current_user.to_dict()), namespace='/chat', room=str(room_id))
-    emit('get_new_list', namespace='/rooms', room=str(room_id))
+    emit('get_updated_room', room.to_dict(current_user), namespace='/rooms', room=str(room_id))
 
 
 @sio.on('join', namespace='/chat')

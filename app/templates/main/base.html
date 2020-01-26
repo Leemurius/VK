@@ -109,15 +109,11 @@
                                 <li>
 
                                 <li>
-                                    <a href="{{ url_for('main.search') }}">
-                                        <i class="fas fa-search"></i>
-                                    </a>
+                                    <i class="fas fa-search search_link"></i>
                                 </li>
 
                                 <li>
-                                    <a href="{{ url_for('settings.settings') }}">
-                                        <i class="fas fa-gear"></i>
-                                    </a>
+                                    <i class="fas fa-gear settings_link"></i>
                                 </li>
 
                                 <li class="my_profile" ng-click="resizeObjectsWithInformation({{ '\'' + current_user.username + '\'' }})">
@@ -129,16 +125,8 @@
 				</div></div>
 
                 <div class="col-xl-9 box-for-all">
-                    <div class="card">
-
-                        {#HEADER OF CARD#}
-                        <div class="card-header big-window">
-                            <div class="for-hover">
-                            </div>
-                        </div>
-
-                        {% block content %}{% endblock %}
-
+                    <div class="card additional_page">
+                        {% block main %}{% endblock %}
                     </div>
                 </div>
 

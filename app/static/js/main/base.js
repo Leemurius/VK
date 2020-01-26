@@ -1,7 +1,10 @@
+// Libs variables
 var myApp = angular.module('myApp', []);  // ANGULAR FOR ALL TEMPLATES
 var rooms_sio = io.connect(getPrefixUrl() + "/rooms");
+
 // Profile information
 var me = getAjaxInformation(getPrefixUrl() + '/api/self/information');
+var rooms = getRoomList({'request': ''});
 
 $(document).ready(function() {  // FOR ALL TEMPLATES
     $('#preloader').delay(450).fadeOut('slow');
@@ -14,6 +17,14 @@ $(document).ready(function() {  // FOR ALL TEMPLATES
 });
 
 // Requests -----------------------------------------------------------------------------------------
+
+function loadJS (url) {
+    jQuery.ajax({
+        url: url,
+        dataType: 'script',
+        async: true
+    });
+}
 
 function getAjaxInformation(url) {
     let response = null;
@@ -71,8 +82,17 @@ function postAjaxPhoto(url, photo) {
 
 // SIO ----------------------------------------------------------------------------------------------
 
-rooms_sio.on('get_new_list', function () {
-    updateListOfRooms(getRoomList(JSON.stringify({'request': ''})));
+rooms_sio.on('get_updated_room', function (room) {
+    for (let i = 0; i < rooms.length; i++) {
+        if (rooms[i]['id'] == room['id']) {
+            rooms[i] = room;
+            rooms[0] = [rooms[i], rooms[i] = rooms[0]][0]; // swap first and i-th
+            updateListOfRooms(rooms);
+            return;
+        }
+    }
+    rooms.splice(0, 0, room);
+    updateListOfRooms(rooms);
 });
 
 // API ----------------------------------------------------------------------------------------------
@@ -94,11 +114,19 @@ function getProfileId(username) {
 }
 
 function getRoomList(data) {
-    return postAjaxInformation(getPrefixUrl() + '/api/self/find/room', data);
+    return postAjaxInformation(getPrefixUrl() + '/api/self/find/room', JSON.stringify(data));
 }
 
 function getProfileInformation(username) {
     return getAjaxInformation(getPrefixUrl() + '/api/user/information/' + username)
+}
+
+function getHTMLBlock(data) {
+    return postAjaxInformation(getPrefixUrl() + '/api/html/get', JSON.stringify(data));
+}
+
+function getListOfJSFromHTML(data) {
+    return postAjaxInformation(getPrefixUrl() + '/api/js/list/get', JSON.stringify(data));
 }
 
 function addInformationInProfileBox(username) {
@@ -109,11 +137,6 @@ function addInformationInProfileBox(username) {
     }
     editVisualProfileBox(getProfileInformation(username));
 }
-
-$(".write_message button").click(function () {
-    var room_id = getAjaxInformation(getPrefixUrl() + '/api/rooms/' + getProfileId(LastClickOn));
-    window.location.assign(getPrefixUrl() + "/chat/" + room_id);
-});
 
 function editVisualProfileBox(dict) {
     $('.profile-box .name_surname p').text(dict['name'] + ' ' + dict['surname']);
@@ -127,7 +150,8 @@ function editVisualProfileBox(dict) {
 // Angular for profile box animation ------------------------------------------------------------------------------
 
 var LastClickOn = undefined;  // Search menu
-myApp.controller('baseController',['$scope',function($scope) {
+
+myApp.controller('baseController',['$scope', '$compile',function($scope, $compile) {
     $scope.name = {};
     $scope.resizeObjectsWithInformation = function (username) {
         if (LastClickOn == username) {
@@ -162,15 +186,99 @@ myApp.controller('baseController',['$scope',function($scope) {
             LastClickOn = username;
         }
     };
+
+    // TODO: Moved from search.js, because it has problems with dynamically upload of ng-controllers
+    $scope.updateListOfUsers = function (users) {
+        $('.user-links').remove();  // delete all links on user
+        for (let i = 0; i < users.length; i++) {
+            var user = users[i];
+            var element = '<tr class="user-links" ng-click="resizeObjectsWithInformation(' + '\'' + user.username +  '\'' + ')">' +
+                    '<td>' +
+                        '<img src="' + user['photo'] + '" alt="" class="rounded-circle user_img">' +
+                        '<span class="name_surname">' + user['name'] + ' ' + user['surname'] + '</span>' +
+                    '</td>' +
+                    '<td>' + (user['age'] ? user['age'] : 'No information') + '</td>' +
+                    '<td class="text-center">' +
+                        (user['status'] ? '<span class="label label-success">Online</span>' : '<span class="label label-default">Offline</span>') +
+                    '</td>' +
+                    '<td>' +
+                        '<span>' + user['email'] + '</span>' +
+                    '</td>' +
+                '</tr>';
+
+            var compiledElement = $compile(element)($scope);
+            $(compiledElement).appendTo($('.list-for-users'));
+        }
+    }
 }]);
+
+// Page loads ------------------------------------------------------------------------------------------
+
+function loadSettingsPage() {
+    // CLear
+    $('.additional_page').empty();
+
+    // Head
+    let data = {'blockname': 'head', 'filename': '/templates/main/settings.html'};
+    $('head').append(getHTMLBlock(data));
+    $(document).attr('title', 'Settings');
+
+    // Main
+    data['blockname'] = 'main';
+    $('.additional_page').append(getHTMLBlock(data));
+
+    // JS files
+    let js_files = getListOfJSFromHTML(data);
+    for (let i = 0; i < js_files.length; i++) {
+        loadJS(js_files[i]);
+    }
+
+    // Change URL
+    window.history.pushState('', 'Settings', "/my_profile/settings");
+}
+
+function loadSearchPage() {
+    // CLear
+    $('.additional_page').empty();
+
+    // Head
+    let data = {'blockname': 'head', 'filename': '/templates/main/search.html'};
+    $('head').append(getHTMLBlock(data));
+    $(document).attr('title', 'Search');
+
+    // Main
+    data['blockname'] = 'main';
+    $('.additional_page').append(getHTMLBlock(data));
+
+    // JS files
+    let js_files = getListOfJSFromHTML(data);
+    for (let i = 0; i < js_files.length; i++) {
+        loadJS(js_files[i]);
+    }
+
+    // Change URL
+    window.history.pushState('', 'Search', "/search");
+}
+
+// Clicks on buttons ------------------------------------------------------------------------------------------
+
+$('.search_link').click(function () {
+    loadSearchPage();
+});
+
+$('.settings_link').click(function () {
+    loadSettingsPage();
+});
+
+$(".write_message button").click(function () {
+    var room_id = getAjaxInformation(getPrefixUrl() + '/api/rooms/' + getProfileId(LastClickOn));
+    window.location.assign(getPrefixUrl() + "/chat/" + room_id);
+});
 
 // Search of rooms ------------------------------------------------------------------------------------------------
 
 function searchRooms() {
-    const data = JSON.stringify({
-       'request': $('.search-room-input').val()
-    });
-
+    const data = {'request': $('.search-room-input').val()};
     updateListOfRooms(getRoomList(data));
 }
 

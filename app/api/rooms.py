@@ -8,9 +8,7 @@ from app.models import Room, User
 
 @bp.route('/rooms/<int:profile_id>', methods=['GET'])
 def get_room_or_create(profile_id):
-    profile_user = User.query.get_or_404(profile_id)
-    room_id = Room.get_or_create_room(current_user, profile_user)
-    return jsonify(room_id)
+    return jsonify(Room.get_or_create_dialog(current_user, User.query.get_or_404(profile_id)))
 
 
 @bp.route('/rooms/get/recipient/<int:room_id>', methods=['GET'])

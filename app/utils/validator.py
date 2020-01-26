@@ -2,6 +2,7 @@ import os
 import re
 
 import werkzeug
+from flask import current_app
 from flask_login import current_user
 
 from config import Constants
@@ -32,6 +33,31 @@ class Validator:
 
         except ValueError as exception:
             return 'login', str(exception)
+        return None
+
+    @staticmethod
+    def validate_blockname(blockname):
+        try:
+            Validator._check_type(blockname, str)
+
+            allowed_names = ('head', 'main', 'js_files')
+            if blockname not in allowed_names:
+                raise ValueError('Block name should be ' + str(allowed_names))
+
+        except ValueError as exception:
+            return 'blockname', str(exception)
+        return None
+
+    @staticmethod
+    def validate_filename(filename):
+        try:
+            Validator._check_type(filename, str)
+
+            if not os.path.isfile(current_app.root_path + filename):
+                raise ValueError("Incorrect filepath")
+
+        except ValueError as exception:
+            return 'blockname', str(exception)
         return None
 
     @staticmethod
@@ -305,3 +331,14 @@ class ResetValidator(Validator):
 class MessageValidator(Validator):
     def _validate(self, data):
         return MessageValidator.validate_message(data['message']),
+
+
+class ContentValidator(Validator):
+    def _validate(self, data):
+        return (ContentValidator.validate_blockname(data['blockname']),
+                ContentValidator.validate_filename(data['filename']))
+
+
+class FilenameValidator(Validator):
+    def _validate(self, data):
+        return ContentValidator.validate_filename(data['filename']),

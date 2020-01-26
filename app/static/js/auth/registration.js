@@ -17,7 +17,6 @@ $('.validate-form').on('submit',function() {
     var response = postAjaxInformation(getPrefixUrl() + '/api/user/create', data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);
-        alert(errors_list);
         for (let i = 0; i < errors_list.length; i++) {
             if (errors_list[i] == null) {
                 continue;

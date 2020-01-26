@@ -10,11 +10,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from config import Constants
 
-
 rooms = db.Table('rooms',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('room_id', db.Integer, db.ForeignKey('room.id'))
-)
+                 db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+                 db.Column('room_id', db.Integer, db.ForeignKey('room.id'))
+                 )
 
 
 class User(UserMixin, db.Model):
@@ -62,7 +61,7 @@ class User(UserMixin, db.Model):
         try:
             id = jwt.decode(token, current_app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
-        except:
+        except Exception:
             return None
         return User.query.get(id)
 
@@ -93,9 +92,10 @@ class User(UserMixin, db.Model):
         return {
             'name': self.name,
             'surname': self.surname,
+            'username': self.username,
+            'status': self.status,
             'photo': self.photo,
             'age': self.age,
-            'username': self.username,
             'email': self.email,
             'address': self.address
         }
@@ -166,19 +166,18 @@ class Room(db.Model):
         return room
 
     @staticmethod
-    def get_or_create_room(user1, user2):
+    def get_or_create_dialog(user1, user2):
         if user1 == user2:  # Not create room with yourself
             return None
 
-        for room1 in user1.rooms:       # FIXME: make faster
+        for room1 in user1.rooms:  # FIXME: make faster
             for room2 in user2.rooms:
-                if room1 == room2 and room1.members.count() == 2:  # private
+                if room1 == room2 and room1.is_dialog:
                     return room1.id
 
         room = Room.create_new_room(is_dialog=True)
         room.add_user(user1)
-        if user1 != user2:  # Chat with yourself
-            room.add_user(user2)
+        room.add_user(user2)
         return room.id
 
     @property
@@ -251,9 +250,9 @@ class Room(db.Model):
             return datetime.datetime.now()
 
     def create_chat(self):
-        DynamicBase = declarative_base(class_registry=dict())
+        dynamic_base = declarative_base(class_registry=dict())
 
-        class Message(DynamicBase):
+        class Message(dynamic_base):
             __tablename__ = 'chat_{}'.format(self.id)
             id = db.Column(db.Integer, primary_key=True)
             text = db.Column(db.String(Constants.MAX_MESSAGE_LENGTH))

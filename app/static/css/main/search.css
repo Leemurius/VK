@@ -30,6 +30,10 @@ tbody tr:hover{
     margin-left: 10px;
 }
 
-.input-group input {
+.search_input {
+    margin-top: 15px;
+}
+
+.search_input input {
     width: 100px;
 }

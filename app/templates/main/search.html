@@ -9,14 +9,14 @@
     <!--===============================================================================================-->
 {% endblock %}
 
-{% block content %}
+{% block main %}
     {{ moment.include_jquery() }}
 
     {# Content of card #}
     <div class="container">
         {# Search line #}
         <div class="input-group">
-            <div class="input-group">
+            <div class="input-group search_input">
                 <input type="text" placeholder="Search new friend..." class="form-control search search-person-input">
                 <span class="input-group-text search_btn search-person"><i class="fas fa-search"></i></span>
             </div>
@@ -32,29 +32,7 @@
                         <th><span>Email</span></th>
                     </tr>
                 </thead>
-                <tbody class="list-for-users" id="searchController" ng-controller="searchController">
-                    {% for user in users %}
-                        <tr class="user-links" ng-click="resizeObjectsWithInformation({{ '\'' + user.username + '\'' }})">
-                            <td>
-                                <img src="{{ user.photo }}" alt="" class="rounded-circle user_img">
-                                <span class="name_surname"> {{ user.name }} {{ user.surname }} </span>
-                            </td>
-
-                            <td>{{ user.age if user.age else 'No information' }}</td>
-
-                            <td class="text-center">
-                                {% if user.status %}
-                                    <span class="label label-success">Online</span>
-                                {% else %}
-                                    <span class="label label-default">Offline</span>
-                                {% endif %}
-                            </td>
-
-                            <td>
-                                <span>{{ user.email }}</span>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                <tbody class="list-for-users" id="searchController">
                 </tbody>
             </table>
         </div>
