@@ -23,6 +23,10 @@ def chat(room_id):
     if not room.is_member(current_user):
         return redirect(url_for('main.profile'))
 
+    # TODO: hotfix for reading messages
+    room.unread_messages_count = 0
+    room.commit_to_db()
+
     return render_template(
         'main/chat.html',
         current_user=current_user,  # for base.html

@@ -3,7 +3,7 @@ import re
 from flask_login import login_required
 from flask import current_app, request, jsonify
 
-from api.errors import bad_request
+from app.api.errors import bad_request
 from app.api import bp
 from app.utils.validator import ContentValidator, FilenameValidator
 

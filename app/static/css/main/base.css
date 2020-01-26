@@ -261,9 +261,10 @@ body,html{
 .message_info p {
 	padding: 0px 3px 0px 3px;
 	border-radius: 10px;
-	color: lawngreen;
+	color: #5755ef;
+	background-color: lime;
 	font-weight: bold;
-	font-size: 1em;
+	font-size: 1.2em;
     margin: auto;
 }
 

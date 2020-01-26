@@ -214,7 +214,7 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
 
 // Page loads ------------------------------------------------------------------------------------------
 
-function loadSettingsPage() {
+async function loadSettingsPage() {
     // CLear
     $('.additional_page').empty();
 
@@ -222,6 +222,9 @@ function loadSettingsPage() {
     let data = {'blockname': 'head', 'filename': '/templates/main/settings.html'};
     $('head').append(getHTMLBlock(data));
     $(document).attr('title', 'Settings');
+
+    // Timeout for loading css
+    await new Promise(r => setTimeout(r, 100));
 
     // Main
     data['blockname'] = 'main';
