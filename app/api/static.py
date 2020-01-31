@@ -15,7 +15,7 @@ def get_html_block():
 
     # Validation
     try:
-        ContentValidator().validate(('blockname', 'filename'), data)
+        ContentValidator().validate({'blockname': str, 'filename': str}, data)
     except ValueError as exception:
         return bad_request(exception.args[0])
 
@@ -29,7 +29,7 @@ def get_list_of_js_from_html():
 
     # Validation
     try:
-        FilenameValidator().validate(('filename', ), data)
+        FilenameValidator().validate({'filename': str}, data)
     except ValueError as exception:
         return bad_request(exception.args[0])
 

@@ -6,14 +6,14 @@ $('.validate-form').on('submit',function() {
     const password = $('.password-input').val();
     const confirm_password = $('.confirm_password-input').val();
 
-    const data = JSON.stringify({
+    const data = {
         'name': name,
         'surname': surname,
         'username': username,
         'email': email,
         'new_password' : password,
         'confirm_password': confirm_password
-    });
+    };
     var response = postAjaxInformation(getPrefixUrl() + '/api/user/create', data);
     if (response != true) {
         const errors_list = JSON.parse(JSON.parse(response).message);

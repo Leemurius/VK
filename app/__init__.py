@@ -91,5 +91,4 @@ def create_app(config_class=Config, debug=False):
 def load_user(id):
     return models.User.query.get(int(id))
 
-
 from app import models

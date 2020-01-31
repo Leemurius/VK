@@ -2,10 +2,10 @@ $('.validate-form').on('submit',function() {
     const new_password = $('.new-password').val();
     const confirm_password = $('.confirm-password').val();
 
-    const data = JSON.stringify({
+    const data = {
         'new_password' : new_password,
         'confirm_password': confirm_password
-    });
+    };
     const token = window.location.pathname.split('/')[2];
     var response = postAjaxInformation(getPrefixUrl() + '/api/user/update/password/' + token, data);
     if (response != true) {

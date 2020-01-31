@@ -1,100 +1,98 @@
-var chat_sio = io.connect(getPrefixUrl() + "/chat");
+var messages_sio = io.connect(getPrefixUrl() + "/messages");
 
 $(document).ready(function() {
+    joinToChatOrDialog();
+    $('textarea').select();
     $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
-    chat_sio.emit('join', getRoomId());
 });
 
 // - SIO ------------------------------------------------------------------------------------------
 
-chat_sio.on('get_message', function (message, sender) {
-    if (sender['username'] == me['username']) {
-        angular.element(document.getElementById('chatController')).scope().addMessageVisualFromYou(message);
-    } else {
-        angular.element(document.getElementById('chatController')).scope().addMessageVisualFromOther(message, sender);
-    }
+messages_sio.on('get_message', function (message) {
+    addMessage(message);
     $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);  // scroll chat to down
 });
 
 // - JS --------------------------------------------------------------------------------------------
 
-function getRoomId() {
-    const split_url = (window.location.href).split('/'); // current link
-    const room_id = split_url[split_url.length - 1];
-    return room_id;
-}
-
-function addMessage(text) {
-    if (text == '') {
-        return null;
+function addMessage(message) {
+    if (message.sender.id == me.id) {
+        angular.element(document.getElementById('chatController')).scope().addMessageVisualFromYou(message);
+    } else {
+        angular.element(document.getElementById('chatController')).scope().addMessageVisualFromOther(message);
     }
-    chat_sio.emit('send_message', Number(getRoomId()), text);
-    return true;
 }
 
-myApp.controller('chatController',['$scope', '$compile',function($scope, $compile) {
-    $scope.addMessageVisualFromYou = function(message) {
-        let date = new Date().toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+function formatTime(time) {
+    let date = new Date(time + ' UTC').toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+    return date.replace("AM", "am").replace("PM", "pm");
+}
 
-        date = date.replace("AM", "am").replace("PM", "pm");
+function setHeader() {
+    if (isDialog()) {
+        let recipient = postAjaxInformation(getPrefixUrl() + '/api/user/information', {'id': Number(getRecipientId())});
+        let element = '<div class="img_cont">\n' +
+            '                <img src="' + recipient.photo + '" class="rounded-circle user_img" ng-click="resizeObjectsWithInformation(' + recipient.id.toString() + ')" />\n' +
+            '                <span class="online_icon ' + (recipient.status ? 'online' : 'offline') + '"></span>\n' +
+            '            </div>\n' +
+            '            <div class="user_info">\n' +
+            '                <span>' + recipient.name + ' ' + recipient.surname + '</span>\n' +
+            '                <p class="username"> Username: ' + recipient.username + '</p>\n' +
+            '            </div>';
+        angular.element(document.getElementById('chatController')).scope().setHeader(element);
+    } else {
+        // TODO: CHAT
+    }
+}
 
-        var element = '<div class="d-flex justify-content-end mb-4">' +
-                '<div class="msg_cotainer_send">' +
-                    '<p class="text">' + message + '</p>' +
-                    '<span class="msg_time_send">' + date + '</span>' +
-                '</div>' +
+function addMessages() {
+    const messages = postAjaxInformation(
+        getPrefixUrl() + '/api/dialog/get/messages',
+        {'profile_id': Number(getRecipientId())}
+    );
+    for (let i = 0; i < messages.length; i++) {
+        addMessage(messages[i]);
+    }
+}
 
-                '<div class="img_cont_msg">' +
-                   '<img src="' + me['photo'] + '" class="rounded-circle user_img_msg" ng-click="resizeObjectsWithInformation(' +'\'' + me['username'] + '\''+ ')">' +
-                '</div>' +
-            '</div>';
-        var compiledElement = $compile(element)($scope);
-        (compiledElement).appendTo($('.msg_card_body'));
-    };
+function isDialog() {
+    return location.search[5] != 'c';
+}
 
-    $scope.addMessageVisualFromOther = function(message, sender) {
-        let date = new Date().toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
-        date = date.replace("AM", "am").replace("PM", "pm");
+function getRecipientId() {
+    return location.search.split('=')[1];
+}
 
-        var element = '<div class="d-flex justify-content-start mb-4">' +
-                '<div class="img_cont_msg">' +
-                   '<img src="' + sender['photo'] + '" ' +
-            '           class="rounded-circle user_img_msg" ' +
-            '           ng-click="resizeObjectsWithInformation(' +'\'' + sender['username'] + '\''+ ')"' +
-            '       >' +
-                '</div>' +
-
-                '<div class="msg_cotainer">' +
-                    '<p class="text">' + message + '</p>' +
-                    '<span class="msg_time">' + date + '</span>' +
-                '</div>' +
-            '</div>';
-
-        var compiledElement = $compile(element)($scope);
-        (compiledElement).appendTo($('.msg_card_body'));
-    };
-}]);
+function joinToChatOrDialog() {
+    if (isDialog()) {
+        messages_sio.emit('join', getRecipientId());
+    } else {
+        // TODO: CHAT
+    }
+    setHeader();
+    addMessages();
+}
 
 // Send message ----------------------------------------------------------------------------------------
 
-function sendMessage() {
-    addMessage(getMessageFromArea());
-    $('textarea').val('');  // clear textarea
-}
-
-function getMessageFromArea() {
-    var message = $('textarea').val();
-    return message;
+function sendMessage(text) {
+    if (text == '') {
+        return null;
+    }
+    messages_sio.emit('send_message', Number(getRecipientId()), text);
+    return true;
 }
 
 $(window).on('keydown', function(e) {
     if (e.which == 13 && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        sendMessage()
+        sendMessage($('textarea').val());
+        $('textarea').val('');  // clear textarea
     }
 });
 
 $(".send_btn").click(function() {
-    sendMessage();
+    sendMessage($('textarea').val());
+    $('textarea').val('');  // clear textarea
 });
 
 $('textarea').keypress(function(event) {   // Delete new line after sending message

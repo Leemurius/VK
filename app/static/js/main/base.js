@@ -13,6 +13,7 @@ $(document).ready(function() {  // FOR ALL TEMPLATES
         $('.action_menu').toggle();
     });
     $('.profile-box').hide();
+    angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
     rooms_sio.emit('join');  // Connect with all rooms for giving message
 });
 
@@ -44,7 +45,7 @@ function postAjaxInformation(url, data) {
              type: "POST",
              url: url,
              async: false,
-             data: data,
+             data: JSON.stringify(data),
              contentType: 'application/json;charset=UTF-8',
              success : function(text) {
                  response = text;
@@ -87,12 +88,12 @@ rooms_sio.on('get_updated_room', function (room) {
         if (rooms[i]['id'] == room['id']) {
             rooms[i] = room;
             rooms[0] = [rooms[i], rooms[i] = rooms[0]][0]; // swap first and i-th
-            updateListOfRooms(rooms);
+            angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
             return;
         }
     }
     rooms.splice(0, 0, room);
-    updateListOfRooms(rooms);
+    angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
 });
 
 // API ----------------------------------------------------------------------------------------------
@@ -109,33 +110,33 @@ function getPrefixUrl() {
     return getProtocol() + "//" + getServerName();
 }
 
-function getProfileId(username) {
-    return getAjaxInformation(getPrefixUrl() + '/api/user/id/' + username);
-}
-
 function getRoomList(data) {
-    return postAjaxInformation(getPrefixUrl() + '/api/self/find/room', JSON.stringify(data));
+    return postAjaxInformation(getPrefixUrl() + '/api/self/find/room', data);
 }
 
-function getProfileInformation(username) {
-    return getAjaxInformation(getPrefixUrl() + '/api/user/information/' + username)
+function getProfileInformation(id) {
+    return postAjaxInformation(getPrefixUrl() + '/api/user/information', {'id': id});
 }
 
 function getHTMLBlock(data) {
-    return postAjaxInformation(getPrefixUrl() + '/api/html/get', JSON.stringify(data));
+    return postAjaxInformation(getPrefixUrl() + '/api/html/get', data);
 }
 
 function getListOfJSFromHTML(data) {
-    return postAjaxInformation(getPrefixUrl() + '/api/js/list/get', JSON.stringify(data));
+    return postAjaxInformation(getPrefixUrl() + '/api/js/list/get', data);
 }
 
-function addInformationInProfileBox(username) {
-    if (username == me['username']) {
+function saveStateInHistory(title, url) {
+    window.history.pushState({'title':title}, title, url);
+}
+
+function addInformationInProfileBox(id) {
+    if (id == me.id) {
         $('.write_message').hide();
     } else {
         $('.write_message').show();
     }
-    editVisualProfileBox(getProfileInformation(username));
+    editVisualProfileBox(getProfileInformation(id));
 }
 
 function editVisualProfileBox(dict) {
@@ -150,11 +151,10 @@ function editVisualProfileBox(dict) {
 // Angular for profile box animation ------------------------------------------------------------------------------
 
 var LastClickOn = undefined;  // Search menu
-
 myApp.controller('baseController',['$scope', '$compile',function($scope, $compile) {
     $scope.name = {};
-    $scope.resizeObjectsWithInformation = function (username) {
-        if (LastClickOn == username) {
+    $scope.resizeObjectsWithInformation = function (id) {
+        if (LastClickOn == id) {
             setTimeout(
                 function () {
                     $('.profile-box').removeClass('col-xl-3').addClass('col-xl-1');
@@ -173,7 +173,7 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
 
             LastClickOn = undefined;
         } else {
-            addInformationInProfileBox(username);
+            addInformationInProfileBox(id);
             $('.box-for-all').removeClass('col-xl-9').addClass('col-xl-6');
 
             setTimeout(
@@ -183,7 +183,7 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
                 },
                 200);
 
-            LastClickOn = username;
+            LastClickOn = id;
         }
     };
 
@@ -192,7 +192,7 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
         $('.user-links').remove();  // delete all links on user
         for (let i = 0; i < users.length; i++) {
             var user = users[i];
-            var element = '<tr class="user-links" ng-click="resizeObjectsWithInformation(' + '\'' + user.username +  '\'' + ')">' +
+            var element = '<tr class="user-links" ng-click="resizeObjectsWithInformation(' + user.id.toString() + ')">' +
                     '<td>' +
                         '<img src="' + user['photo'] + '" alt="" class="rounded-circle user_img">' +
                         '<span class="name_surname">' + user['name'] + ' ' + user['surname'] + '</span>' +
@@ -209,10 +209,98 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
             var compiledElement = $compile(element)($scope);
             $(compiledElement).appendTo($('.list-for-users'));
         }
-    }
+    };
+
+    $scope.updateListOfRooms = function (rooms) {
+        $('.room-links').remove();  // delete all links on rooms
+
+        for (let i = 0; i < rooms.length; i++) {
+            let room = rooms[i];
+            if (room['is_dialog']) {
+                let element = '<li class="room-links" room_id="' + (room['is_dialog'] ? room['recipient_id'] : 'c' + room['id']) + '">' +
+                        '<div class="d-flex bd-highlight">' +
+                            '<div class="img_cont">' +
+                                '<img src="' + room['photo'] + '" class="rounded-circle user_img">' +
+                                '<span class="online_icon ' + (room['status'] ? 'online' : 'offline') + '"></span>' +
+                            '</div>' +
+                            '<div class="user_info">' +
+                                '<span class="name">' + room['title'] + '</span>' +
+                                '<p class="preview">' + room['last_message']['text'] + '</p>' +
+                            '</div>' +
+                            (room['unread_messages_count'] > 0 ?
+                            '<div class="message_info">' +
+                               '<p>' + room['unread_messages_count'] + '</p>' +
+                            '</div>' : '') +
+                        '</div>' +
+                    '</li>';
+                let compiledElement = $compile(element)($scope);
+                $(compiledElement).appendTo($('.contacts'));
+            } else {
+                // TODO: CHAT
+            }
+        }
+    };
+
+    // TODO: Moved from chat.js, because it has problems with dynamically upload of ng-controllers
+    $scope.setHeader = function(element) {
+        let compiledElement = $compile(element)($scope);
+        (compiledElement).appendTo($('.chat_user_header'));
+    };
+
+    // TODO: Moved from chat.js, because it has problems with dynamically upload of ng-controllers
+    $scope.addMessageVisualFromYou = function(message) {
+        let element = '<div class="d-flex justify-content-end mb-4">' +
+                '<div class="msg_cotainer_send">' +
+                    '<p class="text">' + message.text + '</p>' +
+                    '<span class="msg_time_send">' + formatTime(message.time) + '</span>' +
+                '</div>' +
+
+                '<div class="img_cont_msg">' +
+                   '<img src="' + me.photo + '" class="rounded-circle user_img_msg" ng-click="resizeObjectsWithInformation(' + me.id.toString() + ')">' +
+                '</div>' +
+            '</div>';
+        let compiledElement = $compile(element)($scope);
+        (compiledElement).appendTo($('.msg_card_body'));
+    };
+
+    // TODO: Moved from chat.js, because it has problems with dynamically upload of ng-controllers
+    $scope.addMessageVisualFromOther = function(message) {
+        let element = '<div class="d-flex justify-content-start mb-4">' +
+                '<div class="img_cont_msg">' +
+                   '<img src="' + message.sender.photo + '" ' +
+            '           class="rounded-circle user_img_msg" ' +
+            '           ng-click="resizeObjectsWithInformation(' + message.sender.id.toString() + ')"' +
+            '       >' +
+                '</div>' +
+
+                '<div class="msg_cotainer">' +
+                    '<p class="text">' + message.text + '</p>' +
+                    '<span class="msg_time">' + formatTime(message.time) + '</span>' +
+                '</div>' +
+            '</div>';
+
+        let compiledElement = $compile(element)($scope);
+        (compiledElement).appendTo($('.msg_card_body'));
+    };
 }]);
 
 // Page loads ------------------------------------------------------------------------------------------
+
+window.onpopstate = function(e) {
+    if(e.state) {
+        switch (e.state.title) {
+            case 'Messages':
+                loadChatPage();
+                break;
+            case 'Settings':
+                loadSettingsPage();
+                break;
+            case 'Search':
+                loadSearchPage();
+                break;
+        }
+    }
+};
 
 async function loadSettingsPage() {
     // CLear
@@ -237,10 +325,10 @@ async function loadSettingsPage() {
     }
 
     // Change URL
-    window.history.pushState('', 'Settings', "/my_profile/settings");
+    saveStateInHistory('Settings', '/my_profile/settings');
 }
 
-function loadSearchPage() {
+async function loadSearchPage() {
     // CLear
     $('.additional_page').empty();
 
@@ -248,6 +336,9 @@ function loadSearchPage() {
     let data = {'blockname': 'head', 'filename': '/templates/main/search.html'};
     $('head').append(getHTMLBlock(data));
     $(document).attr('title', 'Search');
+
+    // Timeout for loading css
+    await new Promise(r => setTimeout(r, 100));
 
     // Main
     data['blockname'] = 'main';
@@ -260,60 +351,64 @@ function loadSearchPage() {
     }
 
     // Change URL
-    window.history.pushState('', 'Search', "/search");
+    saveStateInHistory('Search', '/search');
+}
+
+async function loadChatPage(id) {
+    // CLear
+    $('.additional_page').empty();
+
+    // Head
+    let data = {'blockname': 'head', 'filename': '/templates/main/chat.html'};
+    $('head').append(getHTMLBlock(data));
+    $(document).attr('title', 'Messages');
+
+    // Timeout for loading css
+    await new Promise(r => setTimeout(r, 100));
+
+    // Main
+    data['blockname'] = 'main';
+    $('.additional_page').append(getHTMLBlock(data));
+
+
+    // JS files
+    let js_files = getListOfJSFromHTML(data);
+    for (let i = 0; i < js_files.length; i++) {
+        loadJS(js_files[i]);
+    }
+
+    // Change URL
+    saveStateInHistory('Messages', '/messages?sel='+id);
 }
 
 // Clicks on buttons ------------------------------------------------------------------------------------------
 
 $('.search_link').click(function () {
+    saveStateInHistory(document.title, window.location.href);
     loadSearchPage();
 });
 
 $('.settings_link').click(function () {
+    saveStateInHistory(document.title, window.location.href);
     loadSettingsPage();
 });
 
 $(".write_message button").click(function () {
-    var room_id = getAjaxInformation(getPrefixUrl() + '/api/rooms/' + getProfileId(LastClickOn));
-    window.location.assign(getPrefixUrl() + "/chat/" + room_id);
+    saveStateInHistory(document.title, window.location.href);
+    loadChatPage(LastClickOn);
 });
+
+$('.contacts').on('click', 'li', function () {
+    saveStateInHistory(document.title, window.location.href);
+    loadChatPage($(this).attr('room_id'));
+});
+
 
 // Search of rooms ------------------------------------------------------------------------------------------------
 
 function searchRooms() {
     const data = {'request': $('.search-room-input').val()};
-    updateListOfRooms(getRoomList(data));
-}
-
-function updateListOfRooms(rooms) {
-    $('.room-links').remove();  // delete all links on rooms
-
-    for (let i = 0; i < rooms.length; i++) {
-        var room = rooms[i];
-        if (room['is_dialog']) {
-            $('<a class="room-links" href="/chat/' + room['id'] + '">' +
-                    '<li>' +
-                        '<div class="d-flex bd-highlight">' +
-                            '<div class="img_cont">' +
-                                '<img src="' + room['photo'] + '" class="rounded-circle user_img">' +
-                                '<span class="online_icon ' + (room['status'] ? 'online' : 'offline') + '"></span>' +
-                            '</div>' +
-                            '<div class="user_info">' +
-                                '<span class="name">' + room['title'] + '</span>' +
-                                '<p class="preview">' + room['last_message'] + '</p>' +
-                            '</div>' +
-                            (room['unread_messages_count'] > 0 ?
-                            '<div class="message_info">' +
-                               '<p>' + room['unread_messages_count'] + '</p>' +
-                            '</div>' : '') +
-                        '</div>' +
-                    '</li>' +
-                '</a>'
-            ).appendTo($('.contacts'))
-        } else {
-            // TODO: for conversations
-        }
-    }
+    angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(getRoomList(data));
 }
 
 $(".search-room").click(function (e) {

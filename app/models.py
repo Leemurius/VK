@@ -10,10 +10,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from config import Constants
 
-rooms = db.Table('rooms',
-                 db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-                 db.Column('room_id', db.Integer, db.ForeignKey('room.id'))
-                 )
+dialogs = db.Table(
+    'dialogs',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('dialog_id', db.Integer, db.ForeignKey('dialog.id')),
+    db.Column('unread_messages', db.Integer)
+)
 
 
 class User(UserMixin, db.Model):
@@ -35,10 +37,10 @@ class User(UserMixin, db.Model):
     )
     password_hash = db.Column(db.String(256))
 
-    rooms = db.relationship(
-        'Room',
-        secondary=rooms,
-        backref=db.backref('members', lazy="dynamic")
+    dialogs = db.relationship(
+        'Dialog',
+        secondary=dialogs,
+        backref=db.backref('members', lazy='dynamic')
     )
 
     def __init__(self, **kwargs):
@@ -76,11 +78,12 @@ class User(UserMixin, db.Model):
         ).decode('utf-8')
 
     def get_sorted_rooms_by_timestamp(self, current_user):
+        # TODO: CHAT
         rooms = []
-        for room in sorted(self.rooms,
-                           key=lambda room: (room.get_time_of_last_message()),
-                           reverse=True):
-            rooms.append(room.to_dict(current_user))
+        for dialog in sorted(self.dialogs,
+                             key=lambda dialog: (dialog.get_last_message()['time']),
+                             reverse=True):
+            rooms.append(dialog.to_dict(current_user))
         return rooms
 
     @staticmethod
@@ -90,6 +93,7 @@ class User(UserMixin, db.Model):
 
     def to_dict(self):
         return {
+            'id': self.id,
             'name': self.name,
             'surname': self.surname,
             'username': self.username,
@@ -118,8 +122,8 @@ class User(UserMixin, db.Model):
         self.last_seen = datetime.datetime.utcnow()
         db.session.commit()
 
-    def send_message(self, text, recipient_room):
-        recipient_room.add_message(self.id, text)
+    def send_message(self, room, text):
+        room.add_message(self.id, text)
 
     def upload_photo(self, photo):
         if self.photo != photo:
@@ -148,188 +152,129 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
 
-class Room(db.Model):
+class Dialog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(Constants.ROOM_NAME_LENGTH))
-    photo = db.Column(
-        db.String(Constants.PHOTO_LENGTH),
-        default=Constants.DEFAULT_ROOM_PHOTO
-    )
-    unread_messages_count = db.Column(db.Integer, default=0)
-    is_dialog = db.Column(db.Boolean)
 
     @staticmethod
-    def create_new_room(is_dialog=False):
-        room = Room(is_dialog=is_dialog)
-        room.commit_to_db()
-        room.create_chat()
-        return room
+    def create(user1, user2):
+        dialog = Dialog()
+        dialog.members.append(user1)
+        dialog.members.append(user2)
+        dialog.commit_to_db()
+
+        dialog.create_chat()
+        return dialog
 
     @staticmethod
-    def get_or_create_dialog(user1, user2):
-        if user1 == user2:  # Not create room with yourself
+    def get_or_create(user1, user2):
+        dialog_id = Dialog.get_id(user1, user2)
+        if dialog_id is None:
+            return Dialog.create(user1, user2)
+        else:
+            return Dialog.query.get(dialog_id)
+
+    @staticmethod
+    def get_id(user1, user2):
+        for dialog1 in user1.dialogs:  # FIXME: make normal request
+            for dialog2 in user2.dialogs:
+                if dialog1 == dialog2:
+                    return dialog1.id
+        return None
+
+    @staticmethod
+    def get_object(user1, user2):
+        dialog_id = Dialog.get_id(user1, user2)
+        if dialog_id is None:
             return None
-
-        for room1 in user1.rooms:  # FIXME: make faster
-            for room2 in user2.rooms:
-                if room1 == room2 and room1.is_dialog:
-                    return room1.id
-
-        room = Room.create_new_room(is_dialog=True)
-        room.add_user(user1)
-        room.add_user(user2)
-        return room.id
-
-    @property
-    def chat(self):
-        chat_name = 'chat_{}'.format(self.id)
-        chat_table = None
-
-        # If table not exists in metadata - create
-        if chat_name not in db.metadata.tables.keys():
-            chat_table = db.Table(
-                'chat_{}'.format(self.id), db.metadata,
-                db.Column('id', db.Integer, primary_key=True),
-                db.Column('text', db.String(Constants.MAX_MESSAGE_LENGTH)),
-                db.Column('sender_id', db.Integer),
-                db.Column('time', db.DateTime, index=True),
-                db.Column('read', db.Boolean)
-            )
         else:
-            chat_table = db.metadata.tables[chat_name]
-
-        return chat_table
-
-    def add_message(self, sender_id, text):
-        insert = self.chat.insert().values(
-            text=text,
-            sender_id=sender_id,
-            time=datetime.datetime.utcnow()
-        )
-        self.unread_messages_count += 1
-        db.engine.connect().execute(insert)
-        self.commit_to_db()
-
-    @staticmethod
-    def get_message_sender(sender_id):
-        return User.query.get(sender_id)
-
-    def get_messages(self):
-        messages = db.session.query(self.chat).all()
-
-        class Message(object):
-            def __init__(self, message):
-                self.id = message[0]
-                self.text = message[1]
-                self.sender = User.query.get(message[2])
-                self.time = message[3]
-
-        messages = [Message(message) for message in messages]
-        return messages
-
-    def get_last_message(self):
-        messages = db.session.query(self.chat).all()
-
-        last_message = None
-        if messages:
-            last_message = messages[-1].text
-
-        if last_message and len(last_message) > 30:
-            last_message = last_message[:30] + '...'
-
-        if last_message is None:
-            last_message = 'It\'s new chat'
-
-        return last_message
-
-    def get_time_of_last_message(self):
-        messages = db.session.query(self.chat).all()
-        if len(messages):
-            return messages[-1][3]
-        else:
-            return datetime.datetime.now()
+            return Dialog.query.get(dialog_id)
 
     def create_chat(self):
         dynamic_base = declarative_base(class_registry=dict())
 
         class Message(dynamic_base):
-            __tablename__ = 'chat_{}'.format(self.id)
+            __tablename__ = 'dialog_{}'.format(self.id)
             id = db.Column(db.Integer, primary_key=True)
             text = db.Column(db.String(Constants.MAX_MESSAGE_LENGTH))
             sender_id = db.Column(db.Integer)
             time = db.Column(db.DateTime, index=True)
-            read = db.Column(db.Boolean)
 
         Message.__table__.create(db.engine)
 
-    def add_user(self, user):
-        self.members.append(user)
-        db.session.commit()
+    @property
+    def dialog(self):
+        dialog_name = 'dialog_{}'.format(self.id)
 
-    def upload_photo(self, photo):
-        if self.photo != photo:
-            # Delete old photo
-            old_path = os.path.join(
-                Constants.ROOM_IMAGE_UPLOAD_FOLDER, os.path.basename(self.photo)
+        # If table not exists in metadata - create
+        if dialog_name not in db.metadata.tables.keys():
+            dialog_table = db.Table(
+                dialog_name, db.metadata,
+                db.Column('id', db.Integer, primary_key=True),
+                db.Column('text', db.String(Constants.MAX_MESSAGE_LENGTH)),
+                db.Column('sender_id', db.Integer),
+                db.Column('time', db.DateTime, index=True),
             )
-            if os.path.isfile(old_path):
-                os.unlink(old_path)
+        else:
+            dialog_table = db.metadata.tables[dialog_name]
 
-            filename = '{}_{}.{}'.format(self.id, int(time()), photo.filename.rsplit('.', 1)[-1])
-            file_path = os.path.join(Constants.ROOM_IMAGE_UPLOAD_FOLDER, filename)
-            file_path_db = os.path.join(Constants.ROOM_IMAGE_DB_FOLDER, filename)
+        return dialog_table
 
-            photo.seek(0)  # put cursor at the beginning
-            photo.save(file_path)
-            self.photo = file_path_db
+    def add_message(self, sender_id, text):
+        insert = self.dialog.insert().values(
+            text=text,
+            sender_id=sender_id,
+            time=datetime.datetime.utcnow()
+        )
+        db.engine.connect().execute(insert)
+        self.commit_to_db()
+
+    def get_messages(self):
+        messages = db.session.query(self.dialog).all()
+        messages = [message_to_dict(message) for message in messages]
+        return messages
+
+    def get_last_message(self):
+        messages = db.session.query(self.dialog).all()
+
+        last_message = None
+        if messages:
+            last_message = message_to_dict(messages[-1])
+
+        return last_message
+
+    def get_count_of_unread_messages(self, user):
+        return 0
+
+    def has_member(self, user):
+        return user in self.members
 
     def get_recipient(self, user):
-        if not self.is_dialog:  # Chat
-            return None
-
-        for member in self.members:  # Dialog
-            if user != member:
-                return member
-
-        return self.members[0]  # Dialog with yourself
+        return self.members[1] if self.members[0] == user else self.members[0]
 
     def get_title(self, current_user):
-        title = self.title
-        if self.is_dialog:
-            recipient = self.get_recipient(current_user)
-            title = recipient.name + ' ' + recipient.surname
-        return title if len(title) <= 25 else title[:25] + '...'
-
-    def get_photo(self, current_user):
-        if self.is_dialog:
-            return self.get_recipient(current_user).photo
-        else:
-            return self.photo
-
-    def get_status(self, current_user):
-        if self.is_dialog:
-            return self.get_recipient(current_user).status
-        else:
-            return None
-
-    def is_member(self, user):
-        if user in self.members:
-            return True
-        else:
-            return False
+        recipient = self.get_recipient(current_user)
+        title = recipient.name + ' ' + recipient.surname
+        return title
 
     def to_dict(self, current_user):
         return {
             'id': self.id,
-            'status': self.get_status(current_user),
-            'is_dialog': self.is_dialog,
+            'recipient_id': self.get_recipient(current_user).id,
+            'status': self.get_recipient(current_user).status,
+            'is_dialog': True,
             'title': self.get_title(current_user),
-            'photo': self.get_photo(current_user),
+            'photo': self.get_recipient(current_user).photo,
             'last_message': self.get_last_message(),
-            'unread_messages_count': self.unread_messages_count,
-            'time_of_last_message': str(self.get_time_of_last_message())
+            'unread_messages_count': self.get_count_of_unread_messages(current_user)
         }
 
     def commit_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+
+def message_to_dict(message):
+    return {'id': message[0],
+            'text': message[1],
+            'sender': User.query.get(message[2]).to_dict(),
+            'time': str(message[3])}

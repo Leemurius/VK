@@ -22,8 +22,9 @@ class Validator:
 
     @staticmethod
     def validate_required_fields(fields, data):
-        if not all(field in data for field in fields):
-            raise ValueError('Must include ' + str(fields) + ' fields!')
+        for field, type in fields.items():
+            if not (field in data and isinstance(data.get(field), type)):
+                raise ValueError('Template of arguments ' + str(fields) + ' !')
 
     @staticmethod
     def validate_login(login):

@@ -1,6 +1,6 @@
 $('.validate-form').on('submit',function() {
     const email = $('.email-input').val();
-    const data = JSON.stringify({'email': email});
+    const data = {'email': email};
 
     var response = postAjaxInformation(getPrefixUrl() + '/api/reset', data);
     if (response != true) {

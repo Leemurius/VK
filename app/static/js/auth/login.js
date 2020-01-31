@@ -1,7 +1,7 @@
 $('.validate-form').on('submit',function(){
     const login = $('.login-input').val();
     const password = $('.password-input').val();
-    const data = JSON.stringify({'login' : login, 'password' : password});
+    const data = {'login' : login, 'password' : password};
 
     var response = postAjaxInformation(getPrefixUrl() + '/api/login', data);
     if (response != true) {

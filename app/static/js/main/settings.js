@@ -6,8 +6,8 @@ $('.choose-photo-link').on('click', function (e) {
     $('.choose-photo input').click();
 });
 
-$('.choose-photo input').bind('input',function (e) {
-    var photo_path = $(this).val();
+$('.choose-photo input').change(function (e) {
+    let photo_path = this.files[0].name;
     if (photo_path.length > 40) {
         photo_path = photo_path.substring(0, 20) + '...' +
             photo_path.substring(photo_path.length - 10, photo_path.length);
@@ -31,14 +31,14 @@ $('.left-form').on('submit',function() {
     const age = $('.age').val();
     const email = $('.email').val();
     const address = $('.address').val();
-    const data = JSON.stringify({
+    const data = {
         'name': name,
         'surname': surname,
         'username': username,
         'age': Number.parseInt(age),
         'email': email,
         'address': address,
-    });
+    };
     const file = $('.choose-photo input').prop('files')[0];
 
     var responseData = postAjaxInformation(getPrefixUrl() + '/api/self/update/information', data);
@@ -92,11 +92,11 @@ $('.right-form').on('submit',function() {
     const old_password = $('.old-password').val();
     const new_password = $('.new-password').val();
     const confirm_password = $('.confirm-password').val();
-    const data = JSON.stringify({
+    const data = {
         'old_password' : old_password,
         'new_password' : new_password,
         'confirm_password' : confirm_password
-    });
+    };
 
     var response = postAjaxInformation(getPrefixUrl() + '/api/self/update/password', data);
     if (response != true) {

@@ -179,6 +179,10 @@ body,html{
    	outline:0px !important;
 }
 
+.room-links:hover{
+	text-decoration: none;
+}
+
 .search_btn{
 	border-radius: 0 15px 15px 0 !important;
 	background-color: rgba(0,0,0,0.3) !important;
@@ -198,6 +202,7 @@ body,html{
 }
 .contacts li:hover{
 	background-color: rgba(0,0,0,0.3);
+	cursor: pointer;
 }
 .user_img{
 	height: 70px;
@@ -245,6 +250,7 @@ body,html{
 .user_info p{
 	font-size: 13.5px;
 	color: rgba(255,255,255,0.6);
+	text-decoration: none;
 }
 
 .message_info {
@@ -261,10 +267,10 @@ body,html{
 .message_info p {
 	padding: 0px 3px 0px 3px;
 	border-radius: 10px;
-	color: #5755ef;
+	color: black;
 	background-color: lime;
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1em;
     margin: auto;
 }
 

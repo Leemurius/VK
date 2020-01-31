@@ -5,7 +5,7 @@ $(document).ready(function() {
 });
 
 function getUserList(data) {
-    return postAjaxInformation(getPrefixUrl() + '/api/self/find/user', JSON.stringify(data));
+    return postAjaxInformation(getPrefixUrl() + '/api/self/find/user', data);
 }
 
 function searchUser(request) {
