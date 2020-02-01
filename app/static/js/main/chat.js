@@ -1,17 +1,15 @@
-var messages_sio = io.connect(getPrefixUrl() + "/messages");
-
 $(document).ready(function() {
-    joinToChatOrDialog();
+    _initChat();
+});
+
+function _initChat() {
+    setHeader();
+    addMessages();
     $('textarea').select();
     $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
-});
-
-// - SIO ------------------------------------------------------------------------------------------
-
-messages_sio.on('get_message', function (message) {
-    addMessage(message);
-    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);  // scroll chat to down
-});
+    user_sio.emit('read_messages', Number(getRecipientId()));
+    replaceStateInHistory({'title': document.title, id: Number(getRecipientId())}, window.location.href);
+}
 
 // - JS --------------------------------------------------------------------------------------------
 
@@ -63,23 +61,13 @@ function getRecipientId() {
     return location.search.split('=')[1];
 }
 
-function joinToChatOrDialog() {
-    if (isDialog()) {
-        messages_sio.emit('join', getRecipientId());
-    } else {
-        // TODO: CHAT
-    }
-    setHeader();
-    addMessages();
-}
-
 // Send message ----------------------------------------------------------------------------------------
 
 function sendMessage(text) {
     if (text == '') {
         return null;
     }
-    messages_sio.emit('send_message', Number(getRecipientId()), text);
+    user_sio.emit('send_message', Number(getRecipientId()), text);
     return true;
 }
 
@@ -95,7 +83,7 @@ $(".send_btn").click(function() {
     $('textarea').val('');  // clear textarea
 });
 
-$('textarea').keypress(function(event) {   // Delete new line after sending message
+$('.additional_page').on('keypress', 'textarea', function(event) {   // Delete new line after sending message
     if (event.keyCode == 13 && !event.shiftKey) {
         event.preventDefault();
     }

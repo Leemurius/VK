@@ -1,8 +1,13 @@
 // Search user ------------------------------------------------------------------------------------------------
 
 $(document).ready(function() {
-    searchUser("");
+    _initSearch();
 });
+
+function _initSearch() {
+    searchUser("");
+    replaceStateInHistory({'title': document.title}, window.location.href);
+}
 
 function getUserList(data) {
     return postAjaxInformation(getPrefixUrl() + '/api/self/find/user', data);

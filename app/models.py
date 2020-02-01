@@ -14,7 +14,7 @@ dialogs = db.Table(
     'dialogs',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('dialog_id', db.Integer, db.ForeignKey('dialog.id')),
-    db.Column('unread_messages', db.Integer)
+    db.Column('unread_messages', db.Integer, default=0)
 )
 
 
@@ -85,6 +85,17 @@ class User(UserMixin, db.Model):
                              reverse=True):
             rooms.append(dialog.to_dict(current_user))
         return rooms
+
+    @staticmethod
+    def is_correct_id(id):
+        User.query.get(id)
+        try:
+            pass
+        except Exception as e:
+            print(e.args[0])
+            return False
+        else:
+            return True
 
     @staticmethod
     def get_user_from_login(login):
@@ -226,24 +237,47 @@ class Dialog(db.Model):
             time=datetime.datetime.utcnow()
         )
         db.engine.connect().execute(insert)
-        self.commit_to_db()
+
+        for user in self.members:
+            db.session.query(dialogs).filter(
+                dialogs.c.user_id == user.id,
+                dialogs.c.dialog_id == self.id).update(
+                    {dialogs.c.unread_messages: dialogs.c.unread_messages + 1},
+                    synchronize_session=False
+                )
+        db.session.commit()
 
     def get_messages(self):
         messages = db.session.query(self.dialog).all()
-        messages = [message_to_dict(message) for message in messages]
+        messages = [message_to_dict(message, self) for message in messages]
         return messages
+
+    def read_messages(self, user):
+        db.session.query(dialogs).filter(
+            dialogs.c.user_id == user.id,
+            dialogs.c.dialog_id == self.id).update(
+            {dialogs.c.unread_messages: 0},
+            synchronize_session=False
+        )
+        db.session.commit()
 
     def get_last_message(self):
         messages = db.session.query(self.dialog).all()
 
         last_message = None
         if messages:
-            last_message = message_to_dict(messages[-1])
+            last_message = message_to_dict(messages[-1], self)
 
         return last_message
 
     def get_count_of_unread_messages(self, user):
-        return 0
+        return db.session.query(dialogs).filter(
+            dialogs.c.user_id == user.id,
+            dialogs.c.dialog_id == self.id
+        ).one().unread_messages
+
+    def is_dialog(self):
+        return True
 
     def has_member(self, user):
         return user in self.members
@@ -261,7 +295,7 @@ class Dialog(db.Model):
             'id': self.id,
             'recipient_id': self.get_recipient(current_user).id,
             'status': self.get_recipient(current_user).status,
-            'is_dialog': True,
+            'is_dialog': self.is_dialog(),
             'title': self.get_title(current_user),
             'photo': self.get_recipient(current_user).photo,
             'last_message': self.get_last_message(),
@@ -273,8 +307,9 @@ class Dialog(db.Model):
         db.session.commit()
 
 
-def message_to_dict(message):
-    return {'id': message[0],
+def message_to_dict(message, room):
+    return {'is_dialog': room.is_dialog(),
+            'room_id': room.id,
             'text': message[1],
             'sender': User.query.get(message[2]).to_dict(),
             'time': str(message[3])}

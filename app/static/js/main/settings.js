@@ -1,6 +1,11 @@
 $(document).ready(function() {
-    addGeneralInformationInFields();
+    _initSettings();
 });
+
+function _initSettings() {
+    addGeneralInformationInFields();
+    replaceStateInHistory({'title': document.title}, window.location.href);
+}
 
 $('.choose-photo-link').on('click', function (e) {
     $('.choose-photo input').click();

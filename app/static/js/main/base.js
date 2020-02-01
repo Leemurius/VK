@@ -1,10 +1,11 @@
 // Libs variables
 var myApp = angular.module('myApp', []);  // ANGULAR FOR ALL TEMPLATES
-var rooms_sio = io.connect(getPrefixUrl() + "/rooms");
+var user_sio = io.connect(getPrefixUrl() + "/user");
 
 // Profile information
 var me = getAjaxInformation(getPrefixUrl() + '/api/self/information');
 var rooms = getRoomList({'request': ''});
+var uploaded_pages = [];
 
 $(document).ready(function() {  // FOR ALL TEMPLATES
     $('#preloader').delay(450).fadeOut('slow');
@@ -14,7 +15,8 @@ $(document).ready(function() {  // FOR ALL TEMPLATES
     });
     $('.profile-box').hide();
     angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
-    rooms_sio.emit('join');  // Connect with all rooms for giving message
+    user_sio.emit('join');  // Connect user to events
+    uploaded_pages.push(document.title);
 });
 
 // Requests -----------------------------------------------------------------------------------------
@@ -83,15 +85,40 @@ function postAjaxPhoto(url, photo) {
 
 // SIO ----------------------------------------------------------------------------------------------
 
-rooms_sio.on('get_updated_room', function (room) {
+user_sio.on('get_message', function (message) {
+    addMessage(message);
     for (let i = 0; i < rooms.length; i++) {
-        if (rooms[i]['id'] == room['id']) {
-            rooms[i] = room;
+        if (rooms[i].is_dialog == message.is_dialog && rooms[i].id == message.room_id) {
+
+            if (document.title == 'Messages' && Number(getRecipientId()) == rooms[i].recipient_id) {
+                rooms[i].unread_messages_count = 0;
+            } else {
+                rooms[i].unread_messages_count += 1;
+            }
+            rooms[i].last_message = message;
             rooms[0] = [rooms[i], rooms[i] = rooms[0]][0]; // swap first and i-th
-            angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
-            return;
+            break;
         }
     }
+
+     if (document.title == 'Messages') {
+         user_sio.emit('read_messages', Number(getRecipientId()));
+     }
+    angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
+    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);  // scroll chat to down
+});
+
+user_sio.on('update_room', function (room) {
+    for (let i = 0; i < rooms.length; i++) {
+        if (rooms[i].id == room.id) {
+            rooms[i] = room;
+            break;
+        }
+    }
+    angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
+});
+
+user_sio.on('get_new_room', function (room) {
     rooms.splice(0, 0, room);
     angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
 });
@@ -126,8 +153,12 @@ function getListOfJSFromHTML(data) {
     return postAjaxInformation(getPrefixUrl() + '/api/js/list/get', data);
 }
 
-function saveStateInHistory(title, url) {
-    window.history.pushState({'title':title}, title, url);
+function replaceStateInHistory(data, url) {
+    window.history.replaceState(data, data['title'], url);
+}
+
+function saveStateInHistory(data, url) {
+    window.history.pushState(data, data['title'], url);
 }
 
 function addInformationInProfileBox(id) {
@@ -225,7 +256,7 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
                             '</div>' +
                             '<div class="user_info">' +
                                 '<span class="name">' + room['title'] + '</span>' +
-                                '<p class="preview">' + room['last_message']['text'] + '</p>' +
+                                '<p class="preview">' + (room['last_message']['sender']['username'] == me.username ? 'You' : room['last_message']['sender']['username']) + ':  ' + room['last_message']['text'] + '</p>' +
                             '</div>' +
                             (room['unread_messages_count'] > 0 ?
                             '<div class="message_info">' +
@@ -286,121 +317,161 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
 
 // Page loads ------------------------------------------------------------------------------------------
 
+function addUploadedPageInList(title) {
+    if (!wasUploadedPage(title)) {
+        uploaded_pages.push(title);
+    }
+}
+
+function wasUploadedPage(title) {
+    for (let i = 0; i < uploaded_pages.length; i++) {
+        if (uploaded_pages[i] == title) {
+            return true;
+        }
+    }
+    return false;
+}
+
 window.onpopstate = function(e) {
     if(e.state) {
         switch (e.state.title) {
             case 'Messages':
-                loadChatPage();
+                loadChatPage(e.state.id, false);
                 break;
             case 'Settings':
-                loadSettingsPage();
+                loadSettingsPage(false);
                 break;
             case 'Search':
-                loadSearchPage();
+                loadSearchPage(false);
                 break;
         }
     }
 };
 
-async function loadSettingsPage() {
+async function loadSettingsPage(needSaveState) {
     // CLear
     $('.additional_page').empty();
 
     // Head
     let data = {'blockname': 'head', 'filename': '/templates/main/settings.html'};
-    $('head').append(getHTMLBlock(data));
-    $(document).attr('title', 'Settings');
+    if (!wasUploadedPage('Settings')) {
+        $('head').append(getHTMLBlock(data));
 
-    // Timeout for loading css
-    await new Promise(r => setTimeout(r, 100));
+        // Timeout for loading css
+        await new Promise(r => setTimeout(r, 100));
+    }
+    $(document).attr('title', 'Settings');
 
     // Main
     data['blockname'] = 'main';
     $('.additional_page').append(getHTMLBlock(data));
 
     // JS files
-    let js_files = getListOfJSFromHTML(data);
-    for (let i = 0; i < js_files.length; i++) {
-        loadJS(js_files[i]);
+    if (!wasUploadedPage('Settings')) {
+        let js_files = getListOfJSFromHTML(data);
+        for (let i = 0; i < js_files.length; i++) {
+            loadJS(js_files[i]);
+        }
+    } else {
+        _initSettings();
     }
 
     // Change URL
-    saveStateInHistory('Settings', '/my_profile/settings');
+    if (needSaveState) {
+        saveStateInHistory({'title': 'Settings'}, '/my_profile/settings');
+    }
+    addUploadedPageInList('Settings');
 }
 
-async function loadSearchPage() {
+async function loadSearchPage(needSaveState) {
     // CLear
     $('.additional_page').empty();
 
     // Head
     let data = {'blockname': 'head', 'filename': '/templates/main/search.html'};
-    $('head').append(getHTMLBlock(data));
-    $(document).attr('title', 'Search');
+    if (!wasUploadedPage('Search')) {
+        $('head').append(getHTMLBlock(data));
 
-    // Timeout for loading css
-    await new Promise(r => setTimeout(r, 100));
+        // Timeout for loading css
+        await new Promise(r => setTimeout(r, 100));
+    }
+    $(document).attr('title', 'Search');
 
     // Main
     data['blockname'] = 'main';
     $('.additional_page').append(getHTMLBlock(data));
 
     // JS files
-    let js_files = getListOfJSFromHTML(data);
-    for (let i = 0; i < js_files.length; i++) {
-        loadJS(js_files[i]);
+    if (!wasUploadedPage('Search')) {
+        let js_files = getListOfJSFromHTML(data);
+        for (let i = 0; i < js_files.length; i++) {
+            loadJS(js_files[i]);
+        }
+    } else {
+        _initSearch();
     }
 
     // Change URL
-    saveStateInHistory('Search', '/search');
+    if (needSaveState) {
+        saveStateInHistory({'title': 'Search'}, '/search');
+    }
+    addUploadedPageInList('Search');
 }
 
-async function loadChatPage(id) {
+async function loadChatPage(id, needSaveState) {
     // CLear
     $('.additional_page').empty();
 
     // Head
     let data = {'blockname': 'head', 'filename': '/templates/main/chat.html'};
-    $('head').append(getHTMLBlock(data));
+    if (!wasUploadedPage('Messages')) {
+        $('head').append(getHTMLBlock(data));
+        // Timeout for loading css
+        await new Promise(r => setTimeout(r, 100));
+    }
     $(document).attr('title', 'Messages');
-
-    // Timeout for loading css
-    await new Promise(r => setTimeout(r, 100));
 
     // Main
     data['blockname'] = 'main';
     $('.additional_page').append(getHTMLBlock(data));
 
-
-    // JS files
-    let js_files = getListOfJSFromHTML(data);
-    for (let i = 0; i < js_files.length; i++) {
-        loadJS(js_files[i]);
+    // Change URL
+    if (needSaveState) {
+        saveStateInHistory({'title': 'Messages', 'id': id}, '/messages?sel=' + id);
     }
 
-    // Change URL
-    saveStateInHistory('Messages', '/messages?sel='+id);
+    // JS files
+    if (!wasUploadedPage('Messages')) {
+        let js_files = getListOfJSFromHTML(data);
+        for (let i = 0; i < js_files.length; i++) {
+            loadJS(js_files[i]);
+        }
+    } else {
+        _initChat();
+    }
+    addUploadedPageInList('Messages');
 }
 
 // Clicks on buttons ------------------------------------------------------------------------------------------
 
 $('.search_link').click(function () {
-    saveStateInHistory(document.title, window.location.href);
-    loadSearchPage();
+    replaceStateInHistory({'title': document.title}, window.location.href);
+    loadSearchPage(true);
 });
 
 $('.settings_link').click(function () {
-    saveStateInHistory(document.title, window.location.href);
-    loadSettingsPage();
+    replaceStateInHistory({'title': document.title}, window.location.href);
+    loadSettingsPage(true);
 });
 
 $(".write_message button").click(function () {
-    saveStateInHistory(document.title, window.location.href);
-    loadChatPage(LastClickOn);
+    replaceStateInHistory({'title': document.title, 'id': LastClickOn}, window.location.href);
+    loadChatPage(LastClickOn, true);
 });
 
 $('.contacts').on('click', 'li', function () {
-    saveStateInHistory(document.title, window.location.href);
-    loadChatPage($(this).attr('room_id'));
+    replaceStateInHistory({'title': document.title, 'id': LastClickOn}, window.location.href);
+    loadChatPage($(this).attr('room_id'), true);
 });
 
 
