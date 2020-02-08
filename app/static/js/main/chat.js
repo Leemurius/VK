@@ -22,7 +22,9 @@ function addMessage(message) {
 }
 
 function formatTime(time) {
-    let date = new Date(time + ' UTC').toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+    let offset = new Date().getTimezoneOffset();
+    let seconds = new Date(time).setMinutes(new Date(time).getMinutes() - offset);
+    let date = new Date(seconds).toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
     return date.replace("AM", "am").replace("PM", "pm");
 }
 
@@ -48,39 +50,50 @@ function addMessages() {
         getPrefixUrl() + '/api/dialog/get/messages',
         {'profile_id': Number(getRecipientId())}
     );
+
+    if (messages.length > 0) {
+        room_id = messages[0].room_id;
+    } else {
+        room_id = -1;
+    }
+
     for (let i = 0; i < messages.length; i++) {
         addMessage(messages[i]);
     }
 }
 
 function isDialog() {
-    return location.search[5] != 'c';
+    return location.search.substr(0, 5) == '?sel=' && location.search[5] != 'c';
 }
 
 function getRecipientId() {
     return location.search.split('=')[1];
 }
 
+function getNumOfRoom() {
+    return room_id;
+}
+
 // Send message ----------------------------------------------------------------------------------------
 
 function sendMessage(text) {
-    if (text == '') {
-        return null;
-    }
+    if (text.trim() == '') return false;
     user_sio.emit('send_message', Number(getRecipientId()), text);
     return true;
 }
 
 $(window).on('keydown', function(e) {
     if (e.which == 13 && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        sendMessage($('textarea').val());
-        $('textarea').val('');  // clear textarea
+        if (sendMessage($('textarea').val())) {
+            $('textarea').val('');  // clear textarea
+        }
     }
 });
 
-$(".send_btn").click(function() {
-    sendMessage($('textarea').val());
-    $('textarea').val('');  // clear textarea
+$('.additional_page').on('click', '.send_btn', function (event) {
+    if (sendMessage($('textarea').val())) {
+        $('textarea').val('');  // clear textarea
+    }
 });
 
 $('.additional_page').on('keypress', 'textarea', function(event) {   // Delete new line after sending message

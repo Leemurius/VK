@@ -6,6 +6,7 @@ var user_sio = io.connect(getPrefixUrl() + "/user");
 var me = getAjaxInformation(getPrefixUrl() + '/api/self/information');
 var rooms = getRoomList({'request': ''});
 var uploaded_pages = [];
+var room_id = NaN;
 
 $(document).ready(function() {  // FOR ALL TEMPLATES
     $('#preloader').delay(450).fadeOut('slow');
@@ -83,35 +84,49 @@ function postAjaxPhoto(url, photo) {
     return response;
 }
 
+function formatRoom(room) {
+    if (room.last_message != null) {
+        let text = room.last_message.text;
+        if (text.length > 40) {
+            room.last_message.text = text.substring(0, 30) + '...';
+        }
+    }
+    return room;
+}
+
 // SIO ----------------------------------------------------------------------------------------------
 
 user_sio.on('get_message', function (message) {
-    addMessage(message);
+    // getNumOfRoom == -1 it means new chat
+    if (message.is_dialog && (message.room_id == getNumOfRoom() || getNumOfRoom() == -1)) {
+        addMessage(message);
+    }
+
     for (let i = 0; i < rooms.length; i++) {
         if (rooms[i].is_dialog == message.is_dialog && rooms[i].id == message.room_id) {
-
+            rooms[i].last_message = message;
             if (document.title == 'Messages' && Number(getRecipientId()) == rooms[i].recipient_id) {
                 rooms[i].unread_messages_count = 0;
             } else {
                 rooms[i].unread_messages_count += 1;
             }
-            rooms[i].last_message = message;
             rooms[0] = [rooms[i], rooms[i] = rooms[0]][0]; // swap first and i-th
             break;
         }
     }
 
+    angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
+    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);  // scroll chat to down
+
      if (document.title == 'Messages') {
          user_sio.emit('read_messages', Number(getRecipientId()));
      }
-    angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
-    $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);  // scroll chat to down
 });
 
 user_sio.on('update_room', function (room) {
     for (let i = 0; i < rooms.length; i++) {
         if (rooms[i].id == room.id) {
-            rooms[i] = room;
+            rooms[i] = formatRoom(room);
             break;
         }
     }
@@ -119,7 +134,7 @@ user_sio.on('update_room', function (room) {
 });
 
 user_sio.on('get_new_room', function (room) {
-    rooms.splice(0, 0, room);
+    rooms.splice(0, 0, formatRoom(room));
     angular.element(document.getElementById('searchRoom')).scope().updateListOfRooms(rooms);
 });
 
@@ -138,7 +153,11 @@ function getPrefixUrl() {
 }
 
 function getRoomList(data) {
-    return postAjaxInformation(getPrefixUrl() + '/api/self/find/room', data);
+    let rooms = postAjaxInformation(getPrefixUrl() + '/api/self/find/room', data);
+    for (let i = 0; i < rooms.length; i++) {
+        rooms[i] = formatRoom(rooms[i]);
+    }
+    return rooms;
 }
 
 function getProfileInformation(id) {
@@ -248,19 +267,19 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
         for (let i = 0; i < rooms.length; i++) {
             let room = rooms[i];
             if (room['is_dialog']) {
-                let element = '<li class="room-links" room_id="' + (room['is_dialog'] ? room['recipient_id'] : 'c' + room['id']) + '">' +
+                let element = '<li class="room-links" room_id="' + (room.is_dialog ? room.recipient_id : 'c' + room.id) + '">' +
                         '<div class="d-flex bd-highlight">' +
                             '<div class="img_cont">' +
-                                '<img src="' + room['photo'] + '" class="rounded-circle user_img">' +
-                                '<span class="online_icon ' + (room['status'] ? 'online' : 'offline') + '"></span>' +
+                                '<img src="' + room.photo + '" class="rounded-circle user_img">' +
+                                '<span class="online_icon ' + (room.status ? 'online' : 'offline') + '"></span>' +
                             '</div>' +
                             '<div class="user_info">' +
-                                '<span class="name">' + room['title'] + '</span>' +
-                                '<p class="preview">' + (room['last_message']['sender']['username'] == me.username ? 'You' : room['last_message']['sender']['username']) + ':  ' + room['last_message']['text'] + '</p>' +
+                                '<span class="name">' + room.title + '</span>' +
+                                '<p class="preview">' + (room.last_message.sender.username == me.username ? 'You: ' : '') + room.last_message.text + '</p>' +
                             '</div>' +
-                            (room['unread_messages_count'] > 0 ?
+                            (room.unread_messages_count > 0 ?
                             '<div class="message_info">' +
-                               '<p>' + room['unread_messages_count'] + '</p>' +
+                               '<p>' + room.unread_messages_count + '</p>' +
                             '</div>' : '') +
                         '</div>' +
                     '</li>';
@@ -457,11 +476,13 @@ async function loadChatPage(id, needSaveState) {
 $('.search_link').click(function () {
     replaceStateInHistory({'title': document.title}, window.location.href);
     loadSearchPage(true);
+    room_id = NaN;
 });
 
 $('.settings_link').click(function () {
     replaceStateInHistory({'title': document.title}, window.location.href);
     loadSettingsPage(true);
+    room_id = NaN;
 });
 
 $(".write_message button").click(function () {

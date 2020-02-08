@@ -1,9 +1,11 @@
+from flask import abort
 from flask_login import current_user
 
 from app import sio
 from flask_socketio import emit, join_room, leave_room
 
 from app.models import Dialog, User
+from app.utils.tools import format_message
 
 
 @sio.on('send_message', namespace='/user')
@@ -25,10 +27,15 @@ def send_message(recipient_id, text):
         pass
         # TODO: CHAT
 
-    if room is not None:
-        current_user.send_message(room, text)
+    if room is not None and format_message(text) != '':
+        current_user.send_message(room, format_message(text))
+
+        last_message = room.get_last_message()
+        if last_message['text'] == '':
+            return
+
         for user in room.members:
-            emit('get_message', room.get_last_message(), namespace='/user', room=str(user.id))
+            emit('get_message', last_message, namespace='/user', room=str(user.id))
 
 
 @sio.on('read_messages', namespace='/user')

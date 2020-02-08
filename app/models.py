@@ -2,6 +2,8 @@ import os
 import jwt
 import datetime
 from time import time
+
+import werkzeug
 from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy.ext.declarative import declarative_base
@@ -30,7 +32,6 @@ class User(UserMixin, db.Model):
         db.String(Constants.PHOTO_LENGTH),
         default=Constants.DEFAULT_USER_PHOTO
     )
-    about_me = db.Column(db.String(Constants.ARTICLE_LENGTH))
     last_seen = db.Column(
         db.DateTime, index=True,
         default=datetime.datetime.utcnow()
@@ -88,11 +89,9 @@ class User(UserMixin, db.Model):
 
     @staticmethod
     def is_correct_id(id):
-        User.query.get(id)
         try:
-            pass
-        except Exception as e:
-            print(e.args[0])
+            User.query.get_or_404(id)
+        except werkzeug.exceptions.NotFound:
             return False
         else:
             return True
@@ -169,10 +168,13 @@ class Dialog(db.Model):
     @staticmethod
     def create(user1, user2):
         dialog = Dialog()
-        dialog.members.append(user1)
-        dialog.members.append(user2)
-        dialog.commit_to_db()
 
+        dialog.members.append(user1)
+        # if it's monolog
+        if user1 != user2:
+            dialog.members.append(user2)
+
+        dialog.commit_to_db()
         dialog.create_chat()
         return dialog
 
@@ -186,10 +188,15 @@ class Dialog(db.Model):
 
     @staticmethod
     def get_id(user1, user2):
-        for dialog1 in user1.dialogs:  # FIXME: make normal request
-            for dialog2 in user2.dialogs:
-                if dialog1 == dialog2:
-                    return dialog1.id
+        if user1 == user2:
+            for dialog in user1.dialogs:
+                if len(list(dialog.members)) == 1:
+                    return dialog.id
+        else:
+            for dialog1 in user1.dialogs:  # FIXME: make normal request
+                for dialog2 in user2.dialogs:
+                    if dialog1 == dialog2:
+                        return dialog1.id
         return None
 
     @staticmethod
@@ -283,7 +290,10 @@ class Dialog(db.Model):
         return user in self.members
 
     def get_recipient(self, user):
-        return self.members[1] if self.members[0] == user else self.members[0]
+        if len(list(self.members)) == 2:
+            return self.members[1] if self.members[0] == user else self.members[0]
+        else:
+            return self.members[0]
 
     def get_title(self, current_user):
         recipient = self.get_recipient(current_user)

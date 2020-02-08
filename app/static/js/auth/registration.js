@@ -53,7 +53,7 @@ $('.validate-form').on('submit',function() {
             function () {
                 window.location.assign(getPrefixUrl() + "/")
             },
-            3000
+            2000
         );
         return false;
     }

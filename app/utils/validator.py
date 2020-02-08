@@ -165,6 +165,9 @@ class Validator:
 
             Validator._check_type(age, int)
 
+            if age < 0:
+                raise ValueError('Don\'t try to cheat me')
+
             if age < Constants.MIN_AGE:
                 raise ValueError('You are too young for this website')
 

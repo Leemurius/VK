@@ -7,7 +7,7 @@ function _initSettings() {
     replaceStateInHistory({'title': document.title}, window.location.href);
 }
 
-$('.choose-photo-link').on('click', function (e) {
+$('.additional_page').on('click', '.choose-photo-link', function (event) {
     $('.choose-photo input').click();
 });
 
