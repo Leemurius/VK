@@ -249,7 +249,7 @@ myApp.controller('baseController',['$scope', '$compile',function($scope, $compil
                     '</td>' +
                     '<td>' + (user['age'] ? user['age'] : 'No information') + '</td>' +
                     '<td class="text-center">' +
-                        (user['status'] ? '<span class="label label-success">Online</span>' : '<span class="label label-default">Offline</span>') +
+                        (user['status'] ? '<span class="label label-success status_online">Online</span>' : '<span class="label label-default status_offline">Offline</span>') +
                     '</td>' +
                     '<td>' +
                         '<span>' + user['email'] + '</span>' +
