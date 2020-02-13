@@ -37,3 +37,17 @@ tbody tr:hover{
 .search_input input {
     width: 100px;
 }
+
+.status_online, .status_offline {
+    padding: 1px 5px 1px 5px;
+    border-radius: 20px;
+}
+
+.status_online {
+    color: black;
+    background-color: #03c52a;
+}
+
+.status_offline {
+    background-color: red;
+}
