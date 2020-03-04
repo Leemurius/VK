@@ -1,12 +1,12 @@
 // Libs variables
-var myApp = angular.module('myApp', []);  // ANGULAR FOR ALL TEMPLATES
-var user_sio = io.connect(getPrefixUrl() + "/user");
+var myApp = angular.module('myApp', []);                // Angular
+var user_sio = io.connect(getPrefixUrl() + "/user");    // SocketIO
 
 // Profile information
-var me = getAjaxInformation(getPrefixUrl() + '/api/self/information');
-var rooms = getRoomList({'request': ''});
-var uploaded_pages = [];
-var room_id = NaN;
+var me = getAjaxInformation(getPrefixUrl() + '/api/self/information');  // Self
+var rooms = getRoomList({'request': ''});                              // Rooms list
+var uploaded_pages = [];                                                    // Uploaded pages names
+var room_id = NaN;                                                          // Current room id
 
 $(document).ready(function() {  // FOR ALL TEMPLATES
     $('#preloader').delay(450).fadeOut('slow');
@@ -80,7 +80,6 @@ function postAjaxPhoto(url, photo) {
             response = xhr.responseText;
         }
     });
-
     return response;
 }
 
@@ -110,7 +109,11 @@ user_sio.on('get_message', function (message) {
             } else {
                 rooms[i].unread_messages_count += 1;
             }
-            rooms[0] = [rooms[i], rooms[i] = rooms[0]][0]; // swap first and i-th
+
+            // Delete and insert into the beginning of the list
+            rooms.splice(0, 0, formatRoom(rooms[i]));
+            rooms.splice(i + 1, 1);
+
             break;
         }
     }
@@ -363,6 +366,8 @@ window.onpopstate = function(e) {
             case 'Search':
                 loadSearchPage(false);
                 break;
+            case 'My profile':
+                loadProfilePage(false);
         }
     }
 };
@@ -471,6 +476,29 @@ async function loadChatPage(id, needSaveState) {
     addUploadedPageInList('Messages');
 }
 
+async function loadProfilePage(needSaveState) {
+    // CLear
+    $('.additional_page').empty();
+
+    // Head
+    let data = {'blockname': 'head', 'filename': '/templates/main/profile.html'};
+    if (!wasUploadedPage('My profile')) {
+        $('head').append(getHTMLBlock(data));
+        // Timeout for loading css
+        await new Promise(r => setTimeout(r, 100));
+    }
+    $(document).attr('title', 'My profile');
+
+    // Main
+    data['blockname'] = 'main';
+    $('.additional_page').append(getHTMLBlock(data));
+
+    // Change URL
+    if (needSaveState) {
+        saveStateInHistory({'title': 'My profile'}, '/my_profile');
+    }
+}
+
 // Clicks on buttons ------------------------------------------------------------------------------------------
 
 $('.search_link').click(function () {
@@ -493,7 +521,7 @@ $(".write_message button").click(function () {
 $('.contacts').on('click', 'li', function () {
     replaceStateInHistory({'title': document.title, 'id': LastClickOn}, window.location.href);
     loadChatPage($(this).attr('room_id'), true);
-});
+}); // For normal animation
 
 
 // Search of rooms ------------------------------------------------------------------------------------------------

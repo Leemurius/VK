@@ -172,7 +172,7 @@ class Validator:
                 raise ValueError('You are too young for this website')
 
             if age > Constants.MAX_AGE:
-                raise ValueError('Only if you don\'t live in Russia. But I live in Russia. Sorry(')
+                raise ValueError('Thank you for testing of the website')
 
         except ValueError as exception:
             return 'age', str(exception)

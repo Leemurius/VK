@@ -45,9 +45,9 @@ tbody tr:hover{
 
 .status_online {
     color: black;
-    background-color: #03c52a;
+    background-color: mediumseagreen;
 }
 
 .status_offline {
-    background-color: red;
+    background-color: indianred;
 }

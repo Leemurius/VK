@@ -1,14 +1,12 @@
-/**/
 :root {
     --main-color: #eaeaea;
     --stroke-color: black;
+}
 
-}
-/**/
 body {
-    background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    background: linear-gradient(to left, #7373BD, #6666ac);
 }
+
 h1 {
     margin: 100px auto 0 auto;
     color: whitesmoke;
@@ -17,6 +15,7 @@ h1 {
     font-weight: 200;
     text-align: center;
 }
+
 h2 {
     margin: 20px auto 30px auto;
     color: white;
@@ -25,10 +24,12 @@ h2 {
     font-weight: 200;
     text-align: center;
 }
+
 h1, h2 {
     -webkit-transition: opacity 0.5s linear, margin-top 0.5s linear;
     transition: opacity 0.5s linear, margin-top 0.5s linear;
 }
+
 .loading h1, .loading h2 {
     margin-top: 0px;
     opacity: 0;

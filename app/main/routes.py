@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, request, abort
 from flask_login import current_user, login_required
 
 from app.main import bp
@@ -18,6 +18,9 @@ def profile():
 @login_required
 def chat():
     recipient = request.args.get('sel', type=str)
+
+    if recipient is None:
+        abort(404)
 
     # if sel = 'c213'
     if not recipient.isdigit():

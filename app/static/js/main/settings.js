@@ -85,8 +85,9 @@ $('.left-form').on('submit',function() {
 
         if (responsePhoto != true) {
             var error = JSON.parse(JSON.parse(responsePhoto).message);
-            addValidateMessage('.photo-path', error);
+            addValidateMessage('.photo-path', error[0][1]);
         }
+
         return false;
     } else {
         return true;

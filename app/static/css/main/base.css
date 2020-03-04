@@ -1,7 +1,6 @@
 #preloader {
 	position: absolute;
-	background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    background: linear-gradient(to left, #7373BD, #6666ac);
 	width: 100%;
 	height: 100%;
    	z-index: 9999;
@@ -103,11 +102,9 @@ body,html{
 	overflow-x: hidden;
 	height: 100%;
 	margin: 0;
-	background: #7F7FD5;
     justify-content: center;
     align-items: center;
-   	background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    background: linear-gradient(to left, #7373BD, #6666ac);
 }
 
 .chat, .box-for-all, .profile-box{
@@ -123,20 +120,6 @@ body,html{
   	padding-right: 25px;
 }
 
-.chat::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-	background-color: #86A8E7;
-	border-radius: 10px;
-}
-.chat::-webkit-scrollbar {
-	width: 10px;
-	background-color: #7F7FD5;
-}
-.chat::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-	background-color: #6fe9e3;
-}
 
 .card{
 	width: 100%;
@@ -150,30 +133,37 @@ body,html{
 	overflow-y: auto;
 	white-space: nowrap;
 }
+
 .msg_card_body{
 	overflow-y: auto;
 }
+
 .card-header{
 	border-radius: 15px 15px 0 0 !important;
 	border-bottom: 0 !important;
 }
- .card-footer{
+
+.card-footer{
 	border-radius: 0 0 15px 15px !important;
 	border-top: 0 !important;
 }
+
 .container{
 	align-content: center;
 }
+
 .search{
 	border-radius: 15px 0 0 15px !important;
 	background-color: rgba(0,0,0,0.3) !important;
 	border:0 !important;
 	color:white !important;
 }
+
 .search:focus{
    box-shadow:none !important;
    outline:0px !important;
 }
+
 .type_msg{
 	background-color: rgba(0,0,0,0.3) !important;
 	border:0 !important;
@@ -181,58 +171,65 @@ body,html{
 	height: 60px !important;
 	overflow-y: auto;
 }
-.type_msg:focus{
+
+.type_msg:focus {
     box-shadow:none !important;
    	outline:0px !important;
 }
 
-.room-links:hover{
+.room-links:hover {
 	text-decoration: none;
 }
 
-.search_btn{
+.search_btn {
 	border-radius: 0 15px 15px 0 !important;
 	background-color: rgba(0,0,0,0.3) !important;
 	border:0 !important;
 	color: white !important;
 	cursor: pointer;
 }
-.contacts{
+
+.contacts {
 	list-style: none;
 	padding: 0;
 }
-.contacts li{
+
+.contacts li {
 	width: 100% !important;
 	padding: 5px 10px;
 	padding-top: 10px !important;
 	padding-bottom: 10px !important;
 }
-.contacts li:hover{
+
+.contacts li:hover {
 	background-color: rgba(0,0,0,0.3);
 	cursor: pointer;
 }
-.user_img{
+
+.user_img {
 	height: 70px;
 	width: 70px;
 	border:1.5px solid #f5f6fa;
-
 }
-.user_img_msg{
+
+.user_img_msg {
 	height: 40px;
 	width: 40px;
-	border:1.5px solid #f5f6fa;
-
+	border: 1.5px solid #f5f6fa;
 }
-.img_cont{
+
+.img_cont {
 	position: relative;
 	height: 70px;
 	width: 70px;
 }
-.img_cont_msg{
+
+.img_cont_msg {
 	height: 40px;
 	width: 40px;
 }
-.online_icon{
+
+.online_icon {
 	position: absolute;
 	height: 15px;
 	width:15px;
@@ -242,19 +239,23 @@ body,html{
 	right: 0.4em;
 	border:1.5px solid white;
 }
-.offline{
+
+.offline {
 	background-color: #c23616 !important;
 }
-.user_info{
+
+.user_info {
 	margin-top: auto;
 	margin-bottom: auto;
 	margin-left: 15px;
 }
+
 .user_info span {
 	font-size: 20px;
 	color: white;
 }
-.user_info p{
+
+.user_info p {
 	font-size: 13.5px;
 	color: rgba(255,255,255,0.6);
 	text-decoration: none;
@@ -328,19 +329,9 @@ body,html{
 
 /*PROFILE ---------------------------------------------------------------------------------------*/
 
-@media screen and (min-width: 601px) {
-  .profile-box {
-    font-size: 1vw;
-  }
-}
-
-@media screen and (max-width: 600px) {
-	.profile-box {
-		font-size: 2vw;
-	}
-}
-
 .profile-box{
+	width: 100%;
+	height: 100%;
 	margin-top: auto;
 	margin-bottom: auto;
     color: white;
@@ -361,7 +352,7 @@ body,html{
 }
 
 .profile-box .name_surname {
-    font-size: 1.25vw;
+    font-size: 1.5em;
     text-align: center;
     margin-top: 5px;
 }
@@ -371,17 +362,18 @@ body,html{
 }
 
 .profile-box .write_message button {
-    border-color: white;
+	background-color: Transparent;
+	border: white solid 2px;
     color: white;
 }
 
 .profile-box .write_message button:hover {
-    background-color: rgb(125,149,218);
-    border-color: grey;
-    color: white;
+    background-color: white;
+    color: black;
 }
 
 .hero-info {
+	position: relative;
     margin-top: 20px;
 }
 
@@ -392,7 +384,7 @@ body,html{
 
 .hero-info .list {
 	word-break: break-all;
-    max-width: 40em;
+    max-width: 30em;
     margin: auto;
 }
 
@@ -402,7 +394,7 @@ body,html{
 }
 
 .hero-info ul li {
-	font-size: 1vw;
+	font-size: 1.1em;
 	color: white;
 	margin-bottom: 15px;
 }
@@ -412,17 +404,20 @@ body,html{
 	display: inline-block;
     min-width: 100px;
 }
+
 /*PROFILE ---------------------------------------------------------------------------------------*/
 
 *::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-	background-color: #4b4f7e;
+	opacity: 0;
 	border-radius: 10px;
 }
+
 *::-webkit-scrollbar {
 	width: 10px;
-	background-color: #4b4f7e;
+	opacity: 0;
 }
+
 *::-webkit-scrollbar-thumb {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
