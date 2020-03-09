@@ -4,11 +4,15 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
-    IP_ADDRESS = ''
-    PORT = ''
+    DEBUG = False
+    IP_ADDRESS = '0.0.0.0'
+    PORT = '5000'
 
     SECRET_KEY = ''
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+    if DEBUG:
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+    else:
+        SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://messenger_profile:pqwoSr1;2rtg1g2@localhost/messenger?charset=utf8'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER = 'smtp.yandex.ru'
