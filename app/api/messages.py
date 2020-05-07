@@ -18,7 +18,10 @@ def add_message():
         return bad_request(exception.args[0])
 
     current_user.send_message(
-        room=Dialog.get_or_create(current_user, User.query.get_or_404(data['recipient_id'])),
+        room=Dialog.get_or_create(
+            current_user,
+            User.query.get_or_404(data['recipient_id'])
+        ),
         text=data['message']
     )
     return jsonify(True)

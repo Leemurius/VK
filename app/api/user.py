@@ -5,11 +5,13 @@ from app.api import bp
 from app.api.errors import bad_request
 from app.auth.email import send_password_reset_email
 from app.models import User
-from app.utils.validator import SettingsValidator, PhotoValidator, PasswordValidator, \
-    ResetValidator, LoginValidator, RegistrationValidator, ResetPasswordValidator, Validator
+from app.utils.validator import (SettingsValidator, PhotoValidator,
+                                 PasswordValidator, ResetValidator,
+                                 LoginValidator, RegistrationValidator,
+                                 ResetPasswordValidator, Validator)
 
 
-# GET ---------------------------------------------------------------------------------------------
+# GET --------------------------------------------------------------------------
 
 
 @bp.route('/self/id', methods=['GET'])
@@ -61,10 +63,11 @@ def get_id():
     except ValueError as exception:
         return bad_request(exception.args[0])
 
-    return jsonify(User.query.filter_by(username=data['username']).first_or_404().id)
+    return jsonify(
+        User.query.filter_by(username=data['username']).first_or_404().id)
 
 
-# POST --------------------------------------------------------------------------------------------
+# POST -------------------------------------------------------------------------
 
 
 @bp.route('/user/create', methods=['POST'])
@@ -74,13 +77,14 @@ def create_user():
     # Validation
     try:
         RegistrationValidator().validate(
-            {'name': str,
-             'surname': str,
-             'username': str,
-             'email': str,
-             'new_password': str,
-             'confirm_password': str
-             }, data
+            {
+                'name': str,
+                'surname': str,
+                'username': str,
+                'email': str,
+                'new_password': str,
+                'confirm_password': str
+            }, data
         )
     except ValueError as exception:
         return bad_request(exception.args[0])
@@ -120,13 +124,14 @@ def update_self_information():
     # Validation
     try:
         SettingsValidator().validate(
-            {'name': str,
-             'surname': str,
-             'username': str,
-             'age': object,  # not required
-             'email': str,
-             'address': str  # not required
-             }, data
+            {
+                'name': str,
+                'surname': str,
+                'username': str,
+                'age': object,  # not required
+                'email': str,
+                'address': str  # not required
+            }, data
         )
     except ValueError as exception:
         return bad_request(exception.args[0])
@@ -168,10 +173,11 @@ def update_self_password():
     # Validation
     try:
         PasswordValidator().validate(
-            {'old_password': str,
-             'new_password': str,
-             'confirm_password': str
-             }, data
+            {
+                'old_password': str,
+                'new_password': str,
+                'confirm_password': str
+            }, data
         )
     except ValueError as exception:
         return bad_request(exception.args[0])
@@ -188,9 +194,10 @@ def update_user_password(token):
     # Validation
     try:
         ResetPasswordValidator().validate(
-            {'new_password': str,
-             'confirm_password': str
-             }, data
+            {
+                'new_password': str,
+                'confirm_password': str
+            }, data
         )
     except ValueError as exception:
         return bad_request(exception.args[0])

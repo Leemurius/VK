@@ -7,11 +7,7 @@ from app.main import bp
 @bp.route('/my_profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template(
-        'main/profile.html',
-        current_user=current_user,
-        rooms=current_user.get_sorted_rooms_by_timestamp(current_user)
-    )
+    return render_template('main/profile.html', current_user=current_user)
 
 
 @bp.route('/messages', methods=['GET'])
@@ -27,21 +23,13 @@ def chat():
         # TODO: CHAT
         pass
 
-    return render_template(
-        'main/chat.html',
-        current_user=current_user,
-        rooms=current_user.get_sorted_rooms_by_timestamp(current_user)
-    )
+    return render_template('main/chat.html', current_user=current_user)
 
 
 @bp.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
-    return render_template(
-        'main/search.html',
-        current_user=current_user,
-        rooms=current_user.get_sorted_rooms_by_timestamp(current_user)
-    )
+    return render_template('main/search.html', current_user=current_user)
 
 
 @bp.before_request

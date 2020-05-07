@@ -1,9 +1,7 @@
-from flask import abort
 from flask_login import current_user
-
-from app import sio
 from flask_socketio import emit, join_room, leave_room
 
+from app import sio
 from app.models import Dialog, User
 from app.utils.tools import format_message
 
@@ -20,7 +18,8 @@ def send_message(recipient_id, text):
 
             # Send new dialog to all users
             for user in room.members:
-                emit('get_new_room', room.to_dict(user), namespace='/user', room=str(user.id))
+                emit('get_new_room', room.to_dict(user),
+                     namespace='/user', room=str(user.id))
         else:
             room = Dialog.query.get(dialog_id)
     else:
@@ -35,7 +34,8 @@ def send_message(recipient_id, text):
             return
 
         for user in room.members:
-            emit('get_message', last_message, namespace='/user', room=str(user.id))
+            emit('get_message', last_message,
+                 namespace='/user', room=str(user.id))
 
 
 @sio.on('read_messages', namespace='/user')
@@ -50,7 +50,8 @@ def read_messages(recipient_id):
     if room is not None:
         room.read_messages(current_user)
         for user in room.members:
-            emit('update_room', room.to_dict(user), namespace='/user', room=(str(user.id)))
+            emit('update_room', room.to_dict(user),
+                 namespace='/user', room=(str(user.id)))
 
 
 @sio.on('join', namespace='/user')

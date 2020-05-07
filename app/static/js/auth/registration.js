@@ -1,12 +1,12 @@
 $('.validate-form').on('submit',function() {
-    const name = $('.name-input').val();
-    const surname = $('.surname-input').val();
-    const username = $('.username-input').val();
-    const email = $('.email-input').val();
-    const password = $('.password-input').val();
-    const confirm_password = $('.confirm_password-input').val();
+    let name = $('.name-input').val();
+    let surname = $('.surname-input').val();
+    let username = $('.username-input').val();
+    let email = $('.email-input').val();
+    let password = $('.password-input').val();
+    let confirm_password = $('.confirm_password-input').val();
 
-    const data = {
+    let data = {
         'name': name,
         'surname': surname,
         'username': username,
@@ -14,9 +14,9 @@ $('.validate-form').on('submit',function() {
         'new_password' : password,
         'confirm_password': confirm_password
     };
-    var response = postAjaxInformation(getPrefixUrl() + '/api/user/create', data);
-    if (response != true) {
-        const errors_list = JSON.parse(JSON.parse(response).message);
+    let response = postAjaxInformation('/api/user/create', data);
+    if (response.status != 200) {
+        let errors_list = JSON.parse(JSON.parse(response.responseText).message);
         for (let i = 0; i < errors_list.length; i++) {
             if (errors_list[i] == null) {
                 continue;
@@ -51,7 +51,7 @@ $('.validate-form').on('submit',function() {
         $('.toast').stop().fadeIn(400).delay(3000).fadeOut(500);
         setTimeout(
             function () {
-                window.location.assign(getPrefixUrl() + "/")
+                window.location.assign( "/")
             },
             2000
         );

@@ -12,7 +12,9 @@ class Config(object):
     if DEBUG:
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     else:
-        SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://messenger_profile:pqwoSr1;2rtg1g2@localhost/messenger?charset=utf8'
+        SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://' \
+                                  'messenger_profile:pqwoSr1;2rtg1g2@' \
+                                  'localhost/messenger?charset=utf8'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER = 'smtp.yandex.ru'

@@ -65,7 +65,8 @@ class Validator:
     def validate_reset_email(email):
         try:
             if User.query.filter_by(email=email).first() is None:
-                raise ValueError('This email doesn\'t registered on the website')
+                raise ValueError(
+                    'This email doesn\'t registered on the website')
 
         except ValueError as exception:
             return 'email', str(exception)
@@ -124,7 +125,8 @@ class Validator:
             if len(new_username) > Constants.USERNAME_LENGTH:
                 raise ValueError('Too long username')
 
-            if old_username != new_username and User.query.filter_by(username=new_username).first():
+            if old_username != new_username and User.query.filter_by(
+                    username=new_username).first():
                 raise ValueError('This username already taken')
 
             if not re.match('^[0-9a-zA-Z]+$', new_username):
@@ -143,11 +145,14 @@ class Validator:
             if len(new_email) > Constants.EMAIL_LENGTH:
                 raise ValueError('Too long email')
 
-            if old_email != new_email and User.query.filter_by(email=new_email).first():
+            if old_email != new_email and User.query.filter_by(
+                    email=new_email).first():
                 raise ValueError('This email already registered')
 
             if not re.match(
-                    '^[0-9a-zA-Zа-яА-Я.-_]+@[0-9a-zA-Zа-яА-Я-_]+(\.[0-9a-zA-Zа-яА-Я]+)+$',
+                    '^[0-9a-zA-Zа-яА-Я.-_]+'
+                    '@[0-9a-zA-Zа-яА-Я-_]+'
+                    '(\.[0-9a-zA-Zа-яА-Я]+)+$',
                     new_email
             ):
                 raise ValueError('Incorrect email format')
@@ -189,7 +194,8 @@ class Validator:
 
             photo.seek(0, os.SEEK_END)  # Go to the end of file
             if photo.tell() / 1024 / 1024 > Constants.MAX_PHOTO_SIZE:
-                raise ValueError('Max size of photo is {} MB'.format(Constants.MAX_PHOTO_SIZE))
+                raise ValueError('Max size of photo is {} MB'.format(
+                    Constants.MAX_PHOTO_SIZE))
 
         except ValueError as exception:
             return 'photo', str(exception)
@@ -268,9 +274,13 @@ class Validator:
 
 class LoginValidator(Validator):
     def _validate(self, data):
-        if (LoginValidator.validate_login(data['login']) is not None or
-                LoginValidator.validate_old_password(
-                    data['password'], User.get_user_from_login(data['login'])) is not None):
+        login = LoginValidator.validate_login(data['login'])
+        old_password = LoginValidator.validate_old_password(
+            data['password'],
+            User.get_user_from_login(data['login'])
+        )
+
+        if login is not None or old_password is not None:
             return (
                 ('login', 'Login or password is incorrect'),
                 ('password', 'Login or password is incorrect')
@@ -298,9 +308,11 @@ class SettingsValidator(Validator):
         return (
             SettingsValidator.validate_name(data['name']),
             SettingsValidator.validate_surname(data['surname']),
-            SettingsValidator.validate_new_username(current_user.username, data['username']),
+            SettingsValidator.validate_new_username(current_user.username,
+                                                    data['username']),
             SettingsValidator.validate_age(data['age']),
-            SettingsValidator.validate_new_email(current_user.email, data['email']),
+            SettingsValidator.validate_new_email(current_user.email,
+                                                 data['email']),
             SettingsValidator.validate_address(data['address'])
         )
 
@@ -313,9 +325,11 @@ class PhotoValidator(Validator):
 class PasswordValidator(Validator):
     def _validate(self, data):
         return (
-            PhotoValidator.validate_old_password(data['old_password'], current_user),
+            PhotoValidator.validate_old_password(data['old_password'],
+                                                 current_user),
             PhotoValidator.validate_new_password(data['new_password']),
-            PhotoValidator.validate_confirm_password(data['new_password'], data['confirm_password'])
+            PhotoValidator.validate_confirm_password(data['new_password'],
+                                                     data['confirm_password'])
         )
 
 
@@ -323,7 +337,8 @@ class ResetPasswordValidator(Validator):
     def _validate(self, data):
         return (
             PhotoValidator.validate_new_password(data['new_password']),
-            PhotoValidator.validate_confirm_password(data['new_password'], data['confirm_password'])
+            PhotoValidator.validate_confirm_password(data['new_password'],
+                                                     data['confirm_password'])
         )
 
 

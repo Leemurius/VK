@@ -1,11 +1,11 @@
-$('.validate-form').on('submit',function(){
-    const login = $('.login-input').val();
-    const password = $('.password-input').val();
-    const data = {'login' : login, 'password' : password};
+$('.validate-form').on('submit', function () {
+    let login = $('.login-input').val();
+    let password = $('.password-input').val();
+    let data = {'login': login, 'password': password};
 
-    var response = postAjaxInformation(getPrefixUrl() + '/api/login', data);
-    if (response != true) {
-        const error_text = JSON.parse(JSON.parse(response).message);
+    var response = postAjaxInformation('/api/login', data);
+    if (response.status != 200) {
+        let error_text = JSON.parse(JSON.parse(response.responseText).message);
         $('.login-input-div').attr('data-validate', error_text[0][1]);
         $('.password-input-div').attr('data-validate', error_text[1][1]);
         showValidate($('.login-input'));
@@ -16,9 +16,9 @@ $('.validate-form').on('submit',function(){
     }
 });
 
-$('.validate-form .input100').each(function(){
-    $(this).focus(function(){
-       hideValidate(this);
+$('.validate-form .input100').each(function () {
+    $(this).focus(function () {
+        hideValidate(this);
     });
 });
 

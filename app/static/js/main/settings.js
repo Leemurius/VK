@@ -30,13 +30,13 @@ function addGeneralInformationInFields() {
 }
 
 $('.left-form').on('submit',function() {
-    const name = $('.name-field').val();
-    const surname = $('.surname').val();
-    const username = $('.username').val();
-    const age = $('.age').val();
-    const email = $('.email').val();
-    const address = $('.address').val();
-    const data = {
+    let name = $('.name-field').val();
+    let surname = $('.surname').val();
+    let username = $('.username').val();
+    let age = $('.age').val();
+    let email = $('.email').val();
+    let address = $('.address').val();
+    let data = {
         'name': name,
         'surname': surname,
         'username': username,
@@ -44,14 +44,14 @@ $('.left-form').on('submit',function() {
         'email': email,
         'address': address,
     };
-    const file = $('.choose-photo input').prop('files')[0];
+    let file = $('.choose-photo input').prop('files')[0];
 
-    var responseData = postAjaxInformation(getPrefixUrl() + '/api/self/update/information', data);
-    var responsePhoto = postAjaxPhoto(getPrefixUrl() + '/api/self/update/photo', file);
+    var responseData = postAjaxInformation('/api/self/update/information', data);
+    var responsePhoto = postAjaxPhoto('/api/self/update/photo', file);
 
-    if (responseData != true || responsePhoto != true) {
-        if (responseData != true) {
-            const errors_list = JSON.parse(JSON.parse(responseData).message);
+    if (responseData.status != 200 || responsePhoto.status != 200) {
+        if (responseData .status != 200) {
+            let errors_list = JSON.parse(JSON.parse(responseData).message);
             for (let i = 0; i < errors_list.length; i++) {
                 if (errors_list[i] == null) {
                     continue;
@@ -83,7 +83,7 @@ $('.left-form').on('submit',function() {
             }
         }
 
-        if (responsePhoto != true) {
+        if (responsePhoto.responseText != 200) {
             var error = JSON.parse(JSON.parse(responsePhoto).message);
             addValidateMessage('.photo-path', error[0][1]);
         }
@@ -95,18 +95,18 @@ $('.left-form').on('submit',function() {
 });
 
 $('.right-form').on('submit',function() {
-    const old_password = $('.old-password').val();
-    const new_password = $('.new-password').val();
-    const confirm_password = $('.confirm-password').val();
-    const data = {
+    let old_password = $('.old-password').val();
+    let new_password = $('.new-password').val();
+    let confirm_password = $('.confirm-password').val();
+    let data = {
         'old_password' : old_password,
         'new_password' : new_password,
         'confirm_password' : confirm_password
     };
 
-    var response = postAjaxInformation(getPrefixUrl() + '/api/self/update/password', data);
-    if (response != true) {
-        const errors_list = JSON.parse(JSON.parse(response).message);
+    var response = postAjaxInformation('/api/self/update/password', data);
+    if (response.status != 200) {
+        let errors_list = JSON.parse(JSON.parse(response.responseText).message);
         for (let i = 0; i < errors_list.length; i++) {
             if (errors_list[i] == null) {
                 continue;

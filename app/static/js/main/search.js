@@ -10,11 +10,11 @@ function _initSearch() {
 }
 
 function getUserList(data) {
-    return postAjaxInformation(getPrefixUrl() + '/api/self/find/user', data);
+    return postAjaxInformation('/api/self/find/user', data).responseText;
 }
 
 function searchUser(request) {
-    const data = {'request': request};
+    let data = {'request': request};
     // Use angular, because if add ng-click through Jquery - it doesn't work
     angular.element(
         document.getElementById('searchController')

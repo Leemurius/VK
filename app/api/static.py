@@ -43,11 +43,14 @@ def get_block_from_html(blockname, filename):
 
     with open(current_app.root_path + filename) as file:
         for line in file:
-            # Crutch that deletes Jinja's things like "{{ some() }}" and comments from html
-            if re.findall('.*\{\{.+\}\}.*', line) or re.findall('.*\{#.+#\}.*', line):
+            # Crutch that deletes Jinja's things like "{{ some() }}" and
+            # comments from html
+            if (re.findall('.*\{\{.+\}\}.*', line) or
+                    re.findall('.*\{#.+#\}.*', line)):
                 continue
 
-            if can_write is True and line in ('{% endblock %}\n', '{% endblock %}'):
+            if (can_write is True and
+                    line in ('{% endblock %}\n', '{% endblock %}')):
                 can_write = False
 
             if can_write:

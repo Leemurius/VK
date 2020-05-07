@@ -38,9 +38,11 @@ def find_user():
     except ValueError as exception:
         return bad_request(exception.args[0])
 
+    # TODO: Normal request to the database
     user_list = []
     for user in User.query.all():
-        search_line = (user.name + ' ' + user.surname + ' ' + user.username).lower()
-        if re.search(data['request'].lower(), search_line) and user != current_user:
+        search_line = ' '.join([user.name, user.surname, user.username]).lower()
+        request_line = data['request'].lower()
+        if re.search(request_line, search_line) and user != current_user:
             user_list.append(user.to_dict())
     return jsonify(user_list)

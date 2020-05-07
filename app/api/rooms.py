@@ -17,17 +17,11 @@ def get_dialog():
     except ValueError as exception:
         return bad_request(exception.args[0])
 
-    dialog = Dialog.get_object(current_user, User.query.get_or_404(data['profile_id']))
+    dialog = Dialog.get_object(
+        current_user,
+        User.query.get_or_404(data['profile_id'])
+    )
     if dialog is None:
         return jsonify([])
     else:
         return jsonify(dialog.get_messages())
-
-
-# @bp.route('/rooms/get/recipient/<int:room_id>', methods=['GET'])
-# def get_recipient_username(room_id):
-#     user = Chat.query.get(room_id).get_recipient(current_user)
-#     if user is None:
-#         return bad_request('This room is not chat')
-#     else:
-#         return jsonify(user.username)

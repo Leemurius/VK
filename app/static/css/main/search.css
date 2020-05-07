@@ -9,15 +9,15 @@
 }
 
 thead {
-  border-top: 2px solid white;
+    border-top: 2px solid white;
 }
 
 th span {
-  color: white;
+    color: white;
 }
 
-tbody tr:hover{
-    background-color: rgba(0,0,0,0.3);
+tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.3);
     cursor: pointer;
 }
 

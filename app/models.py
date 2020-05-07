@@ -68,7 +68,8 @@ class User(UserMixin, db.Model):
             return None
         return User.query.get(id)
 
-    def get_reset_password_token(self, expires_in=Constants.TIME_OF_ACTUAL_REQUEST):
+    def get_reset_password_token(self,
+                                 expires_in=Constants.TIME_OF_ACTUAL_REQUEST):
         return jwt.encode(
             {
                 'reset_password': self.id,
@@ -82,7 +83,8 @@ class User(UserMixin, db.Model):
         # TODO: CHAT
         rooms = []
         for dialog in sorted(self.dialogs,
-                             key=lambda dialog: (dialog.get_last_message()['time']),
+                             key=lambda dialog:
+                             (dialog.get_last_message()['time']),
                              reverse=True):
             rooms.append(dialog.to_dict(current_user))
         return rooms
@@ -138,11 +140,14 @@ class User(UserMixin, db.Model):
     def upload_photo(self, photo):
         if self.photo != photo:
             # Delete old photo
-            old_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER, os.path.basename(self.photo))
+            old_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER,
+                                    os.path.basename(self.photo))
             if os.path.isfile(old_path):
                 os.unlink(old_path)
 
-            filename = '{}_{}.{}'.format(self.id, int(time()), photo.filename.rsplit('.', 1)[-1])
+            filename = '{}_{}.{}'.format(self.id,
+                                         int(time()),
+                                         photo.filename.rsplit('.', 1)[-1])
             file_path = os.path.join(Constants.IMAGE_UPLOAD_FOLDER, filename)
             file_path_db = os.path.join(Constants.IMAGE_DB_FOLDER, filename)
 
@@ -249,9 +254,9 @@ class Dialog(db.Model):
             db.session.query(dialogs).filter(
                 dialogs.c.user_id == user.id,
                 dialogs.c.dialog_id == self.id).update(
-                    {dialogs.c.unread_messages: dialogs.c.unread_messages + 1},
-                    synchronize_session=False
-                )
+                {dialogs.c.unread_messages: dialogs.c.unread_messages + 1},
+                synchronize_session=False
+            )
         db.session.commit()
 
     def get_messages(self):
@@ -291,7 +296,8 @@ class Dialog(db.Model):
 
     def get_recipient(self, user):
         if len(list(self.members)) == 2:
-            return self.members[1] if self.members[0] == user else self.members[0]
+            return (self.members[1] if self.members[0] == user
+                    else self.members[0])
         else:
             return self.members[0]
 
@@ -309,7 +315,8 @@ class Dialog(db.Model):
             'title': self.get_title(current_user),
             'photo': self.get_recipient(current_user).photo,
             'last_message': self.get_last_message(),
-            'unread_messages_count': self.get_count_of_unread_messages(current_user)
+            'unread_messages_count': self.get_count_of_unread_messages(
+                current_user)
         }
 
     def commit_to_db(self):
