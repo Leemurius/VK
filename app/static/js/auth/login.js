@@ -3,9 +3,9 @@ $('.validate-form').on('submit', function () {
     let password = $('.password-input').val();
     let data = {'login': login, 'password': password};
 
-    var response = postAjaxInformation('/api/login', data);
-    if (response.status != 200) {
-        let error_text = JSON.parse(JSON.parse(response.responseText).message);
+    let response = postAjaxInformation('/api/login', data);
+    if (response.status_code != 200) {
+        let error_text = JSON.parse(JSON.parse(response.text).message);
         $('.login-input-div').attr('data-validate', error_text[0][1]);
         $('.password-input-div').attr('data-validate', error_text[1][1]);
         showValidate($('.login-input'));
@@ -23,11 +23,11 @@ $('.validate-form .input100').each(function () {
 });
 
 function showValidate(input) {
-    var thisAlert = $(input).parent();
+    let thisAlert = $(input).parent();
     $(thisAlert).addClass('alert-validate');
 }
 
 function hideValidate(input) {
-    var thisAlert = $(input).parent();
+    let thisAlert = $(input).parent();
     $(thisAlert).removeClass('alert-validate');
 }

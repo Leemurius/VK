@@ -10,7 +10,7 @@ function _initSearch() {
 }
 
 function getUserList(data) {
-    return postAjaxInformation('/api/self/find/user', data).responseText;
+    return postAjaxInformation('/api/self/find/user', data).text;
 }
 
 function searchUser(request) {

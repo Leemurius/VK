@@ -30,7 +30,7 @@ function formatTime(time) {
 
 function setHeader() {
     if (isDialog()) {
-        let recipient = postAjaxInformation( '/api/user/information', {'id': Number(getRecipientId())}).responseText;
+        let recipient = postAjaxInformation( '/api/user/information', {'id': Number(getRecipientId())}).text;
         let element = '<div class="img_cont">\n' +
             '                <img src="' + recipient.photo + '" class="rounded-circle user_img" ng-click="resizeObjectsWithInformation(' + recipient.id.toString() + ')" />\n' +
             '                <span class="online_icon ' + (recipient.status ? 'online' : 'offline') + '"></span>\n' +
@@ -46,7 +46,8 @@ function setHeader() {
 }
 
 function addMessages() {
-    let messages = postAjaxInformation('/api/dialog/get/messages', {'profile_id': Number(getRecipientId())}).responseText;
+    let data = {'profile_id': Number(getRecipientId())};
+    let messages = postAjaxInformation('/api/dialog/get/messages', data).text;
 
     if (messages.length > 0) {
         room_id = messages[0].room_id;

@@ -53,19 +53,22 @@ function postAjaxInformation(url, data) {
         contentType: 'application/json;charset=UTF-8',
         success: function (text) {
             response = {
-                'responseText': text,
-                'status': 200
-            }
+                'text': text,
+                'status_code': 200
+            };
         },
         error: function (xhr, status, error) {
-            response = xhr.responseText;
+            response = {
+                'text': xhr.responseText,
+                'status_code': 400
+            };
         }
     });
     return response
 }
 
 function postAjaxPhoto(url, photo) {
-    var form_data = new FormData();
+    let form_data = new FormData();
     form_data.append('photo', photo);
 
     let response = null;
@@ -77,14 +80,17 @@ function postAjaxPhoto(url, photo) {
         async: false,
         cache: false,
         processData: false,
-        success: function (text) {
+        success: function (photo) {
             response = {
-                'responseText': text,
-                'status': 200
-            }
+                'photo': photo,
+                'status_code': 200
+            };
         },
         error: function (xhr, status, error) {
-            response = xhr.responseText;
+            response = {
+                'photo': xhr.responseText,
+                'status_code': 400
+            };
         }
     });
     return response;
@@ -151,7 +157,7 @@ user_sio.on('get_new_room', function (room) {
 // API -------------------------------------------------------------------------------------
 
 function getRoomList(data) {
-    let rooms = postAjaxInformation('/api/self/find/room', data).responseText;
+    let rooms = postAjaxInformation('/api/self/find/room', data).text;
     for (let i = 0; i < rooms.length; i++) {
         rooms[i] = formatRoom(rooms[i]);
     }
@@ -159,15 +165,15 @@ function getRoomList(data) {
 }
 
 function getProfileInformation(id) {
-    return postAjaxInformation('/api/user/information', {'id': id}).responseText;
+    return postAjaxInformation('/api/user/information', {'id': id}).text;
 }
 
 function getHTMLBlock(data) {
-    return postAjaxInformation('/api/html/get', data).responseText;
+    return postAjaxInformation('/api/html/get', data).text;
 }
 
 function getListOfJSFromHTML(data) {
-    return postAjaxInformation('/api/js/list/get', data).responseText;
+    return postAjaxInformation('/api/js/list/get', data).text;
 }
 
 function replaceStateInHistory(data, url) {
@@ -239,8 +245,8 @@ myApp.controller('baseController', ['$scope', '$compile', function ($scope, $com
     $scope.updateListOfUsers = function (users) {
         $('.user-links').remove();  // delete all links on user
         for (let i = 0; i < users.length; i++) {
-            var user = users[i];
-            var element = '<tr class="user-links" ng-click="resizeObjectsWithInformation(' + user.id.toString() + ')">' +
+            let user = users[i];
+            let element = '<tr class="user-links" ng-click="resizeObjectsWithInformation(' + user.id.toString() + ')">' +
                 '<td>' +
                 '<img src="' + user['photo'] + '" alt="" class="rounded-circle user_img">' +
                 '<span class="name_surname">' + user['name'] + ' ' + user['surname'] + '</span>' +
@@ -254,7 +260,7 @@ myApp.controller('baseController', ['$scope', '$compile', function ($scope, $com
                 '</td>' +
                 '</tr>';
 
-            var compiledElement = $compile(element)($scope);
+            let compiledElement = $compile(element)($scope);
             $(compiledElement).appendTo($('.list-for-users'));
         }
     };

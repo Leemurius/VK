@@ -3,8 +3,8 @@ $('.validate-form').on('submit',function() {
     let data = {'email': email};
 
     let response = postAjaxInformation('/api/reset', data);
-    if (response.status != 200) {
-        let error_text = JSON.parse(JSON.parse(response.responseText).message);
+    if (response.status_code != 200) {
+        let error_text = JSON.parse(JSON.parse(response.text).message);
         $('.email-input-div').attr('data-validate', error_text);
         showValidate($('.email-input'));
         return false;
@@ -27,11 +27,11 @@ $('.validate-form .input100').each(function(){
 });
 
 function showValidate(input) {
-    var thisAlert = $(input).parent();
+    let thisAlert = $(input).parent();
     $(thisAlert).addClass('alert-validate');
 }
 
 function hideValidate(input) {
-    var thisAlert = $(input).parent();
+    let thisAlert = $(input).parent();
     $(thisAlert).removeClass('alert-validate');
 }

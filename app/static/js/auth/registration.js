@@ -15,8 +15,8 @@ $('.validate-form').on('submit',function() {
         'confirm_password': confirm_password
     };
     let response = postAjaxInformation('/api/user/create', data);
-    if (response.status != 200) {
-        let errors_list = JSON.parse(JSON.parse(response.responseText).message);
+    if (response.status_code != 200) {
+        let errors_list = JSON.parse(JSON.parse(response.text).message);
         for (let i = 0; i < errors_list.length; i++) {
             if (errors_list[i] == null) {
                 continue;
@@ -71,11 +71,11 @@ function addValidateMessage(attr, message) {
 }
 
 function showValidate(input) {
-    var thisAlert = $(input).parent();
+    let thisAlert = $(input).parent();
     $(thisAlert).addClass('alert-validate');
 }
 
 function hideValidate(input) {
-    var thisAlert = $(input).parent();
+    let thisAlert = $(input).parent();
     $(thisAlert).removeClass('alert-validate');
 }

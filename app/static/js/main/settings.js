@@ -46,12 +46,12 @@ $('.left-form').on('submit',function() {
     };
     let file = $('.choose-photo input').prop('files')[0];
 
-    var responseData = postAjaxInformation('/api/self/update/information', data);
-    var responsePhoto = postAjaxPhoto('/api/self/update/photo', file);
+    let responseData = postAjaxInformation('/api/self/update/information', data);
+    let responsePhoto = postAjaxPhoto('/api/self/update/photo', file);
 
-    if (responseData.status != 200 || responsePhoto.status != 200) {
-        if (responseData .status != 200) {
-            let errors_list = JSON.parse(JSON.parse(responseData).message);
+    if (responseData.status_code != 200 || responsePhoto.status_code != 200) {
+        if (responseData .status_code != 200) {
+            let errors_list = JSON.parse(JSON.parse(responseData.text).message);
             for (let i = 0; i < errors_list.length; i++) {
                 if (errors_list[i] == null) {
                     continue;
@@ -83,8 +83,8 @@ $('.left-form').on('submit',function() {
             }
         }
 
-        if (responsePhoto.responseText != 200) {
-            var error = JSON.parse(JSON.parse(responsePhoto).message);
+        if (responsePhoto.status_code != 200) {
+            let error = JSON.parse(JSON.parse(responsePhoto.photo).message);
             addValidateMessage('.photo-path', error[0][1]);
         }
 
@@ -104,9 +104,9 @@ $('.right-form').on('submit',function() {
         'confirm_password' : confirm_password
     };
 
-    var response = postAjaxInformation('/api/self/update/password', data);
-    if (response.status != 200) {
-        let errors_list = JSON.parse(JSON.parse(response.responseText).message);
+    let response = postAjaxInformation('/api/self/update/password', data);
+    if (response.status_code != 200) {
+        let errors_list = JSON.parse(JSON.parse(response.text).message);
         for (let i = 0; i < errors_list.length; i++) {
             if (errors_list[i] == null) {
                 continue;
@@ -142,11 +142,11 @@ function addValidateMessage(attr, message) {
 }
 
 function showValidate(input) {
-    var thisAlert = $(input).parent();
+    let thisAlert = $(input).parent();
     $(thisAlert).addClass('alert-validate');
 }
 
 function hideValidate(input) {
-    var thisAlert = $(input).parent();
+    let thisAlert = $(input).parent();
     $(thisAlert).removeClass('alert-validate');
 }
