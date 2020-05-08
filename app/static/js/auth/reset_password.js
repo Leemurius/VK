@@ -1,9 +1,9 @@
-$('.validate-form').on('submit',function() {
+$('.validate-form').on('submit', function () {
     let new_password = $('.new-password').val();
     let confirm_password = $('.confirm-password').val();
 
     let data = {
-        'new_password' : new_password,
+        'new_password': new_password,
         'confirm_password': confirm_password
     };
     let token = window.location.pathname.split('/')[2];
@@ -36,9 +36,9 @@ $('.validate-form').on('submit',function() {
     }
 });
 
-$('.input100').each(function() {
-    $(this).focus(function(){
-       hideValidate(this);
+$('.input100').each(function () {
+    $(this).focus(function () {
+        hideValidate(this);
     });
 });
 

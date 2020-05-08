@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     _initChat();
 });
 
@@ -8,7 +8,10 @@ function _initChat() {
     $('textarea').select();
     $('.msg_card_body').scrollTop($('.msg_card_body')[0].scrollHeight);
     user_sio.emit('read_messages', Number(getRecipientId()));
-    replaceStateInHistory({'title': document.title, id: Number(getRecipientId())}, window.location.href);
+    replaceStateInHistory({
+        'title': document.title,
+        id: Number(getRecipientId())
+    }, window.location.href);
 }
 
 // - JS --------------------------------------------------------------------------------------------
@@ -24,13 +27,17 @@ function addMessage(message) {
 function formatTime(time) {
     let offset = new Date().getTimezoneOffset();
     let seconds = new Date(time).setMinutes(new Date(time).getMinutes() - offset);
-    let date = new Date(seconds).toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+    let date = new Date(seconds).toLocaleString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+    });
     return date.replace("AM", "am").replace("PM", "pm");
 }
 
 function setHeader() {
     if (isDialog()) {
-        let recipient = postAjaxInformation( '/api/user/information', {'id': Number(getRecipientId())}).text;
+        let recipient = postAjaxInformation('/api/user/information', {'id': Number(getRecipientId())}).text;
         let element = '<div class="img_cont">\n' +
             '                <img src="' + recipient.photo + '" class="rounded-circle user_img" ng-click="resizeObjectsWithInformation(' + recipient.id.toString() + ')" />\n' +
             '                <span class="online_icon ' + (recipient.status ? 'online' : 'offline') + '"></span>\n' +
@@ -80,7 +87,7 @@ function sendMessage(text) {
     return true;
 }
 
-$(window).on('keydown', function(e) {
+$(window).on('keydown', function (e) {
     if (e.which == 13 && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
         if (sendMessage($('textarea').val())) {
             $('textarea').val('');  // clear textarea
@@ -94,7 +101,7 @@ $('.additional_page').on('click', '.send_btn', function (event) {
     }
 });
 
-$('.additional_page').on('keypress', 'textarea', function(event) {   // Delete new line after sending message
+$('.additional_page').on('keypress', 'textarea', function (event) {   // Delete new line after sending message
     if (event.keyCode == 13 && !event.shiftKey) {
         event.preventDefault();
     }

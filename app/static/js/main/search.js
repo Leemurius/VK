@@ -1,6 +1,6 @@
 // Search user ------------------------------------------------------------------------------------------------
 
-$(document).ready(function() {
+$(document).ready(function () {
     _initSearch();
 });
 

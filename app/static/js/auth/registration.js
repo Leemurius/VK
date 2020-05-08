@@ -1,4 +1,4 @@
-$('.validate-form').on('submit',function() {
+$('.validate-form').on('submit', function () {
     let name = $('.name-input').val();
     let surname = $('.surname-input').val();
     let username = $('.username-input').val();
@@ -11,7 +11,7 @@ $('.validate-form').on('submit',function() {
         'surname': surname,
         'username': username,
         'email': email,
-        'new_password' : password,
+        'new_password': password,
         'confirm_password': confirm_password
     };
     let response = postAjaxInformation('/api/user/create', data);
@@ -51,7 +51,7 @@ $('.validate-form').on('submit',function() {
         $('.toast').stop().fadeIn(400).delay(3000).fadeOut(500);
         setTimeout(
             function () {
-                window.location.assign( "/")
+                window.location.assign("/")
             },
             2000
         );
@@ -59,9 +59,9 @@ $('.validate-form').on('submit',function() {
     }
 });
 
-$('.validate-form .input100').each(function() {
-    $(this).focus(function(){
-       hideValidate(this);
+$('.validate-form .input100').each(function () {
+    $(this).focus(function () {
+        hideValidate(this);
     });
 });
 

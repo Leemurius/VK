@@ -1,7 +1,5 @@
-
-
-var formatThousandsNoRounding = function(n, dp) {
-    var e = "",
+var formatThousandsNoRounding = function (n, dp) {
+    let e = "",
         s = e + n,
         l = s.length,
         b = n < 0 ? 1 : 0,
@@ -23,25 +21,25 @@ var formatThousandsNoRounding = function(n, dp) {
 
 var hasRun = false;
 
-inView("#countUp").on("enter", function() {
+inView("#countUp").on("enter", function () {
     if (hasRun == false) {
-        $(".number").each(function() {
+        $(".number").each(function () {
             var $this = $(this),
                 countTo = $this.attr("data-count");
 
-            $({ countNum: $this.text() }).animate(
+            $({countNum: $this.text()}).animate(
                 {
                     countNum: countTo
                 },
                 {
                     duration: 2000,
                     easing: "linear",
-                    step: function() {
+                    step: function () {
                         $this.text(
                             formatThousandsNoRounding(Math.floor(this.countNum))
                         );
                     },
-                    complete: function() {
+                    complete: function () {
                         $this.text(formatThousandsNoRounding(this.countNum));
                     }
                 }

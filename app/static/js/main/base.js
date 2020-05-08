@@ -80,15 +80,15 @@ function postAjaxPhoto(url, photo) {
         async: false,
         cache: false,
         processData: false,
-        success: function (photo) {
+        success: function (text) {
             response = {
-                'photo': photo,
+                'text': text,
                 'status_code': 200
             };
         },
         error: function (xhr, status, error) {
             response = {
-                'photo': xhr.responseText,
+                'text': xhr.responseText,
                 'status_code': 400
             };
         }

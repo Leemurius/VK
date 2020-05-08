@@ -1,4 +1,4 @@
-$('.validate-form').on('submit',function() {
+$('.validate-form').on('submit', function () {
     let email = $('.email-input').val();
     let data = {'email': email};
 
@@ -20,9 +20,9 @@ $('.validate-form').on('submit',function() {
     }
 });
 
-$('.validate-form .input100').each(function(){
-    $(this).focus(function(){
-       hideValidate(this);
+$('.validate-form .input100').each(function () {
+    $(this).focus(function () {
+        hideValidate(this);
     });
 });
 

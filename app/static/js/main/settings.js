@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     _initSettings();
 });
 
@@ -29,7 +29,7 @@ function addGeneralInformationInFields() {
     $('.address').val(me['address']);
 }
 
-$('.left-form').on('submit',function() {
+$('.left-form').on('submit', function () {
     let name = $('.name-field').val();
     let surname = $('.surname').val();
     let username = $('.username').val();
@@ -50,7 +50,7 @@ $('.left-form').on('submit',function() {
     let responsePhoto = postAjaxPhoto('/api/self/update/photo', file);
 
     if (responseData.status_code != 200 || responsePhoto.status_code != 200) {
-        if (responseData .status_code != 200) {
+        if (responseData.status_code != 200) {
             let errors_list = JSON.parse(JSON.parse(responseData.text).message);
             for (let i = 0; i < errors_list.length; i++) {
                 if (errors_list[i] == null) {
@@ -84,24 +84,23 @@ $('.left-form').on('submit',function() {
         }
 
         if (responsePhoto.status_code != 200) {
-            let error = JSON.parse(JSON.parse(responsePhoto.photo).message);
+            let error = JSON.parse(JSON.parse(responsePhoto.text).message);
             addValidateMessage('.photo-path', error[0][1]);
         }
-
         return false;
     } else {
         return true;
     }
 });
 
-$('.right-form').on('submit',function() {
+$('.right-form').on('submit', function () {
     let old_password = $('.old-password').val();
     let new_password = $('.new-password').val();
     let confirm_password = $('.confirm-password').val();
     let data = {
-        'old_password' : old_password,
-        'new_password' : new_password,
-        'confirm_password' : confirm_password
+        'old_password': old_password,
+        'new_password': new_password,
+        'confirm_password': confirm_password
     };
 
     let response = postAjaxInformation('/api/self/update/password', data);
@@ -130,9 +129,9 @@ $('.right-form').on('submit',function() {
     }
 });
 
-$('.input100').each(function() {
-    $(this).focus(function(){
-       hideValidate(this);
+$('.input100').each(function () {
+    $(this).focus(function () {
+        hideValidate(this);
     });
 });
 
