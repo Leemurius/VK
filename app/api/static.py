@@ -5,7 +5,7 @@ from flask import current_app, request, jsonify
 
 from app.api import bp
 from app.utils.validator import ContentValidator, FilenameValidator
-from utils.errors import bad_request
+from app.utils.errors import bad_request
 
 
 @bp.route('/static/getHTML', methods=['POST'])

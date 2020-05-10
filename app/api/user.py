@@ -3,7 +3,7 @@ from flask import jsonify, request
 from flask_login import login_required, current_user, login_user
 
 from app.api import bp
-from utils.errors import bad_request
+from app.utils.errors import bad_request
 from app.auth.email import send_password_reset_email
 from app.models import User
 from app.utils.validator import (SettingsValidator, PhotoValidator,

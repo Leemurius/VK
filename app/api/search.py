@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from app.api import bp
 from app.models import User
 from app.utils.validator import Validator
-from utils.errors import bad_request
+from app.utils.errors import bad_request
 
 
 @bp.route('/search/room', methods=['POST'])
