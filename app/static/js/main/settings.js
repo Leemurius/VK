@@ -58,9 +58,10 @@ $('.left-form').on('submit', function () {
 
     // Not required field
     let responsePhoto = {'status_code': 200};
-    if (photoData.photo !== undefined) {
+    if (photoData.photo !== undefined && responseData.status_code == 200) {
         responsePhoto = postAjaxPhoto('/api/user/setPhoto', photoData);
     }
+
     if (responseData.status_code != 200 || responsePhoto.status_code != 200) {
         if (responseData.status_code != 200) {
             let errors_list = JSON.parse(JSON.parse(responseData.text).message);
@@ -96,8 +97,20 @@ $('.left-form').on('submit', function () {
         }
 
         if (responsePhoto.status_code != 200) {
-            let error = JSON.parse(JSON.parse(responsePhoto.text).message);
-            addValidateMessage('.photo-path', error[0][1]);
+            let errors_list = JSON.parse(JSON.parse(responsePhoto.text).message);
+            for (let i = 0; i < errors_list.length; i++) {
+                if (errors_list[i] == null) {
+                    continue;
+                }
+
+                if (errors_list[i][0] == 'photo') {
+                    addValidateMessage('.photo-path', errors_list[i][1]);
+                }
+
+                if (errors_list[i][0] == 'user_id') {
+                    alert('Oooops. Something went wrong.');
+                }
+            }
         }
         return false;
     } else {
