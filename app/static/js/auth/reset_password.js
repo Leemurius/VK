@@ -7,7 +7,7 @@ $('.validate-form').on('submit', function () {
         'confirm_password': confirm_password
     };
     let token = window.location.pathname.split('/')[2];
-    let response = postAjaxInformation('/api/user/update/password/' + token, data);
+    let response = postAjaxInformation('/api/user/setPassword/' + token, data);
     if (response.status_code != 200) {
         let errors_list = JSON.parse(JSON.parse(response.text).message);
         for (let i = 0; i < errors_list.length; i++) {

@@ -2,7 +2,7 @@ $('.validate-form').on('submit', function () {
     let email = $('.email-input').val();
     let data = {'email': email};
 
-    let response = postAjaxInformation('/api/reset', data);
+    let response = postAjaxInformation('/api/user/reset', data);
     if (response.status_code != 200) {
         let error_text = JSON.parse(JSON.parse(response.text).message);
         $('.email-input-div').attr('data-validate', error_text);

@@ -1,7 +1,6 @@
 import os
 import re
 
-import werkzeug
 from flask import current_app
 from flask_login import current_user
 
@@ -10,24 +9,37 @@ from app.models import User
 
 
 class Validator:
-    def validate(self, required_fields, data):
-        Validator.validate_required_fields(required_fields, data)
+    @classmethod
+    def validate(cls, required_fields, data):
+        cls.validate_required_fields(required_fields, data)
 
-        error_list = self._validate(data)
+        error_list = cls._validate(data)
         if any(error_list):
             raise ValueError(error_list)
 
-    def _validate(self, data):
+    @classmethod
+    def _validate(cls, data):
         pass
 
-    @staticmethod
-    def validate_required_fields(fields, data):
+    @classmethod
+    def validate_required_fields(cls, fields, data):
         for field, type in fields.items():
             if not (field in data and isinstance(data.get(field), type)):
-                raise ValueError('Template of arguments ' + str(fields) + ' !')
+                raise ValueError('Template of arguments must be' +
+                                 str(fields) + ' !')
 
-    @staticmethod
-    def validate_login(login):
+    @classmethod
+    def validate_id(cls, id):
+        try:
+            if User.query.get(id) is None:
+                raise ValueError("User id is incorrect")
+
+        except ValueError as exception:
+            return 'user_id', str(exception)
+        return None
+
+    @classmethod
+    def validate_login(cls, login):
         try:
             if User.get_user_from_login(login) is None:
                 raise ValueError("Login is incorrect")
@@ -36,60 +48,53 @@ class Validator:
             return 'login', str(exception)
         return None
 
-    @staticmethod
-    def validate_blockname(blockname):
+    @classmethod
+    def validate_block_name(cls, block_name):
         try:
-            Validator._check_type(blockname, str)
-
             allowed_names = ('head', 'main', 'js_files')
-            if blockname not in allowed_names:
+            if block_name not in allowed_names:
                 raise ValueError('Block name should be ' + str(allowed_names))
 
         except ValueError as exception:
-            return 'blockname', str(exception)
+            return 'block name', str(exception)
         return None
 
-    @staticmethod
-    def validate_filename(filename):
+    @classmethod
+    def validate_filename(cls, filename):
         try:
-            Validator._check_type(filename, str)
-
             if not os.path.isfile(current_app.root_path + filename):
                 raise ValueError("Incorrect filepath")
 
         except ValueError as exception:
-            return 'blockname', str(exception)
+            return 'filename', str(exception)
         return None
 
-    @staticmethod
-    def validate_reset_email(email):
+    @classmethod
+    def validate_reset_email(cls, email):
         try:
             if User.query.filter_by(email=email).first() is None:
-                raise ValueError(
-                    'This email doesn\'t registered on the website')
+                raise ValueError("This email doesn't registered on the website")
 
         except ValueError as exception:
             return 'email', str(exception)
         return None
 
-    @staticmethod
-    def validate_message(message):
+    @classmethod
+    def validate_message(cls, message):
         try:
-            Validator._check_type(message, str)
-            Validator._line_is_not_empty(message)
+            cls._line_is_not_empty(message)
 
-            if len(message) > Constants.MAX_MESSAGE_LENGTH:  # Check length
+            if len(message) > Constants.MAX_MESSAGE_LENGTH:
                 raise ValueError('Too long message')
 
         except ValueError as exception:
             return 'name', str(exception)
         return None
 
-    @staticmethod
-    def validate_name(name):
+    @classmethod
+    def validate_name(cls, name):
         try:
-            Validator._check_type(name, str)
-            Validator._line_is_not_empty(name)
+            cls._line_is_not_empty(name)
 
             if len(name) > Constants.NAME_LENGTH:
                 raise ValueError('Too long name')
@@ -101,11 +106,10 @@ class Validator:
             return 'name', str(exception)
         return None
 
-    @staticmethod
-    def validate_surname(surname):
+    @classmethod
+    def validate_surname(cls, surname):
         try:
-            Validator._check_type(surname, str)
-            Validator._line_is_not_empty(surname)
+            cls._line_is_not_empty(surname)
             if len(surname) > Constants.SURNAME_LENGTH:
                 raise ValueError('Too long surname')
 
@@ -116,17 +120,16 @@ class Validator:
             return 'surname', str(exception)
         return None
 
-    @staticmethod
-    def validate_new_username(old_username, new_username):
+    @classmethod
+    def validate_new_username(cls, old_username, new_username):
         try:
-            Validator._check_type(new_username, str)
-            Validator._line_is_not_empty(new_username)
+            cls._line_is_not_empty(new_username)
 
             if len(new_username) > Constants.USERNAME_LENGTH:
                 raise ValueError('Too long username')
 
-            if old_username != new_username and User.query.filter_by(
-                    username=new_username).first():
+            if (old_username != new_username and
+                    User.query.filter_by(username=new_username).first()):
                 raise ValueError('This username already taken')
 
             if not re.match('^[0-9a-zA-Z]+$', new_username):
@@ -136,17 +139,16 @@ class Validator:
             return 'username', str(exception)
         return None
 
-    @staticmethod
-    def validate_new_email(old_email, new_email):
+    @classmethod
+    def validate_new_email(cls, old_email, new_email):
         try:
-            Validator._check_type(new_email, str)
-            Validator._line_is_not_empty(new_email)
+            cls._line_is_not_empty(new_email)
 
             if len(new_email) > Constants.EMAIL_LENGTH:
                 raise ValueError('Too long email')
 
-            if old_email != new_email and User.query.filter_by(
-                    email=new_email).first():
+            if (old_email != new_email and
+                    User.query.filter_by(email=new_email).first()):
                 raise ValueError('This email already registered')
 
             if not re.match(
@@ -161,17 +163,15 @@ class Validator:
             return 'email', str(exception)
         return None
 
-    @staticmethod
-    def validate_age(age):
+    @classmethod
+    def validate_age(cls, age):
         try:
             # It's not important field
             if age is None:
                 return None
 
-            Validator._check_type(age, int)
-
             if age < 0:
-                raise ValueError('Don\'t try to cheat me')
+                raise ValueError("Don't try to cheat me")
 
             if age < Constants.MIN_AGE:
                 raise ValueError('You are too young for this website')
@@ -183,14 +183,11 @@ class Validator:
             return 'age', str(exception)
         return None
 
-    @staticmethod
-    def validate_photo(photo):
+    @classmethod
+    def validate_photo(cls, photo):
         try:
-            # It's not important field
             if photo is None:
-                return None
-
-            Validator._check_type(photo, werkzeug.datastructures.FileStorage)
+                raise ValueError('Photo field is empty')
 
             photo.seek(0, os.SEEK_END)  # Go to the end of file
             if photo.tell() / 1024 / 1024 > Constants.MAX_PHOTO_SIZE:
@@ -201,11 +198,9 @@ class Validator:
             return 'photo', str(exception)
         return None
 
-    @staticmethod
-    def validate_address(address):
+    @classmethod
+    def validate_address(cls, address):
         try:
-            Validator._check_type(address, str)
-
             if len(address) > Constants.ADDRESS_LENGTH:
                 raise ValueError('Too long address')
 
@@ -216,11 +211,9 @@ class Validator:
             return 'address', str(exception)
         return None
 
-    @staticmethod
-    def validate_old_password(password, user):
+    @classmethod
+    def validate_old_password(cls, password, user):
         try:
-            Validator._check_type(password, str)
-
             # When we sign in we can have user of NoneType type
             if user is None:
                 raise ValueError("Password is incorrect")
@@ -232,11 +225,10 @@ class Validator:
             return 'old_password', str(exception)
         return None
 
-    @staticmethod
-    def validate_new_password(password):
+    @classmethod
+    def validate_new_password(cls, password):
         try:
-            Validator._check_type(password, str)
-            Validator._line_is_not_empty(password)
+            cls._line_is_not_empty(password)
 
             if len(password) < Constants.MIN_PASSWORD_LENGTH:
                 raise ValueError('Too short password')
@@ -248,11 +240,10 @@ class Validator:
             return 'new_password', str(exception)
         return None
 
-    @staticmethod
-    def validate_confirm_password(new_password, confirm_password):
+    @classmethod
+    def validate_confirm_password(cls, new_password, confirm_password):
         try:
-            Validator._check_type(confirm_password, str)
-            Validator._line_is_not_empty(confirm_password)
+            cls._line_is_not_empty(confirm_password)
 
             if new_password != confirm_password:
                 raise ValueError('Passwords don\'t match')
@@ -261,21 +252,17 @@ class Validator:
             return 'confirm_password', str(exception)
         return None
 
-    @staticmethod
-    def _line_is_not_empty(line):
+    @classmethod
+    def _line_is_not_empty(cls, line):
         if line.strip() == '':
             raise ValueError('This field is required')
 
-    @staticmethod
-    def _check_type(variable, type):
-        if not isinstance(variable, type):
-            raise ValueError('Type must be ' + str(type))
-
 
 class LoginValidator(Validator):
-    def _validate(self, data):
-        login = LoginValidator.validate_login(data['login'])
-        old_password = LoginValidator.validate_old_password(
+    @classmethod
+    def _validate(cls, data):
+        login = cls.validate_login(data['login'])
+        old_password = cls.validate_old_password(
             data['password'],
             User.get_user_from_login(data['login'])
         )
@@ -290,74 +277,83 @@ class LoginValidator(Validator):
 
 
 class RegistrationValidator(Validator):
-    def _validate(self, data):
+    @classmethod
+    def _validate(cls, data):
         return (
-            RegistrationValidator.validate_name(data['name']),
-            RegistrationValidator.validate_surname(data['surname']),
-            RegistrationValidator.validate_new_username(None, data['username']),
-            RegistrationValidator.validate_new_email(None, data['email']),
-            RegistrationValidator.validate_new_password(data['new_password']),
-            RegistrationValidator.validate_confirm_password(
-                data['new_password'], data['confirm_password']
-            )
+            cls.validate_name(data['name']),
+            cls.validate_surname(data['surname']),
+            cls.validate_new_username(None, data['username']),
+            cls.validate_new_email(None, data['email']),
+            cls.validate_new_password(data['new_password']),
+            cls.validate_confirm_password(data['new_password'],
+                                          data['confirm_password'])
         )
 
 
 class SettingsValidator(Validator):
-    def _validate(self, data):
+    @classmethod
+    def _validate(cls, data):
         return (
-            SettingsValidator.validate_name(data['name']),
-            SettingsValidator.validate_surname(data['surname']),
-            SettingsValidator.validate_new_username(current_user.username,
-                                                    data['username']),
-            SettingsValidator.validate_age(data['age']),
-            SettingsValidator.validate_new_email(current_user.email,
-                                                 data['email']),
-            SettingsValidator.validate_address(data['address'])
+            cls.validate_id(data['user_id']),
+            cls.validate_name(data['name']),
+            cls.validate_surname(data['surname']),
+            cls.validate_new_username(current_user.username, data['username']),
+            cls.validate_age(data['age']),
+            cls.validate_new_email(current_user.email, data['email']),
+            cls.validate_address(data['address'])
         )
 
 
 class PhotoValidator(Validator):
-    def _validate(self, data):
-        return PhotoValidator.validate_photo(data['photo']),
+    @classmethod
+    def _validate(cls, data):
+        return (
+            cls.validate_id(data['user_id']),
+            cls.validate_photo(data['photo'])
+        )
 
 
 class PasswordValidator(Validator):
-    def _validate(self, data):
+    @classmethod
+    def _validate(cls, data):
         return (
-            PhotoValidator.validate_old_password(data['old_password'],
-                                                 current_user),
-            PhotoValidator.validate_new_password(data['new_password']),
-            PhotoValidator.validate_confirm_password(data['new_password'],
-                                                     data['confirm_password'])
+            cls.validate_old_password(data['old_password'], current_user),
+            cls.validate_new_password(data['new_password']),
+            cls.validate_confirm_password(data['new_password'],
+                                          data['confirm_password'])
         )
 
 
 class ResetPasswordValidator(Validator):
-    def _validate(self, data):
+    @classmethod
+    def _validate(cls, data):
         return (
-            PhotoValidator.validate_new_password(data['new_password']),
-            PhotoValidator.validate_confirm_password(data['new_password'],
-                                                     data['confirm_password'])
+            cls.validate_new_password(data['new_password']),
+            cls.validate_confirm_password(data['new_password'],
+                                          data['confirm_password'])
         )
 
 
-class ResetValidator(Validator):
-    def _validate(self, data):
-        return ResetValidator.validate_reset_email(data['email']),
+class ResetProfileValidator(Validator):
+    @classmethod
+    def _validate(cls, data):
+        return cls.validate_reset_email(data['email']),
 
 
 class MessageValidator(Validator):
-    def _validate(self, data):
-        return MessageValidator.validate_message(data['message']),
+    @classmethod
+    def _validate(cls, data):
+        return cls.validate_message(data['message']),
 
 
 class ContentValidator(Validator):
-    def _validate(self, data):
-        return (ContentValidator.validate_blockname(data['blockname']),
-                ContentValidator.validate_filename(data['filename']))
+    @classmethod
+    def _validate(cls, data):
+        return (cls.validate_block_name(data['block_name']),
+                cls.validate_filename(data['filename']))
 
 
 class FilenameValidator(Validator):
-    def _validate(self, data):
-        return ContentValidator.validate_filename(data['filename']),
+    @classmethod
+    def _validate(cls, data):
+        return cls.validate_filename(data['filename']),

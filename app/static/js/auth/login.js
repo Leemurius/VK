@@ -3,7 +3,7 @@ $('.validate-form').on('submit', function () {
     let password = $('.password-input').val();
     let data = {'login': login, 'password': password};
 
-    let response = postAjaxInformation('/api/login', data);
+    let response = postAjaxInformation('/api/user/signIn', data);
     if (response.status_code != 200) {
         let error_text = JSON.parse(JSON.parse(response.text).message);
         $('.login-input-div').attr('data-validate', error_text[0][1]);

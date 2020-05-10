@@ -29,6 +29,10 @@ function addGeneralInformationInFields() {
     $('.address').val(me['address']);
 }
 
+
+// PROFILE INFORMATION SETTINGS ------------------------------------------------
+
+
 $('.left-form').on('submit', function () {
     let name = $('.name-field').val();
     let surname = $('.surname').val();
@@ -36,7 +40,8 @@ $('.left-form').on('submit', function () {
     let age = $('.age').val();
     let email = $('.email').val();
     let address = $('.address').val();
-    let data = {
+    let infData = {
+        'user_id': me['id'],
         'name': name,
         'surname': surname,
         'username': username,
@@ -44,11 +49,18 @@ $('.left-form').on('submit', function () {
         'email': email,
         'address': address,
     };
-    let file = $('.choose-photo input').prop('files')[0];
+    let photoData = {
+        'user_id': me['id'],
+        'photo': $('.choose-photo input').prop('files')[0],
+    };
 
-    let responseData = postAjaxInformation('/api/self/update/information', data);
-    let responsePhoto = postAjaxPhoto('/api/self/update/photo', file);
+    let responseData = postAjaxInformation('/api/user/setInformation', infData);
 
+    // Not required field
+    let responsePhoto = {'status_code': 200};
+    if (photoData.photo !== undefined) {
+        responsePhoto = postAjaxPhoto('/api/user/setPhoto', photoData);
+    }
     if (responseData.status_code != 200 || responsePhoto.status_code != 200) {
         if (responseData.status_code != 200) {
             let errors_list = JSON.parse(JSON.parse(responseData.text).message);
@@ -93,6 +105,10 @@ $('.left-form').on('submit', function () {
     }
 });
 
+
+// PASSWORD SETTINGS -----------------------------------------------------------
+
+
 $('.right-form').on('submit', function () {
     let old_password = $('.old-password').val();
     let new_password = $('.new-password').val();
@@ -103,7 +119,7 @@ $('.right-form').on('submit', function () {
         'confirm_password': confirm_password
     };
 
-    let response = postAjaxInformation('/api/self/update/password', data);
+    let response = postAjaxInformation('/api/user/setPassword', data);
     if (response.status_code != 200) {
         let errors_list = JSON.parse(JSON.parse(response.text).message);
         for (let i = 0; i < errors_list.length; i++) {

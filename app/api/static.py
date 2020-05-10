@@ -3,33 +3,33 @@ import re
 from flask_login import login_required
 from flask import current_app, request, jsonify
 
-from app.api.errors import bad_request
 from app.api import bp
 from app.utils.validator import ContentValidator, FilenameValidator
+from utils.errors import bad_request
 
 
-@bp.route('/html/get', methods=['POST'])
+@bp.route('/static/getHTML', methods=['POST'])
 @login_required
 def get_html_block():
     data = request.get_json() or {}
 
     # Validation
     try:
-        ContentValidator().validate({'blockname': str, 'filename': str}, data)
+        ContentValidator.validate({'block_name': str, 'filename': str}, data)
     except ValueError as exception:
         return bad_request(exception.args[0])
 
-    return jsonify(get_block_from_html(data['blockname'], data['filename']))
+    return jsonify(get_block_from_html(data['block_name'], data['filename']))
 
 
-@bp.route('/js/list/get', methods=['POST'])
+@bp.route('/static/getJSList', methods=['POST'])
 @login_required
 def get_list_of_js_from_html():
     data = request.get_json() or {}
 
     # Validation
     try:
-        FilenameValidator().validate({'filename': str}, data)
+        FilenameValidator.validate({'filename': str}, data)
     except ValueError as exception:
         return bad_request(exception.args[0])
 
@@ -37,7 +37,7 @@ def get_list_of_js_from_html():
     return jsonify(get_list_of_js_from_block(content))
 
 
-def get_block_from_html(blockname, filename):
+def get_block_from_html(block_name, filename):
     block = ''
     can_write = False
 
@@ -56,7 +56,7 @@ def get_block_from_html(blockname, filename):
             if can_write:
                 block += line
 
-            if line == '{{% block {} %}}\n'.format(blockname):
+            if line == '{{% block {} %}}\n'.format(block_name):
                 can_write = True
 
     return block

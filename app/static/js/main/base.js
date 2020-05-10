@@ -3,7 +3,7 @@ var myApp = angular.module('myApp', []);  // Angular
 var user_sio = io.connect("/user");    // SocketIO
 
 // Profile information
-var me = getAjaxInformation('/api/self/information');  // Self
+var me = getAjaxInformation('/api/user/getSelf');  // Self
 var rooms = getRoomList({'request': ''});                              // Rooms list
 var uploaded_pages = [];                                                    // Uploaded pages names
 var room_id = NaN;                                                          // Current room id
@@ -67,19 +67,21 @@ function postAjaxInformation(url, data) {
     return response
 }
 
-function postAjaxPhoto(url, photo) {
+function postAjaxPhoto(url, data) {
     let form_data = new FormData();
-    form_data.append('photo', photo);
+    form_data.append('user_id', data['user_id']);
+    form_data.append('photo', data['photo']);
 
     let response = null;
     $.ajax({
         type: 'POST',
         url: url,
+        enctype: 'multipart/form-data',
         data: form_data,
         contentType: false,
+        processData: false,
         async: false,
         cache: false,
-        processData: false,
         success: function (text) {
             response = {
                 'text': text,
@@ -157,7 +159,7 @@ user_sio.on('get_new_room', function (room) {
 // API -------------------------------------------------------------------------------------
 
 function getRoomList(data) {
-    let rooms = postAjaxInformation('/api/self/find/room', data).text;
+    let rooms = postAjaxInformation('/api/search/room', data).text;
     for (let i = 0; i < rooms.length; i++) {
         rooms[i] = formatRoom(rooms[i]);
     }
@@ -165,15 +167,15 @@ function getRoomList(data) {
 }
 
 function getProfileInformation(id) {
-    return postAjaxInformation('/api/user/information', {'id': id}).text;
+    return postAjaxInformation('/api/user/get', {'user_id': id}).text;
 }
 
 function getHTMLBlock(data) {
-    return postAjaxInformation('/api/html/get', data).text;
+    return postAjaxInformation('/api/static/getHTML', data).text;
 }
 
 function getListOfJSFromHTML(data) {
-    return postAjaxInformation('/api/js/list/get', data).text;
+    return postAjaxInformation('/api/static/getJSList', data).text;
 }
 
 function replaceStateInHistory(data, url) {
@@ -379,7 +381,7 @@ async function loadSettingsPage(needSaveState) {
 
     // Head
     let data = {
-        'blockname': 'head',
+        'block_name': 'head',
         'filename': '/templates/main/settings.html'
     };
     if (!wasUploadedPage('Settings')) {
@@ -391,7 +393,7 @@ async function loadSettingsPage(needSaveState) {
     $(document).attr('title', 'Settings');
 
     // Main
-    data['blockname'] = 'main';
+    data['block_name'] = 'main';
     $('.additional_page').append(getHTMLBlock(data));
 
     // JS files
@@ -416,7 +418,10 @@ async function loadSearchPage(needSaveState) {
     $('.additional_page').empty();
 
     // Head
-    let data = {'blockname': 'head', 'filename': '/templates/main/search.html'};
+    let data = {
+        'block_name': 'head',
+        'filename': '/templates/main/search.html'
+    };
     if (!wasUploadedPage('Search')) {
         $('head').append(getHTMLBlock(data));
 
@@ -426,7 +431,7 @@ async function loadSearchPage(needSaveState) {
     $(document).attr('title', 'Search');
 
     // Main
-    data['blockname'] = 'main';
+    data['block_name'] = 'main';
     $('.additional_page').append(getHTMLBlock(data));
 
     // JS files
@@ -451,7 +456,7 @@ async function loadChatPage(id, needSaveState) {
     $('.additional_page').empty();
 
     // Head
-    let data = {'blockname': 'head', 'filename': '/templates/main/chat.html'};
+    let data = {'block_name': 'head', 'filename': '/templates/main/chat.html'};
     if (!wasUploadedPage('Messages')) {
         $('head').append(getHTMLBlock(data));
         // Timeout for loading css
@@ -460,7 +465,7 @@ async function loadChatPage(id, needSaveState) {
     $(document).attr('title', 'Messages');
 
     // Main
-    data['blockname'] = 'main';
+    data['block_name'] = 'main';
     $('.additional_page').append(getHTMLBlock(data));
 
     // Change URL
@@ -489,7 +494,7 @@ async function loadProfilePage(needSaveState) {
 
     // Head
     let data = {
-        'blockname': 'head',
+        'block_name': 'head',
         'filename': '/templates/main/profile.html'
     };
     if (!wasUploadedPage('My profile')) {
@@ -500,7 +505,7 @@ async function loadProfilePage(needSaveState) {
     $(document).attr('title', 'My profile');
 
     // Main
-    data['blockname'] = 'main';
+    data['block_name'] = 'main';
     $('.additional_page').append(getHTMLBlock(data));
 
     // Change URL
